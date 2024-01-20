@@ -1,0 +1,29 @@
+
+#menu {
+    width: 250px;
+    background-color: #333;
+    color: #fff;
+    position: fixed;
+    height: 100%;
+    z-index: 2;
+}
+
+#header {
+    width: 100%;
+    background-color: var(--primary-white);
+    padding-left: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 50px;
+    z-index: 1;
+    position: fixed;
+    top: 0;
+}
+
+#body {
+    flex: 1;
+    margin-top: 50px; /* Khoảng trống giữa header và body */
+    margin-left: 250px; /* Khoảng trống bên trái cho menu */
+    overflow-y: auto;
+    background-color: var(--primary-body);
+    min-height: calc(100vh - 50px);
+}
