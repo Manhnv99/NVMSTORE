@@ -17,8 +17,8 @@ public class StaffRequest {
     @NotEmpty(message = "Bạn Chưa Điền Tên Nhân Viên!")
     private String name;
 
-    @NotNull(message = "Bạn Chưa Chọn Giới Tính!")
-    private Boolean gender;
+    @NotEmpty(message = "Bạn Chưa Chọn Giới Tính!")
+    private String gender;
 
     @NotNull(message = "Bạn Chưa Chọn Ngày Sinh!")
     private LocalDate birthday;
@@ -35,8 +35,8 @@ public class StaffRequest {
     @Pattern(regexp = "^0\\d{11}$", message = "Sai Định Dạng Căn Cước Công Dân!")
     private String cccd;
 
-    @NotNull(message = "Bạn Chưa Chọn Trạng Thái!")
-    private Boolean status;
+    @NotEmpty(message = "Bạn Chưa Chọn Trạng Thái!")
+    private String status;
 
     @NotBlank(message = "Bạn Chưa Chọn Tỉnh Thành Phố!")
     private String address_city;
@@ -50,6 +50,5 @@ public class StaffRequest {
     @NotBlank(message = "Bạn Chưa Điền Số nhà/Ngõ/Đường!")
     private String address_detail;
 
-    @NotNull(message = "Bạn Chưa Chọn Ảnh!")
     private MultipartFile image;
 }

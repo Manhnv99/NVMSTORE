@@ -2,14 +2,14 @@ import "./AddStaff.css"
 import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {useCallback, useEffect, useRef, useState} from "react";
 import StaffAPI from "../../../../services/StaffAPI/StaffAPI";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import Loading from "../../../loading/Loading";
 import {CallApiGeoGraph, CallApiVN} from "../../../../../redux/slices/APIVNSlice";
 import {toastMessage} from "../../../../../redux/slices/ToastMsgSlice";
 
 
-const AddStaff=()=>{
+const UpdateStaff=()=>{
     const [name,setName]=useState('')
     const [cccd,setCCCD]=useState('')
     const [city,setCity]=useState('')
@@ -22,6 +22,7 @@ const AddStaff=()=>{
     const [birth,setBirth]=useState('')
     const [gender,setGender]=useState('')
     const [image,setImage]=useState(new File([],'empty-file'))
+    const [imageShow,setImageShow]=useState('')
     // Touch
     const [touchName,setTouchName]=useState(false)
     const [touchCCCD,setTouchCCCD]=useState(false)
@@ -56,15 +57,55 @@ const AddStaff=()=>{
     const listCity=useSelector((state)=>state.geograph.listGeograph)
     const [listDistrict,setListDistrict]=useState([])
     const [listWard,setListWard]=useState([])
+    const {id}=useParams();
+
 
 
     useEffect(() => {
+        getStaffById(id);
         dispatch(CallApiGeoGraph())
     }, []);
 
+    const getStaffById=async (id)=>{
+        try {
+            const res= await StaffAPI.getStaffById(id);
+            const data=res.data;
+            console.log(res)
+            setName(data.name)
+            setCCCD(data.cccd)
+            setCity(data.address_city)
+            setProvice(data.address_province)
+            setWard(data.address_ward)
+            setAddress(data.address_detail)
+            setStatus(data.status+"")
+            setPhone(data.phone)
+            setEmail(data.email)
+            setBirth(data.birthday)
+            setGender(data.gender+"")
+            setImageShow(data.image_url)
+            let nam=document.querySelector(`input[name="gender"][value="true"]`)
+            let nu=document.querySelector(`input[name="gender"][value="false"]`)
+            if(data.gender===true){
+                nam.checked=true;
+            }else{
+                nu.checked=true;
+            }
+            let statusDOC=document.querySelectorAll('.statusDOC option')
+            if (data.status===true){
+                // eslint-disable-next-line no-unused-expressions
+                statusDOC[1].selected=true
+            }else{
+                // eslint-disable-next-line no-unused-expressions
+                statusDOC[2].selected=true
+            }
+        }catch (e) {
+            console.log(e)
+        }
+    }
 
-    const handleAddStaff= async ()=>{
-        const formData=new FormData()
+
+    const handleUpdateStaff= async ()=>{
+        const formData=new FormData();
         formData.append("name",name)
         switch (gender){
             case '':
@@ -103,10 +144,10 @@ const AddStaff=()=>{
         formData.append("image",image)
         try {
             setLoading(true)
-            const response= await StaffAPI.createStaff(formData);
-            if(response && response.status===201){
+            const response= await StaffAPI.updateStaff(id,formData);
+            if(response && response.status===200){
                 setLoading(false)
-                dispatch(toastMessage())
+                dispatch(toastMessage("Cập nhật nhân viên thành công!"))
                 nav("/nhanvien-management")
             }
         }catch (e){
@@ -124,13 +165,9 @@ const AddStaff=()=>{
             errorCopy.birthday=e.response.data.birthday
             errorCopy.status=e.response.data.status
             errorCopy.gender=e.response.data.gender
-            if(e.response.data.image==='Bạn Chưa Chọn Ảnh!'){
-                alert(e.response.data.image)
-            }
             setErrors(errorCopy)
         }
     }
-
     const handleScanQRCODE=()=>{
 
     }
@@ -254,12 +291,14 @@ const AddStaff=()=>{
             fileReader.readAsDataURL(file)
         }
     }
-
+    const test=()=>{
+        console.log(status)
+        console.log(gender)
+        console.log(image)
+    }
     return(
         <>
-            <button onClick={()=>{
-                console.log(ward)
-            }}>click</button>
+            <button onClick={test}>click</button>
             {loading && <Loading/>}
             <Container>
                 <div className="addstaff-header">
@@ -269,11 +308,9 @@ const AddStaff=()=>{
                     <Col lg={3}>
                         <div className="addstaff-content-left">
                             <span>Ảnh Đại Diện</span>
-                            <div className="upload" onClick={(e) => {
-                                openUpload.current.click()
-                            }}>
-                                <img style={{width:"100%",height:"100%",borderRadius:"50%",objectFit:"cover",display:"none"}} className="my-image"/>
-                                <div>
+                            <div className="upload" onClick={(e) => {openUpload.current.click()}}>
+                                <img src={imageShow} style={{width:"100%",height:"100%",borderRadius:"50%",objectFit:"cover"}} className="my-image"/>
+                                <div style={{display:"none"}}>
                                     <div className="upload-text">
                                         <i className="fa-solid fa-plus"></i>
                                         <p>Upload</p>
@@ -323,7 +360,7 @@ const AddStaff=()=>{
                                         </Form.Group>
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Email </Form.Label>
-                                            <Form.Control required type="email" placeholder="Điền email!"
+                                            <Form.Control value={email} required type="email" placeholder="Điền email!"
                                                           onChange={(e) => {
                                                               onChangeEmail(e)
                                                           }}
@@ -367,7 +404,7 @@ const AddStaff=()=>{
                                         </Form.Group>
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Trạng Thái </Form.Label>
-                                            <Form.Select required onChange={onChangeStatus}
+                                            <Form.Select className={"statusDOC"} required onChange={onChangeStatus}
                                                          isInvalid={touchStatus && status === '' || errors.status!==undefined }
                                                          isValid={status !== ''}>
                                                 <option value="">--Chọn Trạng Thái--</option>
@@ -382,7 +419,7 @@ const AddStaff=()=>{
                                     <Col lg={6}>
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Ngày sinh </Form.Label>
-                                            <Form.Control required type="date" placeholder="Last name"
+                                            <Form.Control value={birth} required type="date" placeholder="Last name"
                                                           onChange={onChangeBirth}
                                                           isInvalid={touchBirth && birth === '' || errors.birthday!==undefined}
                                                           isValid={birth !== ''}/>
@@ -394,8 +431,8 @@ const AddStaff=()=>{
                                             <Form.Label><span style={{color: "red"}}>*</span> Giới Tính </Form.Label>
                                             <br/>
                                             <Form.Check onChange={onChangeGender} style={{marginLeft: "5px"}} inline label="Nam" type="radio" name="gender" value="true" required
-                                                            isInvalid={touchGender && gender==='' || errors.gender!==undefined }
-                                                            isValid={gender!==''}/>
+                                                        isInvalid={touchGender && gender==='' || errors.gender!==undefined }
+                                                        isValid={gender!==''}/>
                                             <Form.Check onChange={onChangeGender} style={{marginLeft: "5px"}} inline label="Nữ" type="radio" name="gender" value="false" required
                                                         isInvalid={touchGender && gender==='' || errors.gender!==undefined }
                                                         isValid={gender!==''}/>
@@ -406,7 +443,7 @@ const AddStaff=()=>{
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Số điện thoại
                                             </Form.Label>
-                                            <Form.Control required type="number" placeholder="Điền số điện thoại!"
+                                            <Form.Control value={phone} required type="number" placeholder="Điền số điện thoại!"
                                                           onChange={onChangePhone}
                                                           isInvalid={touchPhone && phone === '' || errors.phone!==undefined}
                                                           isValid={phone.length === 10}/>
@@ -433,7 +470,7 @@ const AddStaff=()=>{
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Số nhà/Ngõ/Đường
                                             </Form.Label>
-                                            <Form.Control required type="text" placeholder="Điền số nhà/ngõ/đường!"
+                                            <Form.Control value={address} required type="text" placeholder="Điền số nhà/ngõ/đường!"
                                                           onChange={onChangeAddress}
                                                           isInvalid={touchAddress && address === '' || errors.address_detail!==undefined}
                                                           isValid={address.length > 0}/>
@@ -444,8 +481,8 @@ const AddStaff=()=>{
                                     </Col>
                                 </Row>
                                 <div style={{display: "flex", justifyContent: "end",padding:"0 0 20px 0"}}>
-                                    <Button style={{padding: "7px 30px"}} onClick={handleAddStaff}
-                                            type="submit">Thêm</Button>
+                                    <Button style={{padding: "7px 30px"}} onClick={handleUpdateStaff}
+                                            type="submit">Cập Nhật</Button>
                                     <Button style={{
                                         backgroundColor: "#fff",
                                         color: "#444",
@@ -463,4 +500,4 @@ const AddStaff=()=>{
     )
 }
 
-export default AddStaff
+export default UpdateStaff

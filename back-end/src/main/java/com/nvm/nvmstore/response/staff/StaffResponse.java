@@ -4,12 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class StaffResponse {
+
+    private Long id;
+
     private String name;
 
     private String cccd;
@@ -18,7 +22,7 @@ public class StaffResponse {
 
     private String phone;
 
-    private Date birthday;
+    private LocalDate birthday;
 
     private Boolean gender;
 
