@@ -24,7 +24,6 @@ const DetailStaff=()=>{
     const getStaffById= async ()=>{
         const response = await StaffAPI.getStaffById(id)
         setStaff(response.data)
-        console.log(response.data)
         let nam=document.querySelector(`input[name="gender"][value="true"]`)
         let nu=document.querySelector(`input[name="gender"][value="false"]`)
         if(response.data.gender===true){
@@ -132,7 +131,7 @@ const DetailStaff=()=>{
                                         border: "1px solid #444",
                                         padding: "7px 25px",
                                         marginLeft: "10px"
-                                    }} onClick={()=>{nav("/nhanvien-management")}} type="submit">Hủy</Button>
+                                    }} onClick={()=>{nav("/staff-management")}} type="submit">Hủy</Button>
                                 </div>
                             </div>
                         </div>

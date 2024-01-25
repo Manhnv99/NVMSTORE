@@ -3,8 +3,9 @@ import {Button, Card, Col, Container, Form, Row, Table} from "react-bootstrap";
 import {Link, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
-import {getAllStaff, setListStaff} from "../../../../../redux/slices/staffSlice";
+import {getAllStaff, setListStaff} from "../../../../../redux/slices/StaffSlice";
 import staffAPI from "../../../../services/StaffAPI/StaffAPI";
+import Loading from "../../../loading/Loading";
 
 
 const Staff=()=>{
@@ -15,6 +16,7 @@ const Staff=()=>{
     const [input,setInput]=useState('')
     const [status,setStatus]=useState('')
     const [searchOrNothing,setSearchOrNothing]=useState(false)
+    const isLoading=useSelector(state => state.staff.isLoading)
 
     const listStaff=useSelector((state)=>state.staff.listStaff)
 
@@ -130,7 +132,7 @@ const Staff=()=>{
 
     return(
         <>
-            <button onClick={()=>{console.log(totalPage)}}>Click</button>
+            {isLoading && <Loading/>}
             <Container>
                 <div className="staff-header">
                     <i className="fa-solid fa-box-open"></i>
@@ -175,10 +177,10 @@ const Staff=()=>{
                             <span>Danh sách nhân viên</span>
                         </div>
                         <div className={"staff-body-title-right"}>
-                            <Link to="/add-nhanvien-management">
+                            <Button onClick={()=>{nav("/add-staff-management")}}>
                                 <i className="fa-solid fa-plus"></i>
-                                <span style={{marginLeft:"5px"}}>Thêm Nhân Viên</span>
-                            </Link>
+                                <span style={{marginLeft: "5px"}}>Thêm Nhân Viên</span>
+                            </Button>
                         </div>
                     </div>
                     <Card style={{marginTop:"30px"}}>
@@ -210,10 +212,14 @@ const Staff=()=>{
                                             <td style={{textAlign:"center"}}>{item.phone}</td>
                                             <td style={{textAlign:"center"}}>{item.birthday}</td>
                                             <td style={{textAlign:"center"}}>{item.gender ? "Nam" : "Nữ"}</td>
-                                            <td style={{textAlign:"center",backgroundColor:"#68ae6b",height:"40px",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",borderRadius:"5px"}}>{item.status ? "Đang Làm" : "Tạm Ngưng"}</td>
                                             <td style={{textAlign:"center"}}>
-                                                <i onClick={()=>{nav(`/detail-nhanvien-management/${item.id}`)}} className="fa-regular fa-eye actionDetail"></i>
-                                                <i onClick={()=>{nav(`/update-nhanvien-management/${item.id}`)}} className="fa-regular fa-pen-to-square actionEdit"></i>
+                                                <span style={{backgroundColor:"#68ae6b",height:"40px",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",borderRadius:"5px",cursor:"default"}}>
+                                                    {item.status ? "Đang Làm" : "Tạm Ngưng"}
+                                                </span>
+                                            </td>
+                                            <td style={{textAlign:"center"}}>
+                                                <i onClick={()=>{nav(`/detail-staff-management/${item.id}`)}} className="fa-regular fa-eye actionDetail"></i>
+                                                <i onClick={()=>{nav(`/update-staff-management/${item.id}`)}} className="fa-regular fa-pen-to-square actionEdit"></i>
                                             </td>
                                         </tr>
                                     )

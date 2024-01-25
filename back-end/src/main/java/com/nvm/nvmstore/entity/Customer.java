@@ -46,6 +46,8 @@ public class Customer {
 
     private String address_detail;
 
+    private Integer point;
+
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created_at;

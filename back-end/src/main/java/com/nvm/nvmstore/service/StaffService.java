@@ -1,7 +1,7 @@
 package com.nvm.nvmstore.service;
 
 import com.nvm.nvmstore.entity.Staff;
-import com.nvm.nvmstore.request.StaffRequest.StaffRequest;
+import com.nvm.nvmstore.request.staff.StaffRequest;
 import com.nvm.nvmstore.response.staff.StaffResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +24,7 @@ public interface StaffService {
     List<StaffResponse> searchStaff(String input,Boolean status,Pageable pageable);
 
     Double getTotalPageSearch(String input,Boolean status);
+
+    String generateRandomPassword(int length);
 
 }

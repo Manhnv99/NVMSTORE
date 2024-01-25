@@ -106,11 +106,10 @@ const AddStaff=()=>{
             const response= await StaffAPI.createStaff(formData);
             if(response && response.status===201){
                 setLoading(false)
-                dispatch(toastMessage())
-                nav("/nhanvien-management")
+                dispatch(toastMessage("Thêm Nhân Viên Mới Thành Công!"))
+                nav("/staff-management")
             }
         }catch (e){
-            console.log(e)
             setLoading(false)
             const errorCopy={...errors}
             errorCopy.name=e.response.data.name
@@ -257,9 +256,6 @@ const AddStaff=()=>{
 
     return(
         <>
-            <button onClick={()=>{
-                console.log(ward)
-            }}>click</button>
             {loading && <Loading/>}
             <Container>
                 <div className="addstaff-header">
@@ -452,7 +448,7 @@ const AddStaff=()=>{
                                         border: "1px solid #444",
                                         padding: "7px 25px",
                                         marginLeft: "10px"
-                                    }} onClick={()=>{nav("/nhanvien-management")}} type="submit">Hủy</Button>
+                                    }} onClick={()=>{nav("/staff-management")}} type="submit">Hủy</Button>
                                 </div>
                             </div>
                         </div>

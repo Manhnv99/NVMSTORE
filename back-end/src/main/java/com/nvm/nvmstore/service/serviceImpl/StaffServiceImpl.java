@@ -4,10 +4,12 @@ import com.nvm.nvmstore.ExceptionHandler.ExceptionMessage;
 import com.nvm.nvmstore.entity.Staff;
 import com.nvm.nvmstore.repository.RoleRepository;
 import com.nvm.nvmstore.repository.StaffRepository;
-import com.nvm.nvmstore.request.StaffRequest.StaffRequest;
+import com.nvm.nvmstore.request.staff.StaffRequest;
 import com.nvm.nvmstore.response.staff.StaffResponse;
 import com.nvm.nvmstore.service.CloudinaryService;
+import com.nvm.nvmstore.service.EmailService;
 import com.nvm.nvmstore.service.StaffService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,9 @@ public class StaffServiceImpl implements StaffService {
     @Autowired
     private CloudinaryService cloudinaryService;
 
+    @Autowired
+    private EmailService emailService;
+
 
 
     @Override
@@ -39,12 +44,19 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public Staff getStaffById(Long id) {
-        return staffRepository.getStaffById(id);
+        Map<String,String> keyvalue=new HashMap<>();
+        Optional<Staff> staffOptional=staffRepository.findById(id);
+        if(staffOptional.isPresent()){
+            return staffOptional.get();
+        }else{
+            keyvalue.put("error","Không tìm thấy nhân viên này!");
+            throw new ExceptionMessage(keyvalue);
+        }
     }
-
 
     @Override
     public ResponseEntity<?> addStaff(StaffRequest staffRequest) throws IOException {
+        String password=generateRandomPassword(10);
         Map<String,String> listError=new HashMap<>();
         if(staffRepository.getByCCCD(staffRequest.getCccd())!=null){
             listError.put("cccd","CCCD này đã tồn tại!");
@@ -97,7 +109,7 @@ public class StaffServiceImpl implements StaffService {
             default:
                 staffAdd.setStatus(true);
         }
-        staffAdd.setPassword("123");
+        staffAdd.setPassword(password);
         staffAdd.setAddress_city(staffRequest.getAddress_city());
         staffAdd.setAddress_province(staffRequest.getAddress_province());
         staffAdd.setAddress_ward(staffRequest.getAddress_ward());
@@ -107,50 +119,67 @@ public class StaffServiceImpl implements StaffService {
         staffAdd.setImage_id((String) result.get("public_id"));
         staffAdd.setImage_url((String) result.get("url"));
         staffRepository.save(staffAdd);
+        emailService.sendEmail("nguyenvimanhnqt@gmail.com","Password","Mật khẩu để đăng nhập vào hệ thống bán giày NVMSTORE là:"+password);
         return ResponseEntity.status(HttpStatus.CREATED).body("Thêm Nhân Viên Thành Công!");
     }
 
     @Override
     public ResponseEntity<?> updateStaff(Long id,StaffRequest staffRequest) throws IOException {
-        Staff staffUpdate=staffRepository.getStaffById(id);
-        staffUpdate.setName(staffRequest.getName());
+        Map<String,String> listError=new HashMap<>();
+        Optional<Staff> staffOptional=staffRepository.findById(id);
+        if(staffOptional.isPresent()){
+            if(!staffRequest.getCccd().equalsIgnoreCase(staffOptional.get().getCccd())){
+                listError.put("cccd","CCCD này đã tồn tại!");
+            }
+            if(!staffRequest.getEmail().equalsIgnoreCase(staffOptional.get().getEmail())){
+                listError.put("email","Email này đã tồn tại!");
+            }
+            if(!staffRequest.getPhone().equalsIgnoreCase(staffOptional.get().getPhone())){
+                listError.put("phone","Số điện thoại này đã tồn tại!");
+            }
+        }
+        if(!listError.isEmpty()){
+            throw new ExceptionMessage(listError);
+        }
+
+        staffOptional.get().setName(staffRequest.getName());
         switch (staffRequest.getGender()){
             case "true":
-                staffUpdate.setGender(true);
+                staffOptional.get().setGender(true);
                 break;
             case "false":
-                staffUpdate.setGender(false);
+                staffOptional.get().setGender(false);
                 break;
             default:
-                staffUpdate.setGender(true);
+                staffOptional.get().setGender(true);
         }
-        staffUpdate.setBirthday(staffRequest.getBirthday());
-        staffUpdate.setPhone(staffRequest.getPhone());
-        staffUpdate.setEmail(staffRequest.getEmail());
-        staffUpdate.setCccd(staffRequest.getCccd());
+        staffOptional.get().setBirthday(staffRequest.getBirthday());
+        staffOptional.get().setPhone(staffRequest.getPhone());
+        staffOptional.get().setEmail(staffRequest.getEmail());
+        staffOptional.get().setCccd(staffRequest.getCccd());
         switch (staffRequest.getStatus()){
             case "true":
-                staffUpdate.setStatus(true);
+                staffOptional.get().setStatus(true);
                 break;
             case "false":
-                staffUpdate.setStatus(false);
+                staffOptional.get().setStatus(false);
                 break;
             default:
-                staffUpdate.setStatus(true);
+                staffOptional.get().setStatus(true);
         }
         String nameImage=staffRequest.getImage().getOriginalFilename();
         if(!nameImage.equalsIgnoreCase("empty-file")){
-            cloudinaryService.delete(staffUpdate.getImage_id());//xóa ảnh cũ
+            cloudinaryService.delete(staffOptional.get().getImage_id());//xóa ảnh cũ
             Map result=cloudinaryService.upload(staffRequest.getImage());//upload image to cloudinary
-            staffUpdate.setImage_id((String) result.get("public_id"));
-            staffUpdate.setImage_url((String) result.get("url"));
+            staffOptional.get().setImage_id((String) result.get("public_id"));
+            staffOptional.get().setImage_url((String) result.get("url"));
         }
-        staffUpdate.setAddress_city(staffRequest.getAddress_city());
-        staffUpdate.setAddress_province(staffRequest.getAddress_province());
-        staffUpdate.setAddress_ward(staffRequest.getAddress_ward());
-        staffUpdate.setAddress_detail(staffRequest.getAddress_detail());
-        staffUpdate.setUpdated_at(new Date());
-        staffRepository.save(staffUpdate);
+        staffOptional.get().setAddress_city(staffRequest.getAddress_city());
+        staffOptional.get().setAddress_province(staffRequest.getAddress_province());
+        staffOptional.get().setAddress_ward(staffRequest.getAddress_ward());
+        staffOptional.get().setAddress_detail(staffRequest.getAddress_detail());
+        staffOptional.get().setUpdated_at(new Date());
+        staffRepository.save(staffOptional.get());
         return ResponseEntity.status(HttpStatus.OK).body("update successfully");
     }
 
@@ -167,5 +196,10 @@ public class StaffServiceImpl implements StaffService {
     @Override
     public Double getTotalPageSearch(String input, Boolean status) {
         return Math.ceil(staffRepository.getTotalPageSearch(input,status).size()/3.0);
+    }
+
+    @Override
+    public String generateRandomPassword(int length) {
+        return RandomStringUtils.randomAlphanumeric(length);
     }
 }

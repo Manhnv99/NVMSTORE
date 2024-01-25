@@ -70,7 +70,6 @@ const UpdateStaff=()=>{
         try {
             const res= await StaffAPI.getStaffById(id);
             const data=res.data;
-            console.log(res)
             setName(data.name)
             setCCCD(data.cccd)
             setCity(data.address_city)
@@ -148,10 +147,9 @@ const UpdateStaff=()=>{
             if(response && response.status===200){
                 setLoading(false)
                 dispatch(toastMessage("Cập nhật nhân viên thành công!"))
-                nav("/nhanvien-management")
+                nav("/staff-management")
             }
         }catch (e){
-            console.log(e)
             setLoading(false)
             const errorCopy={...errors}
             errorCopy.name=e.response.data.name
@@ -291,14 +289,8 @@ const UpdateStaff=()=>{
             fileReader.readAsDataURL(file)
         }
     }
-    const test=()=>{
-        console.log(status)
-        console.log(gender)
-        console.log(image)
-    }
     return(
         <>
-            <button onClick={test}>click</button>
             {loading && <Loading/>}
             <Container>
                 <div className="addstaff-header">
@@ -489,7 +481,7 @@ const UpdateStaff=()=>{
                                         border: "1px solid #444",
                                         padding: "7px 25px",
                                         marginLeft: "10px"
-                                    }} onClick={()=>{nav("/nhanvien-management")}} type="submit">Hủy</Button>
+                                    }} onClick={()=>{nav("/staff-management")}} type="submit">Hủy</Button>
                                 </div>
                             </div>
                         </div>

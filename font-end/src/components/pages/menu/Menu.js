@@ -98,27 +98,27 @@ const Menu=()=>{
                             <Collapse in={openQLSP}>
                                 <ul>
                                     <li>
-                                        <Link style={{marginLeft: "21px"}}>
+                                        <Link to={"/product-management"} style={{marginLeft: "21px"}}>
                                             <span>Sản Phẩm</span>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link to={"/theloai-management"} style={{marginLeft: "21px"}}>
+                                        <Link to={"/category-management"} style={{marginLeft: "21px"}}>
                                             <span>Thể Loại</span>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link style={{marginLeft: "21px"}}>
+                                        <Link to={"/sole-management"} style={{marginLeft: "21px"}}>
                                             <span>Đế Giày</span>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link style={{marginLeft: "21px"}}>
+                                        <Link to={"/brand-management"} style={{marginLeft: "21px"}}>
                                             <span>Thương Hiệu</span>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link style={{marginLeft: "21px"}}>
+                                        <Link to={"/material-management"} style={{marginLeft: "21px"}}>
                                             <span>Chất Liệu</span>
                                         </Link>
                                     </li>
@@ -139,12 +139,12 @@ const Menu=()=>{
                             <Collapse in={openQLTK}>
                                 <ul>
                                     <li>
-                                        <Link to={"/nhanvien-management"} style={{marginLeft: "21px"}}>
+                                        <Link to={"/staff-management"} style={{marginLeft: "21px"}}>
                                             <span>Nhân Viên</span>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link to={"/khachhang-management"} style={{marginLeft: "21px"}}>
+                                        <Link to={"/customer-management"} style={{marginLeft: "21px"}}>
                                             <span>Khách Hàng</span>
                                         </Link>
                                     </li>

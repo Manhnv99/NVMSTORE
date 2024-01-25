@@ -27,3 +27,12 @@
     background-color: var(--primary-body);
     min-height: calc(100vh - 50px);
 }
+tr th{
+    background-color: var(--primary-orange) !important;
+    color: var(--primary-white) !important;
+    border-left: 1px solid var(--primary-white);
+}
+
+tr td{
+    vertical-align: middle
+}

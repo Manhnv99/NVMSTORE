@@ -22,6 +22,8 @@ public class Sole {
 
     private String name;
 
+    private Boolean Status;
+
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created_at;

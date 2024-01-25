@@ -18,12 +18,6 @@ public interface StaffRepository extends JpaRepository<Staff,Long> {
             """)
     List<StaffResponse> getAll(Pageable pageable);
 
-    @Query("""
-           select s from Staff s where s.id=:id
-            """)
-    Staff getStaffById(Long id);
-
-
     @Query(value = """
             select count(*) from staff
             """,nativeQuery = true)
@@ -38,6 +32,7 @@ public interface StaffRepository extends JpaRepository<Staff,Long> {
             (:input is null or s.cccd like %:input%) or
             (:input is null or s.phone like %:input%) )and
             (:status is null or s.status=:status)
+            order by s.id desc
             """)
     List<StaffResponse> searchStaff(String input,Boolean status,Pageable pageable);
 
@@ -49,7 +44,6 @@ public interface StaffRepository extends JpaRepository<Staff,Long> {
             (:input is null or s.cccd like %:input%) or
             (:input is null or s.phone like %:input%) )and
             (:status is null or s.status=:status)
-            order by s.id desc
             """)
     List<StaffResponse> getTotalPageSearch(String input,Boolean status);
 

@@ -10,6 +10,11 @@ import Staff from "./components/pages/body/TaiKhoan/NhanVien/Staff";
 import DetailStaff from "./components/pages/body/TaiKhoan/NhanVien/DetailStaff";
 import UpdateStaff from "./components/pages/body/TaiKhoan/NhanVien/UpdateStaff";
 import ToastMessage from "./components/pages/toastmsg/ToastMessage";
+import Sole from "./components/pages/body/SanPhamEntity/Sole";
+import Brand from "./components/pages/body/SanPhamEntity/Brand";
+import Material from "./components/pages/body/SanPhamEntity/Material";
+import Product from "./components/pages/body/SanPham/Product";
+import AddProduct from "./components/pages/body/SanPham/AddProduct";
 
 
 function App() {
@@ -25,12 +30,17 @@ function App() {
               <ToastMessage/>
             <Routes>
                 <Route path="/" element={<ThongKe/>}/>
-                <Route path="/theloai-management" element={<Category/>}/>
-                <Route path="/khachhang-management" element={<KhachHang/>}/>
-                <Route path="/nhanvien-management" element={<Staff/>}/>
-                <Route path="/add-nhanvien-management" element={<AddStaff/>}/>
-                <Route path="/update-nhanvien-management/:id" element={<UpdateStaff/>}/>
-                <Route path="/detail-nhanvien-management/:id" element={<DetailStaff/>}/>
+                <Route path={"/product-management"} element={<Product/>}/>
+                <Route path={"/add-product-management"} element={<AddProduct/>}/>
+                <Route path="/category-management" element={<Category/>}/>
+                <Route path="/sole-management" element={<Sole/>}/>
+                <Route path="/brand-management" element={<Brand/>}/>
+                <Route path="/material-management" element={<Material/>}/>
+                <Route path="/customer-management" element={<KhachHang/>}/>
+                <Route path="/staff-management" element={<Staff/>}/>
+                <Route path="/add-staff-management" element={<AddStaff/>}/>
+                <Route path="/update-staff-management/:id" element={<UpdateStaff/>}/>
+                <Route path="/detail-staff-management/:id" element={<DetailStaff/>}/>
             </Routes>
           </div>
       </Router>

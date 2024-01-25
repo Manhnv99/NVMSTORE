@@ -1,4 +1,4 @@
-package com.nvm.nvmstore.request.StaffRequest;
+package com.nvm.nvmstore.request.staff;
 
 
 import jakarta.validation.constraints.*;
