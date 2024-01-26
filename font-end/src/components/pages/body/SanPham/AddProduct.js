@@ -11,6 +11,9 @@ import {setListMaterial} from "../../../../redux/slices/MaterialSlice";
 import {setListSole} from "../../../../redux/slices/SoleSlice";
 import {setListCategory} from "../../../../redux/slices/CategorySlice";
 import ModalEntity from "./ModalEntity";
+import {getAllGender} from "../../../../redux/slices/GenderSlice";
+import {getAllStatusProductDetail} from "../../../../redux/slices/StatusProductDetailSlice";
+import ModalSize from "./ModalSize";
 
 
 const AddProduct=()=>{
@@ -18,7 +21,9 @@ const AddProduct=()=>{
     const dispatch=useDispatch();
     //state entity
     const [whatEntity,setWhatEntity]=useState(undefined)
-    const [openModal,setOpenModal]=useState(false)
+    const [openModalEntity,setOpenModalEntity]=useState(false)
+    const [openModalColor,setOpenModalColor]=useState(false)
+    const [openModalSize,setOpenModalSize]=useState(false)
     // state
     const [name,setName]=useState('')
     const [description,setDescription]=useState('')
@@ -36,6 +41,8 @@ const AddProduct=()=>{
     const listMaterial=useSelector(state => state.material.listMaterial)
     const listSole=useSelector(state => state.sole.listSole)
     const listCategory=useSelector(state => state.category.listCategory)
+    const listGender=useSelector(state => state.gender.listGender)
+    const listStatusProductDetail=useSelector(state => state.status_product_detail.listStatusProductDetail)
 
 
     useEffect(()=>{
@@ -43,6 +50,8 @@ const AddProduct=()=>{
         getAllMaterial();
         getAllSole();
         getAllCategory();
+        dispatch(getAllGender())
+        dispatch(getAllStatusProductDetail())
     },[])
 
     const getAllBrand= async ()=>{
@@ -64,24 +73,36 @@ const AddProduct=()=>{
 
     const handleOpenBrandModal=()=>{
         setWhatEntity('brand')
-        setOpenModal(true)
+        setOpenModalEntity(true)
     }
     const handleOpenMaterialModal=()=>{
         setWhatEntity('material')
-        setOpenModal(true)
+        setOpenModalEntity(true)
     }
     const handleOpenSoleModal=()=>{
         setWhatEntity('sole')
-        setOpenModal(true)
+        setOpenModalEntity(true)
     }
     const handleOpenCategoryModal=()=>{
         setWhatEntity('category')
-        setOpenModal(true)
+        setOpenModalEntity(true)
     }
+    const handleOpenGenderModal=()=>{
+        setWhatEntity('gender')
+        setOpenModalEntity(true)
+    }
+
+    const handleOpenStatusProductDetailModal=()=>{
+        setWhatEntity('status_product_detail')
+        setOpenModalEntity(true)
+    }
+
+
 
     return(
         <>
-            {openModal && <ModalEntity setOpenModal={setOpenModal}/>}
+            {openModalSize && <ModalSize setOpenModalSize={setOpenModalSize}/>}
+            {openModalEntity && <ModalEntity setOpenModalEntity={setOpenModalEntity} whatEntity={whatEntity}/>}
             <Container>
                 <div className="product-base">
                     {/*product add*/}
@@ -128,7 +149,7 @@ const AddProduct=()=>{
                                                     }
                                                 })}
                                             </Form.Select>
-                                            <Button style={{marginLeft:"20px",padding:"3px 8px"}}>
+                                            <Button onClick={handleOpenBrandModal} style={{marginLeft:"20px",padding:"3px 8px"}}>
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
@@ -160,8 +181,15 @@ const AddProduct=()=>{
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Giới tính:</Form.Label>
                                             <Form.Select style={{width:"50%"}} required>
                                                 <option value="">--Chọn giới tính--</option>
+                                                {listGender.map((item,index)=>{
+                                                    if(item.status===true){
+                                                        return(
+                                                            <option key={index} value={item.id}>{item.name}</option>
+                                                        )
+                                                    }
+                                                })}
                                             </Form.Select>
-                                            <Button style={{marginLeft:"20px",padding:"3px 8px"}}>
+                                            <Button onClick={handleOpenGenderModal} style={{marginLeft:"20px",padding:"3px 8px"}}>
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
@@ -175,8 +203,15 @@ const AddProduct=()=>{
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Trạng thái:</Form.Label>
                                             <Form.Select style={{width:"50%"}} required>
                                                 <option value="">--Chọn trạng thái--</option>
+                                                {listStatusProductDetail.map((item,index)=>{
+                                                    if(item.status===true){
+                                                        return(
+                                                            <option key={index} value={item.id}>{item.name}</option>
+                                                        )
+                                                    }
+                                                })}
                                             </Form.Select>
-                                            <Button style={{marginLeft:"20px",padding:"3px 8px"}}>
+                                            <Button onClick={handleOpenStatusProductDetailModal} style={{marginLeft:"20px",padding:"3px 8px"}}>
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
@@ -242,7 +277,7 @@ const AddProduct=()=>{
                                         <Form.Label style={{width:"140px",fontWeight:"700",fontSize:"18px",marginBottom:"0"}}> Kích Cỡ :</Form.Label>
                                         <div>
                                         </div>
-                                        <Button style={{marginLeft:"20px",padding:"3px 8px"}}>
+                                        <Button onClick={()=>{setOpenModalSize(true)}} style={{marginLeft:"20px",padding:"3px 8px"}}>
                                             <i className="fa-solid fa-plus"></i>
                                         </Button>
                                     </div>
@@ -250,11 +285,11 @@ const AddProduct=()=>{
                                 </Form.Group>
                                 <Form.Group style={{padding:"20px 0"}}>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <Form.Label style={{width:"140px",fontWeight:"700",fontSize:"18px",marginBottom:"0"}}> Màu Săc :</Form.Label>
+                                        <Form.Label style={{width:"140px",fontWeight:"700",fontSize:"18px",marginBottom:"0"}}> Màu Sắc :</Form.Label>
                                         <div>
 
                                         </div>
-                                        <Button style={{marginLeft:"20px",padding:"3px 8px"}}>
+                                        <Button onClick={()=>{setOpenModalColor(true)}} style={{marginLeft:"20px",padding:"3px 8px"}}>
                                             <i className="fa-solid fa-plus"></i>
                                         </Button>
                                     </div>

@@ -1,0 +1,25 @@
+.addSizeOrColor{
+    display: none;
+}
+.chooseSizeOrColor{
+    margin-top: 15px;
+}
+.nameSize{
+    display: block;
+    border: 1px solid #444;
+    width: 100%;
+    padding: 4px 0;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.nameSize:hover{
+    border: 1px solid #5ef8ff;
+    transition: 0.3s ease-in-out;
+}
+.activeChoose{
+    background-color: var(--primary-blue);
+    color: var(--primary-white);
+    border: 1px solid #5ef8ff;
+}

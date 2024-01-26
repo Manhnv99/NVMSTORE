@@ -36,7 +36,7 @@ public class Staff {
     private String cccd;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "role_id",referencedColumnName = "id")
     private Role role_id;
 
     private Boolean status;

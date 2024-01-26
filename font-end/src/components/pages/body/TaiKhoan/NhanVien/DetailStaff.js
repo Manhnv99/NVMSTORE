@@ -73,7 +73,7 @@ const DetailStaff=()=>{
                                         </Form.Group>
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Email </Form.Label>
-                                            <Form.Control required type="email" placeholder="Điền email!"/>
+                                            <Form.Control value={staff.email} required type="email" placeholder="Điền email!"/>
                                         </Form.Group>
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Tỉnh/Thành Phố

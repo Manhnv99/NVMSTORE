@@ -22,6 +22,8 @@ public class Status_ProductDetail {
 
     private String name;
 
+    private Boolean status;
+
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created_at;
