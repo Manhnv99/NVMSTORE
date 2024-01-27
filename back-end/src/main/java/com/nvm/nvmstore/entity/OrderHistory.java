@@ -16,15 +16,15 @@ public class OrderHistory {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "order_id",referencedColumnName = "id")
     private Order order_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "status_order_id",referencedColumnName = "id")
     private Status_Order status_order_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "staff_id",referencedColumnName = "id")
     private Staff staff_id;
 
     private String description;

@@ -16,7 +16,7 @@ public class Customer_Address {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "customer_id",referencedColumnName = "id")
     private Customer customer_id;
 
     private String address_city;

@@ -12,6 +12,9 @@ import lombok.Setter;
 @Setter
 public class ColorRequest {
 
+    @NotEmpty(message = "Mã Màu Sắc Không Được Để Trống!")
+    private String code;
+
     @NotEmpty(message = "Tên Màu Sắc Không Được Để Trống!")
     private String name;
 

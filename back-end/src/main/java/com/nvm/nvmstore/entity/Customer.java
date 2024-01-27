@@ -27,7 +27,7 @@ public class Customer {
     private String phone;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "role_id",referencedColumnName = "id")
     private Role role_id;
 
     private String password;

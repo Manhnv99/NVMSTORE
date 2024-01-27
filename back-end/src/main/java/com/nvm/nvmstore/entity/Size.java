@@ -20,7 +20,7 @@ public class Size {
     @Column(unique = true)
     private String code;
 
-    private String name;
+    private Integer name;
 
     private Boolean Status;
 

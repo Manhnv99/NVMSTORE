@@ -15,7 +15,7 @@ public interface SizeRepository extends JpaRepository<Size,Long> {
 
     @Query("""
             select new com.nvm.nvmstore.response.size.SizeResponse(s.id,s.name,s.updated_at,s.Status)
-            from Size s order by s.id desc
+            from Size s order by s.name asc
             """)
     List<SizeResponse> getALl();
 

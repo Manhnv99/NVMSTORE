@@ -32,17 +32,17 @@ public class ColorServiceImpl implements ColorService {
         Color color=new Color();
         //check Validate
         Map<String,String> keyvalue=new HashMap<>();
+
+        if(colorRepository.getColorByCode(colorRequest.getCode())!=null){
+            keyvalue.put("code","Mã Màu Sắc Này Đã Tồn Tại!");
+        }
         if(colorRepository.getColorByName(colorRequest.getName())!=null){
             keyvalue.put("name","Tên Màu Sắc Này Đã Tồn Tại!");
+        }
+        if(!keyvalue.isEmpty()){
             throw new ExceptionMessage(keyvalue);
         }
-        //set Code
-        if(colorRepository.getNewest()==null){
-            color.setCode("COLOR1");
-        }else{
-            String code=colorRepository.getNewest().getCode();//getNewStaff to get Code
-            color.setCode(code.substring(0,5)+((Integer.parseInt(code.substring(5)))+1));
-        }
+        color.setCode(colorRequest.getCode());
         color.setName(colorRequest.getName());
         switch (colorRequest.getStatus()){
             case "true":

@@ -42,7 +42,7 @@ public class SizeServiceImpl implements SizeService {
             String code=sizeRepository.getNewest().getCode();//getNewStaff to get Code
             size.setCode(code.substring(0,4)+((Integer.parseInt(code.substring(4)))+1));
         }
-        size.setName(sizeRequest.getName());
+        size.setName(Integer.parseInt(sizeRequest.getName()));
         switch (sizeRequest.getStatus()){
             case "true":
                 size.setStatus(true);

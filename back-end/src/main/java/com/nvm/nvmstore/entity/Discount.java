@@ -19,7 +19,7 @@ public class Discount {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "product_detail_id",referencedColumnName = "id")
     private Product_Detail product_detail_id;
 
     @Column(unique = true)

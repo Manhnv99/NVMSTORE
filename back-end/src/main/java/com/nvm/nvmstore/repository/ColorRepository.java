@@ -11,11 +11,15 @@ import java.util.List;
 @Repository
 public interface ColorRepository extends JpaRepository<Color,Long> {
     @Query("""
-            select new com.nvm.nvmstore.response.color.ColorResponse(c.id,c.name,c.updated_at,c.Status)
+            select new com.nvm.nvmstore.response.color.ColorResponse(c.id,c.code,c.name,c.updated_at,c.Status)
             from Color c order by c.id desc
             """)
     List<ColorResponse> getALl();
 
+    @Query("""
+            select c from Color c where c.code=:code
+            """)
+    Color getColorByCode(String code);
 
     @Query("""
             select c from Color c where c.name=:name

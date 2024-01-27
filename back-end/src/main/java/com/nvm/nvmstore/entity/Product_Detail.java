@@ -23,19 +23,19 @@ public class Product_Detail {
     private Integer quantity;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "product_id",referencedColumnName = "id")
     private Product product_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "size_id",referencedColumnName = "id")
     private Size size_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name="color_id",referencedColumnName = "id")
     private Color color_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "status_product_detail",referencedColumnName = "id")
     private Status_ProductDetail status_productDetail_id;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

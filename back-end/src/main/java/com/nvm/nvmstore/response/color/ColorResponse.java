@@ -15,6 +15,8 @@ public class ColorResponse {
 
     private Long id;
 
+    private String code;
+
     private String name;
 
     private Date updated_at;

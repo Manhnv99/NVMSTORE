@@ -26,19 +26,19 @@ public class Product {
     private Brand brand_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "material_id",referencedColumnName = "id")
     private Material material_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "sole_id",referencedColumnName = "id")
     private Sole sole_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name="category_id",referencedColumnName = "id")
     private Category category_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name="gender_id",referencedColumnName = "id")
     private Gender gender_id;
 
 

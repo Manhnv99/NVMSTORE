@@ -26,7 +26,7 @@ public class Order_Detail {
     private Order order_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "product_detail_id",referencedColumnName = "id")
     private Product_Detail product_detail_id;
 
 }

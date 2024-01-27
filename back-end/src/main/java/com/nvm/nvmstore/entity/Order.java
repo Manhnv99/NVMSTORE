@@ -40,31 +40,31 @@ public class Order {
     private String transfer_code;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "status_order_id",referencedColumnName = "id")
     private Status_Order status_order_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "httt_id",referencedColumnName = "id")
     private HTTT httt_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "type_order_id",referencedColumnName = "id")
     private Type_Order type_order_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "type_payment_id",referencedColumnName = "id")
     private Type_Payment type_payment_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "customer_id",referencedColumnName = "id")
     private Customer customer_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "staff_id",referencedColumnName = "id")
     private Staff staff_id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "voucher_id",referencedColumnName = "id")
     private Voucher voucher_id;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

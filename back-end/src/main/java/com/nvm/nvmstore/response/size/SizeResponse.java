@@ -15,7 +15,7 @@ public class SizeResponse {
 
     private Long id;
 
-    private String name;
+    private Integer name;
 
     private Date updated_at;
 
