@@ -21,8 +21,10 @@ public class Product {
     @Column(unique = true)
     private String code;
 
+    private String name;
+
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "brand_id",referencedColumnName = "id")
     private Brand brand_id;
 
     @ManyToOne
@@ -40,7 +42,6 @@ public class Product {
     @ManyToOne
     @JoinColumn(name="gender_id",referencedColumnName = "id")
     private Gender gender_id;
-
 
     private String description;
 

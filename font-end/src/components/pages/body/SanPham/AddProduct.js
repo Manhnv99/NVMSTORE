@@ -49,6 +49,7 @@ const AddProduct=()=>{
     const [touchSole_id,setTouchSole_id]=useState(false)
     const [touchCategory_id,setTouchCategory_id]=useState(false)
     const [touchStatus_id,setTouchStatus_id]=useState(false)
+    const [touchDescription,setTouchDescription]=useState(false)
     // list Size Choosed
     const [listSizeChoosed,setListSizeChoosed]=useState([])
     const [listColorChoosed,setListColorChoosed]=useState([])
@@ -220,6 +221,13 @@ const AddProduct=()=>{
         }
     }
 
+    const onChangeDescription=(e)=>{
+        setDescription(e.target.value)
+        if(!touchDescription){
+            setTouchDescription(true)
+        }
+    }
+
     const handleOpenUploadFile=(name)=>{
         file.current.click()
         setWhatColorUpload(name)
@@ -313,6 +321,7 @@ const AddProduct=()=>{
             item.checked=false
         })
         setListProductToEdit([])
+        dispatch(toastMessage("Chỉnh Sửa Giá Và Số Lượng Thành Công!"));
     }
     const handleOpenModalEdit=()=>{
         if(listProductToEdit.length===0){
@@ -322,13 +331,21 @@ const AddProduct=()=>{
         }
     }
 
-    const handleAddProduct=()=>{
-
-    }
-
     const handleOpenModalImageDetail=(url)=>{
         setOpenModalImageDetail(true)
         setImageDetail(url)
+    }
+
+    const handleAddProduct=()=>{
+        let error=0
+        listColorChoosed.forEach(color=>{
+            if(listImageChoose.filter(image=>image.color===color.name).length===0){
+                error++;
+            }
+        })
+        if(error>0){
+            dispatch(toastMessage("Bạn Chưa Chọn Đủ Ảnh Cho Sản Phẩm!"));
+        }
     }
 
     return(
@@ -348,13 +365,16 @@ const AddProduct=()=>{
                             </Col>
                             {/*Tên Sản Phẩm*/}
                             <Col lg={12}>
-                                <Form.Group>
-                                    <div style={{ display: 'flex', alignItems: 'end' }}>
+                                <Form.Group >
+                                    <div style={{ display: 'flex', alignItems: 'start' }}>
                                         <Form.Label style={{width:"140px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Tên sản phẩm:</Form.Label>
                                         <Form.Control value={name} onChange={onChangeName} required type="text" placeholder="Nhập tên sản phẩm!"
-                                                isValid={name!==''}
-                                                isInvalid={touchName && name===''}/>
+                                                      isValid={name!==''}
+                                                      isInvalid={touchName && name===''}/>
                                     </div>
+                                    {touchName && name==='' ?
+                                        <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Điền Tên Sản Phẩm!</span>:''
+                                    }
                                 </Form.Group>
                             </Col>
                             {/*Mô Tả*/}
@@ -362,8 +382,11 @@ const AddProduct=()=>{
                                 <Form.Group>
                                     <div style={{ display: 'flex', alignItems: 'start' }}>
                                         <Form.Label style={{width:"130px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Mô tả:</Form.Label>
-                                        <textarea onChange={(e)=>{setDescription(e.target.value)}} style={{width:"100%",height:"200px",border:"1px solid #999",borderRadius:"5px",outline:"none",paddingLeft:"10px"}}></textarea>
+                                        <textarea onChange={onChangeDescription} style={{width:"100%",height:"200px",border:"1px solid #999",borderRadius:"5px",outline:"none",paddingLeft:"10px"}}></textarea>
                                     </div>
+                                    {touchDescription && description==='' ?
+                                        <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Thương Hiệu!</span>:''
+                                    }
                                 </Form.Group>
                             </Col>
                         </Row>
@@ -390,6 +413,9 @@ const AddProduct=()=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
+                                        {touchBrand_id && brand_id==='' ?
+                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Thương Hiệu!</span>:''
+                                        }
                                     </Form.Group>
                                     {/**/}
                                     <Form.Group style={{marginTop:"20px"}}>
@@ -411,6 +437,9 @@ const AddProduct=()=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
+                                        {touchMaterial_id && material_id==='' ?
+                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Chất Liệu!</span>:''
+                                        }
                                     </Form.Group>
                                     {/**/}
                                     <Form.Group style={{marginTop:"20px"}}>
@@ -432,6 +461,9 @@ const AddProduct=()=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
+                                        {touchGender_id && gender_id==='' ?
+                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Giới Tính!</span>:''
+                                        }
                                     </Form.Group>
                                 </Col>
                                 <Col lg={6}>
@@ -455,6 +487,9 @@ const AddProduct=()=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
+                                        {touchStatus_id && status_id==='' ?
+                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Trạng Thái!</span>:''
+                                        }
                                     </Form.Group>
                                     {/**/}
                                     <Form.Group style={{marginTop:"20px"}}>
@@ -476,7 +511,9 @@ const AddProduct=()=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        <Form.Control.Feedback type={"invalid"}>s</Form.Control.Feedback>
+                                        {touchSole_id && sole_id==='' ?
+                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Đế Giày!</span>:''
+                                        }
                                     </Form.Group>
                                     {/**/}
                                     <Form.Group style={{marginTop:"20px"}}>
@@ -498,7 +535,9 @@ const AddProduct=()=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        <Form.Control.Feedback type={"invalid"}></Form.Control.Feedback>
+                                        {touchCategory_id && category_id==='' ?
+                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Thể Loại!</span>:''
+                                        }
                                     </Form.Group>
                                 </Col>
                             </Row>

@@ -111,6 +111,7 @@ const AddStaff=()=>{
             }
         }catch (e){
             setLoading(false)
+            console.log(e)
             const errorCopy={...errors}
             errorCopy.name=e.response.data.name
             errorCopy.cccd=e.response.data.cccd
@@ -124,7 +125,7 @@ const AddStaff=()=>{
             errorCopy.status=e.response.data.status
             errorCopy.gender=e.response.data.gender
             if(e.response.data.image==='Bạn Chưa Chọn Ảnh!'){
-                alert(e.response.data.image)
+                dispatch(toastMessage(e.response.data.image))
             }
             setErrors(errorCopy)
         }
