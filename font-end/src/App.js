@@ -15,6 +15,7 @@ import Brand from "./components/pages/body/SanPhamEntity/Brand";
 import Material from "./components/pages/body/SanPhamEntity/Material";
 import Product from "./components/pages/body/SanPham/Product";
 import AddProduct from "./components/pages/body/SanPham/AddProduct";
+import ProductDetail from "./components/pages/body/SanPham/productDetail/ProductDetail";
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<ThongKe/>}/>
                 <Route path={"/product-management"} element={<Product/>}/>
+                <Route path={"/product-detail-management/:product_id"} element={<ProductDetail/>}/>
                 <Route path={"/add-product-management"} element={<AddProduct/>}/>
                 <Route path="/category-management" element={<Category/>}/>
                 <Route path="/sole-management" element={<Sole/>}/>

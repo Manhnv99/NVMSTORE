@@ -15,10 +15,15 @@ import {getAllGender} from "../../../../redux/slices/GenderSlice";
 import {getAllStatusProductDetail} from "../../../../redux/slices/StatusProductDetailSlice";
 import ModalSize from "./ModalSize";
 import ModalColor from "./ModelColor";
-import {forEach} from "react-bootstrap/ElementChildren";
 import {toastMessage} from "../../../../redux/slices/ToastMsgSlice";
 import ModalEditProduct from "./ModalEditProduct";
 import ModalDetailImage from "./ModalDetailImage";
+import productAPI from "../../../services/ProductAPI/ProductAPI";
+import ProductDetailAPI from "../../../services/ProductAPI/Product_Detail_API/ProductDetailAPI";
+import ImageProductAPI from "../../../services/ProductAPI/Image_Product_API/ImageProductAPI";
+import {useNavigate} from "react-router-dom";
+import Loading from "../../loading/Loading";
+import {NumericFormat} from "react-number-format";
 
 
 const AddProduct=()=>{
@@ -41,6 +46,7 @@ const AddProduct=()=>{
     const [category_id,setCategory_id]=useState('')
     const [status_id,setStatus_id]=useState('')
     const [imageDetail,setImageDetail]=useState(undefined)
+    const [checkAll,setCheckAll]=useState(false)
     // touch
     const [touchName,setTouchName]=useState(false)
     const [touchBrand_id,setTouchBrand_id]=useState(false)
@@ -67,6 +73,21 @@ const AddProduct=()=>{
     const listCategory=useSelector(state => state.category.listCategory)
     const listGender=useSelector(state => state.gender.listGender)
     const listStatusProductDetail=useSelector(state => state.status_product_detail.listStatusProductDetail)
+    //error
+    const [errors,setErrors]=useState({
+        name:undefined,
+        description:undefined,
+        brand_id:undefined,
+        material_id:undefined,
+        gender_id:undefined,
+        status_id:undefined,
+        sole_id:undefined,
+        category_id:undefined,
+    })
+    //nav
+    const nav=useNavigate();
+    //loading
+    const [loading,setLoading]=useState(false)
 
 
     useEffect(()=>{
@@ -92,6 +113,8 @@ const AddProduct=()=>{
                 })
             })
             setListProduct(myArr);
+        }else{
+            setListProduct([])
         }
     },[name,description,brand_id,material_id,gender_id,status_id,sole_id,category_id,listSizeChoosed.length,listColorChoosed.length])
 
@@ -179,36 +202,54 @@ const AddProduct=()=>{
 
     const onChangeName=(e)=>{
         setName(e.target.value)
+        const errorCopy={...errors}
+        errorCopy.name=undefined
+        setErrors(errorCopy)
         if(!touchName){
             setTouchName(true)
         }
     }
     const onChangeMaterial=(e)=>{
         setMaterial_id(e.target.value)
+        const errorCopy={...errors}
+        errorCopy.material_id=undefined
+        setErrors(errorCopy)
         if(!touchMaterial_id){
             setTouchMaterial_id(true)
         }
     }
     const onChangeGender=(e)=>{
         setGender_id(e.target.value)
+        const errorCopy={...errors}
+        errorCopy.gender_id=undefined
+        setErrors(errorCopy)
         if(!touchGender_id){
             setTouchGender_id(true)
         }
     }
     const onChangeStatus=(e)=>{
         setStatus_id(e.target.value)
+        const errorCopy={...errors}
+        errorCopy.status_id=undefined
+        setErrors(errorCopy)
         if(!touchStatus_id){
             setTouchStatus_id(true)
         }
     }
     const onChangeSole=(e)=>{
         setSole_id(e.target.value)
+        const errorCopy={...errors}
+        errorCopy.sole_id=undefined
+        setErrors(errorCopy)
         if(!touchSole_id){
             setTouchSole_id(true)
         }
     }
     const onChangeCategory=(e)=>{
         setCategory_id(e.target.value)
+        const errorCopy={...errors}
+        errorCopy.category_id=undefined
+        setErrors(errorCopy)
         if(!touchCategory_id){
             setTouchCategory_id(true)
         }
@@ -216,6 +257,9 @@ const AddProduct=()=>{
 
     const onChangeBrand=(e)=>{
         setBrand_id(e.target.value)
+        const errorCopy={...errors}
+        errorCopy.brand_id=undefined
+        setErrors(errorCopy)
         if(!touchBrand_id){
             setTouchBrand_id(true)
         }
@@ -223,6 +267,9 @@ const AddProduct=()=>{
 
     const onChangeDescription=(e)=>{
         setDescription(e.target.value)
+        const errorCopy={...errors}
+        errorCopy.description=undefined
+        setErrors(errorCopy)
         if(!touchDescription){
             setTouchDescription(true)
         }
@@ -308,6 +355,7 @@ const AddProduct=()=>{
 
     const handleEditProduct=(quantity,sell_price)=>{
         const checkbox=document.querySelectorAll('.checkbox')
+        const checkboxall=document.querySelector('.checkbox-all')
         listProductToEdit.forEach(name=>{
             listProduct.forEach(item=>{
                 if(item.name===name){
@@ -320,6 +368,8 @@ const AddProduct=()=>{
         checkbox.forEach(item=>{
             item.checked=false
         })
+        checkboxall.checked=false
+        setCheckAll(false)
         setListProductToEdit([])
         dispatch(toastMessage("Chỉnh Sửa Giá Và Số Lượng Thành Công!"));
     }
@@ -336,20 +386,134 @@ const AddProduct=()=>{
         setImageDetail(url)
     }
 
-    const handleAddProduct=()=>{
+    const handleAddProduct= async ()=>{
         let error=0
-        listColorChoosed.forEach(color=>{
-            if(listImageChoose.filter(image=>image.color===color.name).length===0){
-                error++;
+        try {
+            if(listColorChoosed.length===0 && listSizeChoosed.length===0){
+                // Chưa Chọn Ảnh Thì Chắc Chắn là chưa chọn màu...
+                dispatch(toastMessage("Bạn Chưa Chọn Màu Sắc Và Kích Cỡ!"));
+            }else{
+                if(listColorChoosed.length===0 && listSizeChoosed.length!==0){
+                    dispatch(toastMessage("Bạn Chưa Chọn Màu Sắc!"));
+                }else if(listColorChoosed.length!==0 && listSizeChoosed.length===0){
+                    dispatch(toastMessage("Bạn Chưa Chọn Kích Cỡ!"));
+                }else{
+                    listColorChoosed.forEach(color=>{
+                        if(listImageChoose.filter(image=>image.color===color.name).length===0){
+                            error++;
+                        }
+                    })
+                    if(error>0){
+                        dispatch(toastMessage("Bạn Chưa Chọn Đủ Ảnh!"))
+                    }else{
+                        setLoading(true);
+                        const productRequest={
+                            name:name,
+                            description:description,
+                            brand_id:brand_id,
+                            material_id:material_id,
+                            gender_id:gender_id,
+                            status_id:status_id,
+                            sole_id:sole_id,
+                            category_id:category_id
+                        };
+                        const productResponse =await productAPI.addProduct(productRequest);
+                        await addProductDetail(productResponse.data);
+                    }
+                }
             }
-        })
-        if(error>0){
-            dispatch(toastMessage("Bạn Chưa Chọn Đủ Ảnh Cho Sản Phẩm!"));
+        }catch (e) {
+            setLoading(false);
+            const dataError=e.response.data
+            const errorCopy={...errors}
+            errorCopy.name=dataError.name
+            errorCopy.description=dataError.description
+            errorCopy.brand_id=dataError.brand_id
+            errorCopy.material_id=dataError.material_id
+            errorCopy.sole_id=dataError.sole_id
+            errorCopy.category_id=dataError.category_id
+            errorCopy.gender_id=dataError.gender_id
+            errorCopy.status_id=dataError.status_id
+            dispatch(toastMessage("Bạn Chưa Điền Đủ Thông Tin!"));
+            setErrors(errorCopy);
         }
     }
 
+    const addProductDetail=(idProduct)=>{
+        listProduct.forEach(async (product)=>{
+            const productDetailRequest = {
+                product_id: idProduct,
+                size_name: product.size_name,
+                color_name: product.color_name,
+                quantity: product.quantity,
+                sell_price: product.sell_price,
+                status_product_detail_id: status_id
+            };
+            try {
+                const response=await  ProductDetailAPI.addProductDetail(productDetailRequest);
+                const listImageForColor = listImageChoose.filter(item => item.color === product.color_name);
+                listImageForColor.forEach(image=>{
+                    let imageProductRequest = new FormData();
+                    imageProductRequest.append("product_detail_id", response.data);
+                    imageProductRequest.append("image", image.file);
+                    addImageProduct(imageProductRequest);
+                })
+            } catch (error) {
+                addSuccess();
+            }
+        })
+        setTimeout(()=>{
+            addSuccess();
+        },8000)
+    }
+
+    const addImageProduct=async (imageProductRequest)=>{
+        try{
+            await ImageProductAPI.addImageProduct(imageProductRequest)
+        }catch (e) {
+            setLoading(false)
+            console.log(e)
+        }
+    }
+
+    const addSuccess=()=>{
+        nav("/product-management")
+        dispatch(toastMessage("Tạo Sản Phẩm Thành Công!"))
+        setLoading(false)
+    }
+
+    const handleChooseAllProductToEdit=()=>{
+        console.log(checkAll)
+        const checkbox=document.querySelectorAll(".checkbox")
+        if(checkAll===false){
+            //check
+            setCheckAll(true);
+            checkbox.forEach(item=>{
+                item.checked=true
+            })
+            listProduct.forEach(product=>{
+                listProductToEdit.push(product.name)
+            })
+            setListProductToEdit(listProductToEdit)
+        }else{
+            //uncheck
+            setCheckAll(false);
+            checkbox.forEach(item=>{
+                item.checked=false
+            })
+            setListProductToEdit([])
+        }
+
+    }
+
+
+    const test=()=>{
+        console.log(listProductToEdit)
+    }
     return(
         <>
+            {loading && <Loading/>}
+            <Button onClick={test}>Test</Button>
             {openModalImageDetail && <ModalDetailImage imageDetail={imageDetail} setOpenModalImageDetail={setOpenModalImageDetail}/>}
             {openModalEdit && <ModalEditProduct handleEditProduct={handleEditProduct} setOpenModalEdit={setOpenModalEdit}/>}
             {openModalColor && <ModalColor setOpenModalColor={setOpenModalColor} handleSetListColor={handleSetListColor}/>}
@@ -369,11 +533,13 @@ const AddProduct=()=>{
                                     <div style={{ display: 'flex', alignItems: 'start' }}>
                                         <Form.Label style={{width:"140px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Tên sản phẩm:</Form.Label>
                                         <Form.Control value={name} onChange={onChangeName} required type="text" placeholder="Nhập tên sản phẩm!"
-                                                      isValid={name!==''}
-                                                      isInvalid={touchName && name===''}/>
+                                                      isValid={name.length>=5}
+                                                      isInvalid={touchName && name==='' || errors.name!==undefined}/>
                                     </div>
-                                    {touchName && name==='' ?
-                                        <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Điền Tên Sản Phẩm!</span>:''
+                                    {touchName && name === '' ?
+                                        <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>Bạn Chưa Điền Tên Sản Phẩm!</span> :
+                                            errors.name !== undefined ?
+                                                <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.name}</span>:''
                                     }
                                 </Form.Group>
                             </Col>
@@ -384,8 +550,10 @@ const AddProduct=()=>{
                                         <Form.Label style={{width:"130px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Mô tả:</Form.Label>
                                         <textarea onChange={onChangeDescription} style={{width:"100%",height:"200px",border:"1px solid #999",borderRadius:"5px",outline:"none",paddingLeft:"10px"}}></textarea>
                                     </div>
-                                    {touchDescription && description==='' ?
-                                        <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Thương Hiệu!</span>:''
+                                    {touchDescription && description === '' ?
+                                        <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>Bạn Chưa Chọn Thương Hiệu!</span> :
+                                            errors.description !== undefined ?
+                                                <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.description}</span>:''
                                     }
                                 </Form.Group>
                             </Col>
@@ -399,7 +567,7 @@ const AddProduct=()=>{
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Thương hiệu:</Form.Label>
                                             <Form.Select onChange={onChangeBrand} style={{width:"50%"}} required
                                                          isValid={brand_id!==''}
-                                                         isInvalid={touchBrand_id && brand_id===''}>
+                                                         isInvalid={touchBrand_id && brand_id==='' || errors.brand_id!==undefined}>
                                                 <option value="">--Chọn thương hiệu--</option>
                                                 {listBrand.map((item,index)=>{
                                                     if(item.status===true){
@@ -413,8 +581,10 @@ const AddProduct=()=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        {touchBrand_id && brand_id==='' ?
-                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Thương Hiệu!</span>:''
+                                        {touchBrand_id && brand_id === '' ?
+                                            <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>Bạn Chưa Chọn Thương Hiệu!</span> :
+                                                errors.brand_id !== undefined ?
+                                                    <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.brand_id}</span>:''
                                         }
                                     </Form.Group>
                                     {/**/}
@@ -423,7 +593,7 @@ const AddProduct=()=>{
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Chất liệu:</Form.Label>
                                             <Form.Select onChange={onChangeMaterial} style={{width:"50%"}} required
                                                          isValid={material_id!==''}
-                                                         isInvalid={touchMaterial_id && material_id===''}>
+                                                         isInvalid={touchMaterial_id && material_id==='' || errors.material_id!==undefined}>
                                                 <option value="">--Chọn chất liệu--</option>
                                                 {listMaterial.map((item,index)=>{
                                                     if(item.status===true){
@@ -437,8 +607,10 @@ const AddProduct=()=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        {touchMaterial_id && material_id==='' ?
-                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Chất Liệu!</span>:''
+                                        {touchMaterial_id && material_id === '' ?
+                                            <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>Bạn Chưa Chọn Chất Liệu!</span> :
+                                                errors.material_id !== undefined ?
+                                                    <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.material_id}</span>:''
                                         }
                                     </Form.Group>
                                     {/**/}
@@ -447,7 +619,7 @@ const AddProduct=()=>{
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Giới tính:</Form.Label>
                                             <Form.Select onChange={onChangeGender} style={{width:"50%"}} required
                                                          isValid={gender_id!==''}
-                                                         isInvalid={touchGender_id && gender_id===''}>
+                                                         isInvalid={touchGender_id && gender_id==='' || errors.gender_id!==undefined}>
                                                 <option value="">--Chọn giới tính--</option>
                                                 {listGender.map((item,index)=>{
                                                     if(item.status===true){
@@ -462,7 +634,9 @@ const AddProduct=()=>{
                                             </Button>
                                         </div>
                                         {touchGender_id && gender_id==='' ?
-                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Giới Tính!</span>:''
+                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Giới Tính!</span>:
+                                                errors.gender_id!==undefined ?
+                                                    <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>{errors.gender_id}</span>:''
                                         }
                                     </Form.Group>
                                 </Col>
@@ -473,7 +647,7 @@ const AddProduct=()=>{
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Trạng thái:</Form.Label>
                                             <Form.Select onChange={onChangeStatus} style={{width:"50%"}} required
                                                          isValid={status_id!==''}
-                                                         isInvalid={touchStatus_id && status_id===''}>
+                                                         isInvalid={touchStatus_id && status_id==='' || errors.status_id!==undefined}>
                                                 <option value="">--Chọn trạng thái--</option>
                                                 {listStatusProductDetail.map((item,index)=>{
                                                     if(item.status===true){
@@ -487,8 +661,10 @@ const AddProduct=()=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        {touchStatus_id && status_id==='' ?
-                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Trạng Thái!</span>:''
+                                        {touchStatus_id && status_id===''?
+                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Trạng Thái!</span>:
+                                                errors.status_id!==undefined ?
+                                                    <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>{errors.status_id}</span>:''
                                         }
                                     </Form.Group>
                                     {/**/}
@@ -497,7 +673,7 @@ const AddProduct=()=>{
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Đế giày:</Form.Label>
                                             <Form.Select onChange={onChangeSole} style={{width:"50%"}} required
                                                          isValid={sole_id!==''}
-                                                         isInvalid={touchSole_id && sole_id===''}>
+                                                         isInvalid={touchSole_id && sole_id==='' || errors.sole_id!==undefined}>
                                                 <option value="">--Chọn đế giày--</option>
                                                 {listSole.map((item,index)=>{
                                                     if(item.status===true){
@@ -511,8 +687,10 @@ const AddProduct=()=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        {touchSole_id && sole_id==='' ?
-                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Đế Giày!</span>:''
+                                        {touchSole_id && sole_id===''?
+                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Đế Giày!</span>:
+                                                errors.sole_id!==undefined ?
+                                                    <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>{errors.sole_id}</span>:''
                                         }
                                     </Form.Group>
                                     {/**/}
@@ -521,7 +699,7 @@ const AddProduct=()=>{
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Thể loại:</Form.Label>
                                             <Form.Select onChange={onChangeCategory} style={{width:"50%"}} required
                                                          isValid={category_id!==''}
-                                                         isInvalid={touchCategory_id && category_id===''}>
+                                                         isInvalid={touchCategory_id && category_id==='' || errors.category_id!==undefined}>
                                                 <option value="">--Chọn thể loại--</option>
                                                 {listCategory.map((item,index)=>{
                                                     if(item.status===true){
@@ -535,8 +713,10 @@ const AddProduct=()=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        {touchCategory_id && category_id==='' ?
-                                            <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Thể Loại!</span>:''
+                                        {touchCategory_id && category_id === '' ?
+                                            <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>Bạn Chưa Chọn Thể Loại!</span> :
+                                                errors.category_id !== undefined ?
+                                                    <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.category_id}</span>:''
                                         }
                                     </Form.Group>
                                 </Col>
@@ -617,7 +797,7 @@ const AddProduct=()=>{
                                         <thead>
                                             <tr style={{fontSize:"13px",fontWeight:"600"}}>
                                                 <th style={{width:"5%",textAlign:"center"}}>
-                                                    <input type="checkbox"/>
+                                                    <input className={"checkbox-all"} onClick={handleChooseAllProductToEdit} type="checkbox"/>
                                                     <span style={{marginLeft:"5px"}}>STT</span>
                                                 </th>
                                                 <th style={{width:"30%"}}>Tên Sản Phẩm</th>
@@ -642,7 +822,7 @@ const AddProduct=()=>{
                                                                     <Form.Control value={item.quantity} onChange={(e)=>{handleChangeQuantity(e,item.name)}} required type="number"/>
                                                                 </td>
                                                                 <td style={{textAlign: "center"}}>
-                                                                    <Form.Control value={item.sell_price} onChange={(e)=>{handleChangePrice(e,item.name)}} required type="number"/>
+                                                                    <NumericFormat style={{padding: "0.375rem 0.75rem",borderRadius:"5px",border:"1px solid #dee2e6",outline:"none"}} thousandSeparator={true} suffix={"VNĐ"} value={item.sell_price} onChange={(e)=>{handleChangePrice(e,item.name)}}/>
                                                                 </td>
                                                                 <td style={{textAlign: "center"}}>
                                                                     <i onClick={()=>handleRemoveProduct(item.name,color.name)} style={{color: "red", fontSize: "20px", cursor: "pointer"}} className="fa-solid fa-trash"></i>

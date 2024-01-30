@@ -24,8 +24,8 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         valuesMap.put("cloud_name", "dbxajsljz");
         valuesMap.put("api_key", "399527952585688");
         valuesMap.put("api_secret", "q1j99tlBNxR4dD2iwtSJJ6jR0rQ");
-        valuesMap.put("upload_preset","NVMSTORE");
-        valuesMap.put("folder","NVMSTORE");
+        valuesMap.put("upload_preset","nvmstore");
+        valuesMap.put("folder","nvmstoreimage");
         cloudinary = new Cloudinary(valuesMap);
     }
 

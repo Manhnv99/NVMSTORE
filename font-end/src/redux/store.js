@@ -8,6 +8,8 @@ import MaterialSlice from "./slices/MaterialSlice";
 import BrandSlice from "./slices/BrandSlice";
 import GenderSlice from "./slices/GenderSlice";
 import StatusProductDetailSlice from "./slices/StatusProductDetailSlice";
+import ProductSlice from "./slices/product/ProductSlice";
+import ProductDetailSlice from "./slices/product/ProductDetailSlice";
 
 
 export const store=configureStore({
@@ -20,6 +22,8 @@ export const store=configureStore({
         gender:GenderSlice,
         status_product_detail:StatusProductDetailSlice,
         geograph:APIVNSlice,
-        toastmsg:ToastMsgSlice
+        toastmsg:ToastMsgSlice,
+        product:ProductSlice,
+        productDetail:ProductDetailSlice
     }
 })

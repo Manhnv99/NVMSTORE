@@ -12,10 +12,16 @@ import java.math.BigDecimal;
 @Setter
 @Getter
 public class ProductDetailRequest {
+
     private Long product_id;
-    private Long size_id;
-    private Long color_id;
+
+    private String size_name;
+
+    private String color_name;
+
     private Integer quantity;
+
     private BigDecimal sell_price;
+
     private Long status_product_detail_id;
 }

@@ -1,5 +1,6 @@
 import {Button, Col, Form, Modal} from "react-bootstrap";
 import {memo, useState} from "react";
+import {NumericFormat} from "react-number-format";
 
 
 const ModalEditProduct=(props)=>{
@@ -35,7 +36,7 @@ const ModalEditProduct=(props)=>{
                     </Form.Group>
                     <Form.Group>
                         <Form.Label><span style={{color: "red"}}>*</span> Đơn giá</Form.Label>
-                        <Form.Control value={sell_price} onChange={(e)=>{setSell_Price(e.target.value)}} required type="number" placeholder="Điền Đơn Giá!"/>
+                        <NumericFormat style={{width:"100%",padding: "0.375rem 0.75rem",borderRadius:"5px",border:"1px solid #dee2e6",outline:"none",fontSize:"16px"}} placeholder={"Điền Giá Bán!"} thousandSeparator={true} suffix={"VNĐ"} onValueChange={(e)=>{setSell_Price(e.value)}} />
                     </Form.Group>
                 </Col>
             </Modal.Body>

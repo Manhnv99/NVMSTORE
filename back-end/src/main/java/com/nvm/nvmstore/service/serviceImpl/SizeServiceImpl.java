@@ -31,7 +31,7 @@ public class SizeServiceImpl implements SizeService {
         Size size=new Size();
         //check Validate
         Map<String,String> keyvalue=new HashMap<>();
-        if(sizeRepository.getColorByName(sizeRequest.getName())!=null){
+        if(sizeRepository.getSizeByName(sizeRequest.getName())!=null){
             keyvalue.put("name","Tên Kích Cỡ Này Đã Tồn Tại!");
             throw new ExceptionMessage(keyvalue);
         }

@@ -7,6 +7,7 @@ import {getAllBrand, setListBrand} from "../../../../redux/slices/BrandSlice";
 import brandAPI from "../../../services/BrandAPI/BrandAPI";
 import BrandAPI from "../../../services/BrandAPI/BrandAPI";
 import {toastMessage} from "../../../../redux/slices/ToastMsgSlice";
+import moment from "moment";
 
 
 const Brand=()=>{
@@ -293,7 +294,9 @@ const Brand=()=>{
                                             <tr key={index} style={{fontSize: "15px"}}>
                                                 <td style={{textAlign: "center"}}>{index+1}</td>
                                                 <td style={{textAlign: "center"}}>{item.name}</td>
-                                                <td style={{textAlign: "center"}}>{item.updated_at}</td>
+                                                <td style={{textAlign: "center"}}>
+                                                    {moment(item.updated_at).format("YYYY-MM-DD hh:mm:ss")}
+                                                </td>
                                                 <td style={{textAlign: "center", justifyContent: "center", color: "#fff", borderRadius: "5px"}}>
                                                     <span style={{backgroundColor: "#68ae6b", padding: "7px 20px", borderRadius: "5px"}}>{item.status ? "Đang sử dụng" : "Ngưng sử dụng"}</span>
                                                 </td>

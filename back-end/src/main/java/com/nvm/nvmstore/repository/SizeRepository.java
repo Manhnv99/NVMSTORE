@@ -23,7 +23,7 @@ public interface SizeRepository extends JpaRepository<Size,Long> {
     @Query("""
             select s from Size s where s.name=:name
             """)
-    Size getColorByName(String name);
+    Size getSizeByName(String name);
 
     @Query(value = """
             select * from size order by size.id desc limit 1

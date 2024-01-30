@@ -1,11 +1,21 @@
 import "./style/Product.css"
 import {Button, Card, Col, Container, Form, Modal, Row, Table} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchProductResponse, setIdProduct} from "../../../../redux/slices/product/ProductSlice";
 
 
 
 const Product=()=>{
     const nav=useNavigate();
+    const dispatch=useDispatch()
+    const listProduct=useSelector(state => state.product.listProduct)
+
+
+    useEffect(() => {
+        dispatch(fetchProductResponse());
+    }, []);
 
     return(
         <>
@@ -73,19 +83,22 @@ const Product=()=>{
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr style={{fontSize: "15px"}}>
-                                    <td style={{textAlign: "center"}}>1</td>
-                                    <td>SP1</td>
-                                    <td>Giày Adidas</td>
-                                    <td style={{textAlign: "center"}}>12</td>
-                                    <td style={{textAlign: "center", justifyContent: "center", color: "#fff", borderRadius: "5px"}}>
-                                        <span style={{backgroundColor: "#68ae6b", padding: "7px 20px", borderRadius: "5px"}}>Đang kinh doanh</span>
-                                    </td>
-                                    <td style={{textAlign: "center"}}>
-                                        <i className="fa-regular fa-eye actionDetail"></i>
-                                        <i className="fa-regular fa-pen-to-square actionEdit"></i>
-                                    </td>
-                                </tr>
+                                {listProduct.map((product,index)=>{
+                                    return(
+                                        <tr style={{fontSize: "15px"}}>
+                                            <td style={{textAlign: "center"}}>{index+1}</td>
+                                            <td>{product.product_code}</td>
+                                            <td>{product.product_name}</td>
+                                            <td style={{textAlign: "center"}}>{product.sum_quantity}</td>
+                                            <td style={{textAlign: "center", justifyContent: "center", color: "#fff", borderRadius: "5px"}}>
+                                                <span style={{backgroundColor: "#68ae6b", padding: "7px 20px", borderRadius: "5px"}}>Đang kinh doanh</span>
+                                            </td>
+                                            <td style={{textAlign: "center"}}>
+                                                <i onClick={()=>{nav(`/product-detail-management/${product.product_id}`)}} className="fa-regular fa-pen-to-square actionEdit"></i>
+                                            </td>
+                                        </tr>
+                                    )
+                                })}
                                 </tbody>
                             </Table>
                         </Card.Body>
