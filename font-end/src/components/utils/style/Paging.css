@@ -1,0 +1,32 @@
+.paging-container{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.paging-previous{
+    margin-right: 15px;
+    cursor: pointer;
+    color: #fa0307;
+}
+
+.paging-next{
+    margin-left: 15px;
+    cursor: pointer;
+    color: #fa0307;
+}
+.list-paging{
+    margin: 5px 0;
+}
+
+.paging-page{
+    cursor: pointer;
+    padding: 3px 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin: 0 3px;
+    color: #fa0307;
+}
+.active-paging{
+    border: 1px solid #fa0307;
+}

@@ -23,27 +23,7 @@ public class Product {
 
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "brand_id",referencedColumnName = "id")
-    private Brand brand_id;
-
-    @ManyToOne
-    @JoinColumn(name = "material_id",referencedColumnName = "id")
-    private Material material_id;
-
-    @ManyToOne
-    @JoinColumn(name = "sole_id",referencedColumnName = "id")
-    private Sole sole_id;
-
-    @ManyToOne
-    @JoinColumn(name="category_id",referencedColumnName = "id")
-    private Category category_id;
-
-    @ManyToOne
-    @JoinColumn(name="gender_id",referencedColumnName = "id")
-    private Gender gender_id;
-
-    private String description;
+    private Boolean status;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
@@ -52,7 +32,5 @@ public class Product {
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated_at;
-
-
 
 }

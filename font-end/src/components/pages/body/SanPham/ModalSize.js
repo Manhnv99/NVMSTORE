@@ -1,18 +1,19 @@
 import "./style/SizeAndColor.css"
 import {Button, Col, Form, Modal, Row} from "react-bootstrap";
 import {memo, useEffect, useRef, useState} from "react";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Loading from "../../loading/Loading";
 import sizeAPI from "../../../services/SizeAPI/SizeAPI";
 import SizeAPI from "../../../services/SizeAPI/SizeAPI";
 import {toastMessage} from "../../../../redux/slices/ToastMsgSlice";
+import {getAllSize} from "../../../../redux/slices/SizeSlice";
 
 
 const ModalSize=(props)=>{
     //state
     const [name,setName]=useState('')
     const [status,setStatus]=useState('')
-    const [listSize,setListSize]=useState([])
+    const listSize=useSelector(state => state.size.listSize)
     //
     const [addOrChoose,setAddOrChoose]=useState(true)
     // touch
@@ -30,7 +31,7 @@ const ModalSize=(props)=>{
 
 
     useEffect(() => {
-        getAllSize();
+        dispatch(getAllSize());
     }, []);
 
 
@@ -41,11 +42,6 @@ const ModalSize=(props)=>{
         },200)
     }
 
-
-    const getAllSize=async ()=> {
-        const res=await sizeAPI.getAll();
-        setListSize(res.data)
-    }
 
     //onChange
     const onChangeName=(e)=>{
@@ -72,7 +68,7 @@ const ModalSize=(props)=>{
             try {
                 const response = await SizeAPI.addSize(sizeRequest)
                 if(response && response.status===201){
-                    getAllSize();
+                    dispatch(getAllSize());
                     setLoading(false);
                     handleAddOrChoose();
                     dispatch(toastMessage("Thêm kích thước thành công!"));

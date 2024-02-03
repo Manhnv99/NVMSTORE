@@ -5,34 +5,96 @@
     z-index: 9999;
 }
 
-.toastmsg-body{
+.toastmsg-body .message{
+    font-size: 17px;
+    margin-left: 10px;
+}
+
+
+/*success*/
+.toastmsg-body_success{
     display: flex;
     align-items: center;
-    color: #fff;
-    background-color: #8fbe99;
-    border-left: 6px solid #27a327;
+    color: #444;
+    background-color: #fff;
+    border-left: 6px solid var(--primary-toastSuccess);
     border-radius: 6px;
     padding: 17px;
     transform: translateX(calc(100% + 10px));
     animation: startt ease-in-out 1.5s forwards;
 }
-.toastmsg-body i{
-    font-size: 23px;
-}
-.toastmsg-body .message{
-    font-size: 17px;
-    margin-left: 10px;
-}
-.countdown{
+.countdown_success{
     position: absolute;
     bottom: 0;
     left: 0px;
     width: 100%;
     height: 3px;
-    background-color: #27a327;
+    background-color: var(--primary-toastSuccess);
     animation: countdown linear 3s forwards;
 }
-
+.icon_success{
+    color: #fff;
+    padding: 4px 6px;
+    border-radius: 50%;
+    background-color: var(--primary-toastSuccess);
+    font-size: 18px;
+}
+/*warning*/
+.toastmsg-body_warning{
+    display: flex;
+    align-items: center;
+    color: #444;
+    background-color: #fff;
+    border-left: 6px solid var(--primary-toastWarning);
+    border-radius: 6px;
+    padding: 17px;
+    transform: translateX(calc(100% + 10px));
+    animation: startt ease-in-out 1.5s forwards;
+}
+.countdown_warning{
+    position: absolute;
+    bottom: 0;
+    left: 0px;
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary-toastWarning);
+    animation: countdown linear 3s forwards;
+}
+.icon_warning{
+    color: #fff;
+    padding: 5px 8px;
+    border-radius: 50%;
+    background-color: var(--primary-toastWarning);
+    font-size: 18px;
+}
+/*error*/
+.toastmsg-body_error{
+    display: flex;
+    align-items: center;
+    color: #444;
+    background-color: #fff;
+    border-left: 6px solid var(--primary-toastError);
+    border-radius: 6px;
+    padding: 17px;
+    transform: translateX(calc(100% + 10px));
+    animation: startt ease-in-out 1.5s forwards;
+}
+.countdown_error{
+    position: absolute;
+    bottom: 0;
+    left: 0px;
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary-toastError);
+    animation: countdown linear 3s forwards;
+}
+.icon_error{
+    padding: 2px 10px;
+    border-radius: 50%;
+    color: #fff;
+    background-color: var(--primary-toastError);
+    font-size: 20px;
+}
 @keyframes countdown {
     0%{
         width: 98%;

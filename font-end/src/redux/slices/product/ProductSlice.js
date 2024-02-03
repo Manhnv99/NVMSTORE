@@ -7,9 +7,9 @@ const initialState={
     idProduct:undefined
 }
 
-export const fetchProductResponse=createAsyncThunk("fetchProductResponse", async()=>{
+export const fetchProductResponse=createAsyncThunk("fetchProductResponse", async(page)=>{
     try {
-        const response = await productAPI.productResponse();
+        const response = await productAPI.productResponse(page);
         return response.data;
     }catch (e) {
         console.log(e)

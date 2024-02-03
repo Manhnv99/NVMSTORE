@@ -1,127 +1,67 @@
 import "./Staff.css"
 import {Button, Card, Col, Container, Form, Row, Table} from "react-bootstrap";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import {getAllStaff, setListStaff} from "../../../../../redux/slices/StaffSlice";
 import staffAPI from "../../../../services/StaffAPI/StaffAPI";
 import Loading from "../../../loading/Loading";
+import Paging from "../../../../utils/Paging";
 
 
 const Staff=()=>{
     const dispatch=useDispatch();
-    const [totalPage,setTotalPage]=useState([]);
-    const [currentPage,setCurrentPage]=useState(1)
-    const nav=useNavigate()
-    const [input,setInput]=useState('')
-    const [status,setStatus]=useState('')
-    const [searchOrNothing,setSearchOrNothing]=useState(false)
-    const isLoading=useSelector(state => state.staff.isLoading)
-
-    const listStaff=useSelector((state)=>state.staff.listStaff)
+    const [totalPage,setTotalPage]=useState(undefined);
+    const nav=useNavigate();
+    const [input,setInput]=useState('');
+    const [status,setStatus]=useState('');
+    const [whatAction,setWhatAction]=useState("normal");
+    //loading
+    const isLoading=useSelector(state => state.staff.isLoading);
+    const [loading,setLoading]=useState(false);
+    const listStaff=useSelector((state)=>state.staff.listStaff);
 
 
     useEffect(() => {
         getTotalPage();
-        dispatch(getAllStaff(1))
+        dispatch(getAllStaff(1));
     }, []);
 
     const getTotalPage= async ()=>{
-        const res= await staffAPI.getTotalPage()
-        let mypage=[]
-        for(let i=0;i<res.data;i++){
-            mypage.push(i)
-        }
-        setTotalPage(mypage)
-    }
-
-    const handleMovePage=async(index)=>{
-        if(searchOrNothing===true){
-            const response=await staffAPI.searchStaff(input,status,index+1)
-            dispatch(setListStaff(response.data))
-            handleMoveAnimation(index)
-        }else{
-            handleMoveAnimation(index)
-            dispatch(getAllStaff(index+1))
-        }
-    }
-    const handleMoveAnimation=(index)=>{
-        const page=document.querySelectorAll('.page')
-        for(let i=0;i<page.length;i++){
-            page[i].classList.remove('actionPage')
-        }
-        page[index].classList.add('actionPage')
-    }
-
-    const handleNextPage= async ()=>{
-        if(searchOrNothing===true){
-            if(currentPage===totalPage.length){
-                const response=await staffAPI.searchStaff(input,status,1)
-                dispatch(setListStaff(response.data))
-                handleMoveAnimation(0)
-                setCurrentPage(1)
-            }else{
-                const response=await staffAPI.searchStaff(input,status,currentPage+1)
-                dispatch(setListStaff(response.data))
-                handleMoveAnimation(currentPage)
-                setCurrentPage(currentPage+1)
-            }
-        }else{
-            if(currentPage===totalPage.length){
-                dispatch(getAllStaff(1))
-                handleMoveAnimation(0)
-                setCurrentPage(1)
-            }else{
-                dispatch(getAllStaff(currentPage+1))
-                handleMoveAnimation(currentPage)
-                setCurrentPage(currentPage+1)
-            }
-        }
-
-    }
-
-    const handlePrePage= async ()=>{
-        if(searchOrNothing===true){
-            if(currentPage===1){
-                const response=await staffAPI.searchStaff(input,status,totalPage.length)
-                dispatch(setListStaff(response.data))
-                handleMoveAnimation(totalPage.length-1)
-                setCurrentPage(totalPage.length)
-            }else{
-                const response=await staffAPI.searchStaff(input,status,currentPage-1)
-                dispatch(setListStaff(response.data))
-                handleMoveAnimation(currentPage-2)
-                setCurrentPage(currentPage-1)
-            }
-        }else{
-            if(currentPage===1){
-                dispatch(getAllStaff(totalPage.length))
-                handleMoveAnimation(totalPage.length-1)
-                setCurrentPage(totalPage.length)
-            }else{
-                dispatch(getAllStaff(currentPage-1))
-                handleMoveAnimation(currentPage-2)
-                setCurrentPage(currentPage-1)
-            }
-        }
+        const res= await staffAPI.getTotalPage();
+        setTotalPage(res.data);
     }
 
 
     const handleSearch= async ()=>{
         try {
-            const response=await staffAPI.searchStaff(input,status,1)
-            dispatch(setListStaff(response.data))
-            const totalPage=await staffAPI.getTotalPageSearch(input,status)
-            let mypage=[]
-            for(let i=0;i<totalPage.data;i++){
-                mypage.push(i)
-            }
-            setTotalPage(mypage)
-            setSearchOrNothing(true)
+            const response=await staffAPI.searchStaff(input,status,1);
+            dispatch(setListStaff(response.data));
+            const totalPage=await staffAPI.getTotalPageSearch(input,status);
+            setTotalPage(totalPage.data);
+            setWhatAction("search");
         }catch (e){
             console.log(e)
         }
     }
+
+    const handleAPISearchPaging= async (page)=>{
+        setLoading(true);
+        try {
+            const response=await staffAPI.searchStaff(input,status,page);
+            dispatch(setListStaff(response.data));
+            setLoading(false);
+        }catch (e) {
+            setLoading(false);
+            console.log(e)
+        }
+    }
+
+    const handleAPIPaging=(page)=>{
+        dispatch(getAllStaff(page));
+    }
+
+
 
     const handleClearText=()=>{
         setInput('')
@@ -228,23 +168,7 @@ const Staff=()=>{
                             </Table>
                         </Card.Body>
                         <Card.Footer style={{backgroundColor: "#fff"}}>
-                            <div style={{display: "flex", justifyContent: "end", alignItems: "center"}}>
-                                <i onClick={handlePrePage} style={{marginRight: "15px", cursor: "pointer",color:"#fa0307"}}
-                                   className="fa-solid fa-angle-left"></i>
-                                {totalPage.map((item,index)=>{
-                                    if(index===0){
-                                        return (
-                                            <span onClick={()=>{handleMovePage(index)}} className={"actionPage page"} style={{cursor: "pointer", padding: "3px 10px", borderRadius: "5px", textAlign: "center", margin: "3px", color: "#fa0307"}}>{item + 1}</span>
-                                        )
-                                    }else{
-                                        return (
-                                            <span onClick={()=>{handleMovePage(index)}} className={"page"} style={{cursor: "pointer", padding: "3px 10px", borderRadius: "5px", textAlign: "center", margin: "3px", color: "#fa0307"}}>{item + 1}</span>
-                                        )
-                                    }
-                                })}
-                                <i onClick={handleNextPage} style={{marginLeft: "15px", cursor: "pointer", color: "#fa0307"}}
-                                   className="fa-solid fa-angle-right"></i>
-                            </div>
+                            <Paging TotalPage={totalPage} APIPaging={handleAPIPaging} APISearchPaging={handleAPISearchPaging} whatAction={whatAction}/>
                         </Card.Footer>
                     </Card>
                 </div>

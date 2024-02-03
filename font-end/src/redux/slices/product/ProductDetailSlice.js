@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import productAPI from "../../../components/services/ProductAPI/ProductAPI";
+import productDetailAPI from "../../../components/services/ProductAPI/Product_Detail_API/ProductDetailAPI";
 
 
 const initialState={
@@ -7,8 +7,8 @@ const initialState={
     isLoading:false
 }
 
-export const fetchProductDetail=createAsyncThunk("fetchProductDetail",async(product_id)=>{
-    const response=await productAPI.productDetailResponse(product_id);
+export const getAllProductDetail=createAsyncThunk("fetchProductDetail",async(param)=>{
+    const response=await productDetailAPI.productDetailResponse(param.product_id,param.page);
     return response.data
 })
 
@@ -22,14 +22,14 @@ const ProductDetailSlice=createSlice({
     },
     extraReducers:(builder)=>{
         builder
-            .addCase(fetchProductDetail.pending,(state,action)=>{
+            .addCase(getAllProductDetail.pending,(state,action)=>{
                 state.isLoading=true
             })
-            .addCase(fetchProductDetail.fulfilled,(state,action)=>{
+            .addCase(getAllProductDetail.fulfilled,(state,action)=>{
                 state.listProductDetail=action.payload
                 state.isLoading=false
             })
-            .addCase(fetchProductDetail.rejected,(state,action)=>{
+            .addCase(getAllProductDetail.rejected,(state,action)=>{
                 state.isLoading=false
             })
     }

@@ -8,128 +8,65 @@ import Loading from "../../loading/Loading";
 import categoryAPI from "../../../services/CategoryAPI/CategoryAPI";
 import {toastMessage} from "../../../../redux/slices/ToastMsgSlice";
 import moment from "moment";
+import Paging from "../../../utils/Paging";
 
 
 const Category=()=>{
     const [name,setName]=useState('');
     const [status,setStatus]=useState('true');
-    const [error,setError]=useState(undefined)
-    const [totalPage,setTotalPage]=useState([])
-    const [touchName,setTouchName]=useState(false)
-    const dispatch=useDispatch()
+    const [error,setError]=useState(undefined);
+    const [totalPage,setTotalPage]=useState(undefined);
+    const [touchName,setTouchName]=useState(false);
+    const dispatch=useDispatch();
     // redux
-    const listCategory=useSelector(state => state.category.listCategory)
-    const isLoading=useSelector(state => state.category.isLoading)
-    const [loading,setLoading]=useState(false)
+    const listCategory=useSelector(state => state.category.listCategory);
+    const isLoading=useSelector(state => state.category.isLoading);
+    const [loading,setLoading]=useState(false);
     const [input,setInput]=useState('')
-    const [currentPage,setCurrentPage]=useState(1)
-    const [searchOrNothing,setSearchOrNothing]=useState(false)
+    const [whatAction,setWhatAction]=useState("normal");
     const [addOrUpdate,setAddOrUpdate]=useState(true);
-    const [idUpdate,setIdUpdate]=useState(undefined)
+    const [idUpdate,setIdUpdate]=useState(undefined);
     //set showModal
     const [show, setShow] = useState(false);
+    const toastSuccess=useSelector(state => state.toastmsg.toastSuccess);
 
 
     useEffect(()=>{
         getTotalPage();
-        dispatch(getAllCategory(1))
+        dispatch(getAllCategory(1));
     },[])
 
     const getTotalPage= async ()=>{
         const res= await categoryAPI.getAllTotalPage();
-        let mypage=[]
-        for(let i=0;i<res.data;i++){
-            mypage.push(i)
-        }
-        setTotalPage(mypage)
-    }
-
-    const handleMovePage=async(index)=>{
-        if(searchOrNothing===true){
-            const response=await categoryAPI.searchCategory(input,status,index+1)
-            dispatch(setListCategory(response.data))
-            handleMoveAnimation(index)
-        }else{
-            handleMoveAnimation(index)
-            dispatch(getAllCategory(index+1))
-        }
-    }
-
-    const handleMoveAnimation=(index)=>{
-        const page=document.querySelectorAll('.page')
-        for(let i=0;i<page.length;i++){
-            page[i].classList.remove('actionPage')
-        }
-        page[index].classList.add('actionPage')
-    }
-
-    const handleNextPage= async ()=>{
-        if(searchOrNothing===true){
-            if(currentPage===totalPage.length){
-                const response=await categoryAPI.searchCategory(input,status,1)
-                dispatch(setListCategory(response.data))
-                handleMoveAnimation(0)
-                setCurrentPage(1)
-            }else{
-                const response=await categoryAPI.searchCategory(input,status,currentPage+1)
-                dispatch(setListCategory(response.data))
-                handleMoveAnimation(currentPage)
-                setCurrentPage(currentPage+1)
-            }
-        }else{
-            if(currentPage===totalPage.length){
-                dispatch(getAllCategory(1))
-                handleMoveAnimation(0)
-                setCurrentPage(1)
-            }else{
-                dispatch(getAllCategory(currentPage+1))
-                handleMoveAnimation(currentPage)
-                setCurrentPage(currentPage+1)
-            }
-        }
-
-    }
-
-    const handlePrePage= async ()=>{
-        if(searchOrNothing===true){
-            if(currentPage===1){
-                const response=await categoryAPI.searchCategory(input,status,totalPage.length)
-                dispatch(setListCategory(response.data))
-                handleMoveAnimation(totalPage.length-1)
-                setCurrentPage(totalPage.length)
-            }else{
-                const response=await categoryAPI.searchCategory(input,status,currentPage-1)
-                dispatch(setListCategory(response.data))
-                handleMoveAnimation(currentPage-2)
-                setCurrentPage(currentPage-1)
-            }
-        }else{
-            if(currentPage===1){
-                dispatch(getAllCategory(totalPage.length))
-                handleMoveAnimation(totalPage.length-1)
-                setCurrentPage(totalPage.length)
-            }else{
-                dispatch(getAllCategory(currentPage-1))
-                handleMoveAnimation(currentPage-2)
-                setCurrentPage(currentPage-1)
-            }
-        }
+        setTotalPage(res.data);
     }
 
     const handleSearch= async ()=>{
         try {
-            const response=await categoryAPI.searchCategory(input,status,1)
-            dispatch(setListCategory(response.data))
-            const totalPage=await categoryAPI.getTotalPageSearch(input,status)
-            let mypage=[]
-            for(let i=0;i<totalPage.data;i++){
-                mypage.push(i)
-            }
-            setTotalPage(mypage)
-            setSearchOrNothing(true)
+            const response=await categoryAPI.searchCategory(input,status,1);
+            dispatch(setListCategory(response.data));
+            const totalPage=await categoryAPI.getTotalPageSearch(input,status);
+            setTotalPage(totalPage.data);
+            setWhatAction("search");
         }catch (e){
+            console.log(e);
+        }
+    }
+
+    const handleAPISearchPaging= async (page)=>{
+        setLoading(true);
+        try {
+            const response=await categoryAPI.searchCategory(input,status,page);
+            dispatch(setListCategory(response.data));
+            setLoading(false);
+        }catch (e) {
+            setLoading(false);
             console.log(e)
         }
+    }
+
+    const handleAPIPaging=(page)=>{
+        dispatch(getAllCategory(page))
     }
 
     const handleClearText=()=>{
@@ -174,7 +111,9 @@ const Category=()=>{
                     getTotalPage();
                     handleClose();
                     setLoading(false)
-                    dispatch(toastMessage("Thêm thể loại thành công!"))
+                    const toastMsg={...toastSuccess};
+                    toastMsg.message="Thêm thể loại thành công!";
+                    dispatch(toastMessage(toastMsg));
                 }
             }catch (e) {
                 setLoading(false)
@@ -192,7 +131,9 @@ const Category=()=>{
                     dispatch(getAllCategory(1));
                     handleClose();
                     setLoading(false)
-                    dispatch(toastMessage("Cập nhật thể loại thành công!"))
+                    const toastMsg={...toastSuccess};
+                    toastMsg.message="Cập nhật thể loại thành công!";
+                    dispatch(toastMessage(toastMsg));
                 }
             }catch (e) {
                 setLoading(false)
@@ -313,22 +254,7 @@ const Category=()=>{
                             </Table>
                         </Card.Body>
                         <Card.Footer style={{backgroundColor: "#fff"}}>
-                            <div style={{display: "flex", justifyContent: "end", alignItems: "center"}}>
-                                <i onClick={handlePrePage} style={{marginRight: "15px", cursor: "pointer", color: "#fa0307"}} className="fa-solid fa-angle-left"></i>
-                                {totalPage.map((item,index)=>{
-                                    if(index===0){
-                                        return (
-                                            <span onClick={()=>{handleMovePage(index)}} className={"actionPage page"} style={{cursor: "pointer", padding: "3px 10px", borderRadius: "5px", textAlign: "center", margin: "3px", color: "#fa0307"}}>{item + 1}</span>
-                                        )
-                                    }else{
-                                        return (
-                                            <span onClick={()=>{handleMovePage(index)}} className={"page"} style={{cursor: "pointer", padding: "3px 10px", borderRadius: "5px", textAlign: "center", margin: "3px", color: "#fa0307"}}>{item + 1}</span>
-                                        )
-                                    }
-                                })}
-                                <i onClick={handleNextPage} style={{marginLeft: "15px", cursor: "pointer", color: "#fa0307"}}
-                                   className="fa-solid fa-angle-right"></i>
-                            </div>
+                            <Paging TotalPage={totalPage} APIPaging={handleAPIPaging} APISearchPaging={handleAPISearchPaging} whatAction={whatAction}/>
                         </Card.Footer>
                     </Card>
                 </div>

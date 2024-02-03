@@ -7,26 +7,28 @@ import {toastMessage} from "../../../../redux/slices/ToastMsgSlice";
 import {getAllSole, setListSole} from "../../../../redux/slices/SoleSlice";
 import soleAPI from "../../../services/SoleAPI/SoleAPI";
 import moment from "moment";
+import Paging from "../../../utils/Paging";
 
 
 
 const Sole=()=>{
-    const dispatch=useDispatch()
+    const dispatch=useDispatch();
     const [name,setName]=useState('');
     const [status,setStatus]=useState('true');
-    const [error,setError]=useState(undefined)
-    const [totalPage,setTotalPage]=useState([])
-    const [touchName,setTouchName]=useState(false)
-    const listSole=useSelector(state => state.sole.listSole)
-    const isLoading=useSelector(state => state.sole.isLoading)
-    const [loading,setLoading]=useState(false)
-    const [input,setInput]=useState('')
-    const [currentPage,setCurrentPage]=useState(1)
-    const [searchOrNothing,setSearchOrNothing]=useState(false)
+    const [error,setError]=useState(undefined);
+    const [totalPage,setTotalPage]=useState(undefined);
+    const [touchName,setTouchName]=useState(false);
+    const listSole=useSelector(state => state.sole.listSole);
+    //loading
+    const isLoading=useSelector(state => state.sole.isLoading);
+    const [loading,setLoading]=useState(false);
+    const [input,setInput]=useState('');
+    const [whatAction,setWhatAction]=useState("normal");
     const [addOrUpdate,setAddOrUpdate]=useState(true);
-    const [idUpdate,setIdUpdate]=useState(undefined)
+    const [idUpdate,setIdUpdate]=useState(undefined);
     //set showModal
     const [show, setShow] = useState(false);
+    const toastSuccess=useSelector(state => state.toastmsg.toastSuccess);
 
 
     useEffect(()=>{
@@ -36,99 +38,35 @@ const Sole=()=>{
 
     const getTotalPage= async ()=>{
         const res= await soleAPI.getAllTotalPage();
-        let mypage=[]
-        for(let i=0;i<res.data;i++){
-            mypage.push(i)
-        }
-        setTotalPage(mypage)
-    }
-
-    const handleMovePage=async(index)=>{
-        if(searchOrNothing===true){
-            const response=await soleAPI.searchBrand(input,status,index+1)
-            dispatch(setListSole(response.data))
-            handleMoveAnimation(index)
-        }else{
-            handleMoveAnimation(index)
-            dispatch(getAllSole(index+1))
-        }
-    }
-
-    const handleMoveAnimation=(index)=>{
-        const page=document.querySelectorAll('.page')
-        for(let i=0;i<page.length;i++){
-            page[i].classList.remove('actionPage')
-        }
-        page[index].classList.add('actionPage')
-    }
-
-    const handleNextPage= async ()=>{
-        if(searchOrNothing===true){
-            if(currentPage===totalPage.length){
-                const response=await soleAPI.searchBrand(input,status,1)
-                dispatch(setListSole(response.data))
-                handleMoveAnimation(0)
-                setCurrentPage(1)
-            }else{
-                const response=await soleAPI.searchBrand(input,status,currentPage+1)
-                dispatch(setListSole(response.data))
-                handleMoveAnimation(currentPage)
-                setCurrentPage(currentPage+1)
-            }
-        }else{
-            if(currentPage===totalPage.length){
-                dispatch(getAllSole(1))
-                handleMoveAnimation(0)
-                setCurrentPage(1)
-            }else{
-                dispatch(getAllSole(currentPage+1))
-                handleMoveAnimation(currentPage)
-                setCurrentPage(currentPage+1)
-            }
-        }
-
-    }
-
-    const handlePrePage= async ()=>{
-        if(searchOrNothing===true){
-            if(currentPage===1){
-                const response=await soleAPI.searchBrand(input,status,totalPage.length)
-                dispatch(setListSole(response.data))
-                handleMoveAnimation(totalPage.length-1)
-                setCurrentPage(totalPage.length)
-            }else{
-                const response=await soleAPI.searchBrand(input,status,currentPage-1)
-                dispatch(setListSole(response.data))
-                handleMoveAnimation(currentPage-2)
-                setCurrentPage(currentPage-1)
-            }
-        }else{
-            if(currentPage===1){
-                dispatch(getAllSole(totalPage.length))
-                handleMoveAnimation(totalPage.length-1)
-                setCurrentPage(totalPage.length)
-            }else{
-                dispatch(getAllSole(currentPage-1))
-                handleMoveAnimation(currentPage-2)
-                setCurrentPage(currentPage-1)
-            }
-        }
+        setTotalPage(res.data)
     }
 
     const handleSearch= async ()=>{
         try {
-            const response=await soleAPI.searchSole(input,status,1)
-            dispatch(setListSole(response.data))
-            const totalPage=await soleAPI.getTotalPageSearch(input,status)
-            let mypage=[]
-            for(let i=0;i<totalPage.data;i++){
-                mypage.push(i)
-            }
-            setTotalPage(mypage)
-            setSearchOrNothing(true)
+            const response=await soleAPI.searchSole(input,status,1);
+            dispatch(setListSole(response.data));
+            const totalPage=await soleAPI.getTotalPageSearch(input,status);
+            setTotalPage(totalPage.data);
+            setWhatAction("search");
         }catch (e){
             console.log(e)
         }
+    }
+
+    const handleAPISearchPaging=async (page)=>{
+        setLoading(true);
+        try {
+            const response=await soleAPI.searchSole(input,status,1);
+            dispatch(setListSole(response.data));
+            setLoading(false);
+        }catch (e) {
+            setLoading(false);
+            console.log(e);
+        }
+    }
+
+    const handleAPIPaging=(page)=>{
+        dispatch(getAllSole(1));
     }
 
     const handleClearText=()=>{
@@ -137,7 +75,6 @@ const Sole=()=>{
         const statusDOC=document.querySelector('.statusDOC option')
         statusDOC.selected=true
     }
-
 
 
     const handleClose = () => {
@@ -173,7 +110,9 @@ const Sole=()=>{
                     getTotalPage();
                     handleClose();
                     setLoading(false)
-                    dispatch(toastMessage("Thêm đế giày thành công!"))
+                    const toastMsg={...toastSuccess};
+                    toastMsg.message="Thêm đế giày thành công!";
+                    dispatch(toastMessage(toastMsg));
                 }
             }catch (e) {
                 setLoading(false)
@@ -191,7 +130,9 @@ const Sole=()=>{
                     dispatch(getAllSole(1));
                     handleClose();
                     setLoading(false)
-                    dispatch(toastMessage("Cập nhật đế giày thành công!"))
+                    const toastMsg={...toastSuccess};
+                    toastMsg.message="Cập nhật đế giày thành công!";
+                    dispatch(toastMessage(toastMsg));
                 }
             }catch (e) {
                 setLoading(false)
@@ -312,22 +253,7 @@ const Sole=()=>{
                             </Table>
                         </Card.Body>
                         <Card.Footer style={{backgroundColor: "#fff"}}>
-                            <div style={{display: "flex", justifyContent: "end", alignItems: "center"}}>
-                                <i onClick={handlePrePage} style={{marginRight: "15px", cursor: "pointer", color: "#fa0307"}} className="fa-solid fa-angle-left"></i>
-                                {totalPage.map((item,index)=>{
-                                    if(index===0){
-                                        return (
-                                            <span onClick={()=>{handleMovePage(index)}} className={"actionPage page"} style={{cursor: "pointer", padding: "3px 10px", borderRadius: "5px", textAlign: "center", margin: "3px", color: "#fa0307"}}>{item + 1}</span>
-                                        )
-                                    }else{
-                                        return (
-                                            <span onClick={()=>{handleMovePage(index)}} className={"page"} style={{cursor: "pointer", padding: "3px 10px", borderRadius: "5px", textAlign: "center", margin: "3px", color: "#fa0307"}}>{item + 1}</span>
-                                        )
-                                    }
-                                })}
-                                <i onClick={handleNextPage} style={{marginLeft: "15px", cursor: "pointer", color: "#fa0307"}}
-                                   className="fa-solid fa-angle-right"></i>
-                            </div>
+                            <Paging TotalPage={totalPage} APIPaging={handleAPIPaging} APISearchPaging={handleAPISearchPaging} whatAction={whatAction}/>
                         </Card.Footer>
                     </Card>
                 </div>

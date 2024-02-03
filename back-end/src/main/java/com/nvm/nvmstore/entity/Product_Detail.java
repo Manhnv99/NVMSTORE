@@ -22,9 +22,31 @@ public class Product_Detail {
 
     private Integer quantity;
 
+    private String description;
+
     @ManyToOne
     @JoinColumn(name = "product_id",referencedColumnName = "id")
     private Product product_id;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id",referencedColumnName = "id")
+    private Brand brand_id;
+
+    @ManyToOne
+    @JoinColumn(name = "material_id",referencedColumnName = "id")
+    private Material material_id;
+
+    @ManyToOne
+    @JoinColumn(name = "sole_id",referencedColumnName = "id")
+    private Sole sole_id;
+
+    @ManyToOne
+    @JoinColumn(name="category_id",referencedColumnName = "id")
+    private Category category_id;
+
+    @ManyToOne
+    @JoinColumn(name="gender_id",referencedColumnName = "id")
+    private Gender gender_id;
 
     @ManyToOne
     @JoinColumn(name = "size_id",referencedColumnName = "id")

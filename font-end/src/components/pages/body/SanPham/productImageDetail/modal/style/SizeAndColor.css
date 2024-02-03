@@ -1,0 +1,80 @@
+.chooseSizeOrColor{
+    margin-top: 15px;
+}
+.nameSize{
+    display: block;
+    border: 1px solid #444;
+    width: 100%;
+    padding: 4px 0;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.nameSize:hover{
+    border: 1px solid #5ef8ff;
+    transition: 0.3s ease-in-out;
+}
+.nameColor{
+    font-weight: 600;
+    width: 100%;
+    display: block;
+    border-radius: 5px;
+    text-align: center;
+    padding: 3px 0;
+    border: 1px solid #444;
+    cursor: pointer;
+}
+.activeChooseSize{
+    background-color: var(--primary-blue);
+    color: var(--primary-white);
+    border: 1px solid #5ef8ff;
+}
+.activeChooseColor{
+    color: var(--primary-white);
+}
+
+
+
+
+.size_item{
+    position: relative;
+    border: 1px solid #999;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: default;
+    margin: 0 10px;
+}
+.size-item-delete{
+    position: absolute;
+    top: -8px;
+    padding: 5px;
+    background-color: var(--primary-red);
+    color: var(--primary-white);
+    border-radius: 50%;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.color_item{
+    position: relative;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 5px 18px;
+    border-radius: 5px;
+    cursor: default;
+    margin: 0 10px;
+}
+.color-item-delete{
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    padding: 5px;
+    background-color: var(--primary-red);
+    color: var(--primary-white);
+    border-radius: 50%;
+    font-size: 10px;
+    cursor: pointer;
+}

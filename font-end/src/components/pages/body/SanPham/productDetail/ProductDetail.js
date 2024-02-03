@@ -1,6 +1,6 @@
 import "./style/ProductDetail.css"
-import {Button, Card, Col, Container, Form, Modal, Row, Table} from "react-bootstrap";
-import {useNavigate, useParams} from "react-router-dom";
+import {Button, Card, Col, Container, Form, Row, Table} from "react-bootstrap";
+import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import SizeAPI from "../../../../services/SizeAPI/SizeAPI";
@@ -8,28 +8,52 @@ import ColorAPI from "../../../../services/ColorAPI/ColorAPI";
 import BrandAPI from "../../../../services/BrandAPI/BrandAPI";
 import CategoryAPI from "../../../../services/CategoryAPI/CategoryAPI";
 import SoleAPI from "../../../../services/SoleAPI/SoleAPI";
-import categoryAPI from "../../../../services/CategoryAPI/CategoryAPI";
 import MaterialAPI from "../../../../services/MaterialAPI/MaterialAPI";
 import StatusProductDetailAPI from "../../../../services/StatusProductDetailAPI/StatusProductDetailAPI";
 import GenderAPI from "../../../../services/GenderAPI/GenderAPI";
-import {fetchProductDetail} from "../../../../../redux/slices/product/ProductDetailSlice";
+import {getAllProductDetail, setListProductDetail} from "../../../../../redux/slices/product/ProductDetailSlice";
+import ProductImageDetail from "../productImageDetail/ProductImageDetail";
+import Paging from "../../../../utils/Paging";
+import productDetailAPI from "../../../../services/ProductAPI/Product_Detail_API/ProductDetailAPI";
+import Loading from "../../../loading/Loading";
 
 
 
 const ProductDetail=()=>{
-    const nav=useNavigate();
-    const dispatch=useDispatch()
-    const [listMaterial,setListMaterial]=useState([])
-    const [listBrand,setListBrand]=useState([])
-    const [listSole,setListSole]=useState([])
-    const [listCategory,setListCategory]=useState([])
-    const [listStatus,setListStatus]=useState([])
-    const [listGender,setListGender]=useState([])
-    const [listSize,setListSize]=useState([])
-    const [listColor,setListColor]=useState([])
+    //dispatch
+    const dispatch=useDispatch();
+    //openModal
+    const [openModalPID,setOpenModalPid]=useState(false);
+    //state
+    const [material_id,setMaterial_Id]=useState('')
+    const [brand_id,setBrand_Id]=useState('')
+    const [sole_id,setSole_Id]=useState('')
+    const [size_id,setSize_Id]=useState('')
+    const [color_id,setColor_Id]=useState('')
+    const [category_id,setCategory_Id]=useState('')
+    const [status_id,setStatus_Id]=useState('')
+    const [gender_id,setGender_Id]=useState('')
+    //list
+    const [listMaterial,setListMaterial]=useState([]);
+    const [listBrand,setListBrand]=useState([]);
+    const [listSole,setListSole]=useState([]);
+    const [listCategory,setListCategory]=useState([]);
+    const [listStatus,setListStatus]=useState([]);
+    const [listGender,setListGender]=useState([]);
+    const [listSize,setListSize]=useState([]);
+    const [listColor,setListColor]=useState([]);
+    const [totalPage,setTotalPage]=useState(undefined);
+    //action
+    const [whatAction,setWhatAction]=useState("normal");
     //list ProductDetail
-    const listProductDetail=useSelector(state => state.productDetail.listProductDetail)
+    const listProductDetail=useSelector(state => state.productDetail.listProductDetail);
+    //loading
+    const isLoading=useSelector(state => state.productDetail.isLoading);
+    const [loading,setLoading]=useState(false);
+    //product_id
     const {product_id}=useParams();
+    //id productDetail
+    const [id_product_detail,setId_Product_Detail]=useState(undefined);
 
 
     useEffect(() => {
@@ -41,8 +65,58 @@ const ProductDetail=()=>{
         getAllGender();
         getAllSize();
         getAllColor();
-        dispatch(fetchProductDetail(product_id))
+        getTotalPage();
+        const param={
+            product_id:product_id,
+            page:1
+        }
+        dispatch(getAllProductDetail(param));
     }, []);
+
+
+    const getTotalPage= async ()=>{
+        try {
+            const response = await productDetailAPI.getTotalPageProductDetailResponse(product_id);
+            setTotalPage(response.data);
+        }catch (e) {
+            console.log(e)
+        }
+    }
+
+    const handleSearch= async ()=>{
+        try {
+            const response=await productDetailAPI.searchProductDetailResponse(product_id,material_id,brand_id,sole_id,size_id,color_id,category_id,status_id,gender_id,1);
+            dispatch(setListProductDetail(response.data));
+            const totalPage=await productDetailAPI.getTotalPageSearchProductDetailResponse(product_id,material_id,brand_id,sole_id,size_id,color_id,category_id,status_id,gender_id);
+            setTotalPage(totalPage.data);
+            setWhatAction("search");
+        }catch (e){
+            console.log(e);
+        }
+    }
+
+    const handleAPISearchPaging= async (page)=>{
+        setLoading(true);
+        try {
+            const response=await productDetailAPI.searchProductDetailResponse(product_id,material_id,brand_id,sole_id,size_id,color_id,category_id,status_id,gender_id,page);
+            dispatch(setListProductDetail(response.data));
+            setLoading(false);
+        }catch (e) {
+            setLoading(false);
+            console.log(e)
+        }
+    }
+
+    const handleAPIPaging=(page)=>{
+        const param={
+            product_id:product_id,
+            page:page
+        }
+        dispatch(getAllProductDetail(param));
+    }
+
+
+
     const getAllCategory=async ()=>{
         const res=await CategoryAPI.getAll();
         setListCategory(res.data)
@@ -79,9 +153,16 @@ const ProductDetail=()=>{
     }
 
 
+    //handle
+    const handleOpenModalProductImageDetail=(id)=>{
+        setId_Product_Detail(id);
+        setOpenModalPid(true)
+    }
 
     return(
         <>
+            {loading || isLoading && <Loading/>}
+            {openModalPID && <ProductImageDetail id_product_detail={id_product_detail} setOpenModalPid={setOpenModalPid}/>}
             <Container>
                 <div className="base-header">
                     <i className="fa-solid fa-box-open"></i>
@@ -97,7 +178,7 @@ const ProductDetail=()=>{
                             <Col lg={6}>
                                 <Form.Group className="findByName">
                                     <Form.Control style={{width: "40%"}} type="text" placeholder="Nhập tên sản phẩm"/>
-                                    <Button style={{margin: "0 10px"}}>Tìm kiếm</Button>
+                                    <Button onClick={handleSearch} style={{margin: "0 10px"}}>Tìm kiếm</Button>
                                     <Button style={{backgroundColor: "red", border: "1px solid red"}}>Làm mới</Button>
                                 </Form.Group>
                             </Col>
@@ -117,10 +198,10 @@ const ProductDetail=()=>{
                                         <div style={{display: 'flex', alignItems: 'center'}}>
                                             <Form.Label style={{width: "120px", fontWeight: "600"}}><span
                                                 style={{color: "red"}}>*</span> Chất liệu:</Form.Label>
-                                            <Form.Select style={{width: "50%"}} required>
+                                            <Form.Select onChange={(e)=>{setMaterial_Id(e.target.value)}} style={{width: "50%"}} required>
                                                 <option value="">--Tất Cả--</option>
                                                 {listMaterial.map((item,index)=> (
-                                                    <option key={index}>{item.name}</option>
+                                                    <option key={index} value={item.id}>{item.name}</option>
                                                 ))}
                                             </Form.Select>
                                         </div>
@@ -131,10 +212,10 @@ const ProductDetail=()=>{
                                         <div style={{display: 'flex', alignItems: 'center'}}>
                                             <Form.Label style={{width: "120px", fontWeight: "600"}}><span
                                                 style={{color: "red"}}>*</span> Thương hiệu:</Form.Label>
-                                            <Form.Select style={{width: "50%"}} required>
+                                            <Form.Select onChange={(e)=>{setBrand_Id(e.target.value)}} style={{width: "50%"}} required>
                                                 <option value="">--Tất Cả--</option>
                                                 {listBrand.map((item,index)=> (
-                                                    <option key={index}>{item.name}</option>
+                                                    <option key={index} value={item.id}>{item.name}</option>
                                                 ))}
                                             </Form.Select>
                                         </div>
@@ -145,10 +226,10 @@ const ProductDetail=()=>{
                                         <div style={{display: 'flex', alignItems: 'center'}}>
                                             <Form.Label style={{width: "120px", fontWeight: "600"}}><span
                                                 style={{color: "red"}}>*</span> Đế giày:</Form.Label>
-                                            <Form.Select style={{width: "50%"}} required>
+                                            <Form.Select onChange={(e)=>{setSole_Id(e.target.value)}} style={{width: "50%"}} required>
                                                 <option value="">--Tất Cả--</option>
                                                 {listSole.map((item,index)=> (
-                                                    <option key={index}>{item.name}</option>
+                                                    <option key={index} value={item.id}>{item.name}</option>
                                                 ))}
                                             </Form.Select>
                                         </div>
@@ -159,10 +240,10 @@ const ProductDetail=()=>{
                                         <div style={{display: 'flex', alignItems: 'center'}}>
                                             <Form.Label style={{width: "120px", fontWeight: "600"}}><span
                                                 style={{color: "red"}}>*</span> Kích Cỡ:</Form.Label>
-                                            <Form.Select style={{width: "50%"}} required>
+                                            <Form.Select onChange={(e)=>{setSize_Id(e.target.value)}} style={{width: "50%"}} required>
                                                 <option value="">--Tất Cả--</option>
                                                 {listSize.map((item,index)=> (
-                                                    <option key={index}>{item.name}</option>
+                                                    <option key={index} value={item.id}>{item.name}</option>
                                                 ))}
                                             </Form.Select>
                                         </div>
@@ -177,10 +258,10 @@ const ProductDetail=()=>{
                                         <div style={{display: 'flex', alignItems: 'center'}}>
                                             <Form.Label style={{width: "120px", fontWeight: "600"}}><span
                                                 style={{color: "red"}}>*</span> Màu sắc:</Form.Label>
-                                            <Form.Select style={{width: "50%"}} required>
+                                            <Form.Select onChange={(e)=>{setColor_Id(e.target.value)}} style={{width: "50%"}} required>
                                                 <option value="">--Tất Cả--</option>
                                                 {listColor.map((item,index)=> (
-                                                    <option key={index}>{item.name}</option>
+                                                    <option key={index} value={item.id}>{item.name}</option>
                                                 ))}
                                             </Form.Select>
                                         </div>
@@ -191,10 +272,10 @@ const ProductDetail=()=>{
                                         <div style={{display: 'flex', alignItems: 'center'}}>
                                             <Form.Label style={{width: "120px", fontWeight: "600"}}><span
                                                 style={{color: "red"}}>*</span> Thể loại:</Form.Label>
-                                            <Form.Select style={{width: "50%"}} required>
+                                            <Form.Select onChange={(e)=>{setCategory_Id(e.target.value)}} style={{width: "50%"}} required>
                                                 <option value="">--Tất Cả--</option>
                                                 {listCategory.map((item,index)=> (
-                                                    <option key={index}>{item.name}</option>
+                                                    <option key={index} value={item.id}>{item.name}</option>
                                                 ))}
                                             </Form.Select>
                                         </div>
@@ -205,10 +286,10 @@ const ProductDetail=()=>{
                                         <div style={{display: 'flex', alignItems: 'center'}}>
                                             <Form.Label style={{width: "120px", fontWeight: "600"}}><span
                                                 style={{color: "red"}}>*</span> Trạng thái:</Form.Label>
-                                            <Form.Select style={{width: "50%"}} required>
+                                            <Form.Select onChange={(e)=>{setStatus_Id(e.target.value)}} style={{width: "50%"}} required>
                                                 <option value="">--Tất Cả--</option>
                                                 {listStatus.map((item,index)=> (
-                                                    <option key={index}>{item.name}</option>
+                                                    <option key={index} value={item.id}>{item.name}</option>
                                                 ))}
                                             </Form.Select>
                                         </div>
@@ -219,10 +300,10 @@ const ProductDetail=()=>{
                                         <div style={{display: 'flex', alignItems: 'center'}}>
                                             <Form.Label style={{width: "120px", fontWeight: "600"}}><span
                                                 style={{color: "red"}}>*</span> Giới Tính:</Form.Label>
-                                            <Form.Select style={{width: "50%"}} required>
+                                            <Form.Select onChange={(e)=>{setGender_Id(e.target.value)}} style={{width: "50%"}} required>
                                                 <option value="">--Tất Cả--</option>
                                                 {listGender.map((item,index)=> (
-                                                    <option key={index}>{item.name}</option>
+                                                    <option key={index} value={item.id}>{item.name}</option>
                                                 ))}
                                             </Form.Select>
                                         </div>
@@ -281,13 +362,13 @@ const ProductDetail=()=>{
                                             <td style={{textAlign: "center"}}>{item.product_detail_sell_price}</td>
                                             <td style={{textAlign: "center"}}>{item.product_detail_size_name}</td>
                                             <td style={{textAlign: "center"}}>
-
+                                                <span style={{backgroundColor:item.product_detail_color_code,display:"block",borderRadius:"10px", color:item.product_detail_color_code,border:"1px solid #444"}}>2</span>
                                             </td>
                                             <td style={{textAlign: "center", justifyContent: "center", color: "#fff", borderRadius: "5px"}}>
                                                 <span style={{backgroundColor: "#68ae6b", padding: "7px", borderRadius: "10px"}}>{item.product_detail_status}</span>
                                             </td>
                                             <td style={{textAlign: "center"}}>
-                                                <i className="fa-regular fa-pen-to-square actionEdit"></i>
+                                                <i onClick={()=>{handleOpenModalProductImageDetail(item.product_detail_id)}} className="fa-regular fa-pen-to-square actionEdit"></i>
                                             </td>
                                         </tr>
                                     ))}
@@ -295,20 +376,7 @@ const ProductDetail=()=>{
                             </Table>
                         </Card.Body>
                         <Card.Footer style={{backgroundColor: "#fff"}}>
-                            <div style={{display: "flex", justifyContent: "end", alignItems: "center"}}>
-                                <i style={{marginRight: "15px", cursor: "pointer", color: "#fa0307"}}
-                                   className="fa-solid fa-angle-left"></i>
-                                <span className={"actionPage page"} style={{
-                                    cursor: "pointer",
-                                    padding: "3px 10px",
-                                    borderRadius: "5px",
-                                    textAlign: "center",
-                                    margin: "3px",
-                                    color: "#fa0307"
-                                }}>1</span>
-                                <i style={{marginLeft: "15px", cursor: "pointer", color: "#fa0307"}}
-                                   className="fa-solid fa-angle-right"></i>
-                            </div>
+                            <Paging TotalPage={totalPage} APIPaging={handleAPIPaging} APISearchPaging={handleAPISearchPaging} whatAction={whatAction}/>
                         </Card.Footer>
                     </Card>
                 </div>

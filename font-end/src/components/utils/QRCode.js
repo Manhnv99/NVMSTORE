@@ -1,4 +1,4 @@
-import "./QRCode.css"
+import "./style/QRCode.css"
 import {Button, Modal} from "react-bootstrap";
 import {useState} from "react";
 import {QrReader} from "react-qr-reader";

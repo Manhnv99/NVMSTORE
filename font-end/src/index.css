@@ -10,7 +10,10 @@
   --primary-text:#999;
   --primary-body:#f4f4f4;
   --primary-red:#fa0307;
-  --primary-orange:#da601a
+  --primary-orange:#da601a;
+  --primary-toastSuccess:#27a327;
+  --primary-toastWarning: #eded2a;
+  --primary-toastError:#FF0000;
 }
 
 body {

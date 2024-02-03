@@ -45,7 +45,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     @Override
-    public File convert(MultipartFile multipartFile) throws IOException{
+    public File convert(MultipartFile multipartFile) throws IOException {
         File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         FileOutputStream fo = new FileOutputStream(file);//tạo 1 file đầu đầu ra
         fo.write(multipartFile.getBytes());//lấy dữ liệu bytes từ multipartfile và viết vào file

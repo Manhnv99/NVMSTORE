@@ -1,8 +1,8 @@
 import "./style/AddProduct.css"
 import {Button, Card, Col, Container, Form, Row, Table} from "react-bootstrap";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getAllBrand, setListBrand} from "../../../../redux/slices/BrandSlice";
+import { setListBrand} from "../../../../redux/slices/BrandSlice";
 import brandAPI from "../../../services/BrandAPI/BrandAPI";
 import materialAPI from "../../../services/MaterialAPI/MaterialAPI";
 import soleAPI from "../../../services/SoleAPI/SoleAPI";
@@ -24,9 +24,14 @@ import ImageProductAPI from "../../../services/ProductAPI/Image_Product_API/Imag
 import {useNavigate} from "react-router-dom";
 import Loading from "../../loading/Loading";
 import {NumericFormat} from "react-number-format";
+import axios from "axios";
 
 
 const AddProduct=()=>{
+    //toastMessage
+    const toastSuccess=useSelector(state => state.toastmsg.toastSuccess);
+    const toastWarning=useSelector(state => state.toastmsg.toastWarning);
+    const toastError=useSelector(state => state.toastmsg.toastError);
     // dispatch
     const dispatch=useDispatch();
     //state entity
@@ -64,8 +69,7 @@ const AddProduct=()=>{
     const [listImageChoose,setListImageChoose]=useState([])
     const [listProductToEdit,setListProductToEdit]=useState([])
     const [whatColorUpload,setWhatColorUpload]=useState('')
-    //useRef
-    const file=useRef()
+    const [listNameProduct,setListNameProduct]=useState([])
     // redux
     const listBrand=useSelector(state => state.brand.listBrand)
     const listMaterial=useSelector(state => state.material.listMaterial)
@@ -124,9 +128,15 @@ const AddProduct=()=>{
         getAllMaterial();
         getAllSole();
         getAllCategory();
+        getAllProduct();
         dispatch(getAllGender())
         dispatch(getAllStatusProductDetail())
     },[])
+
+    const getAllProduct= async ()=>{
+        const res= await productAPI.getAllProduct();
+        setListNameProduct(res.data);
+    }
 
     const getAllBrand= async ()=>{
         const res=await brandAPI.getAll();
@@ -208,6 +218,8 @@ const AddProduct=()=>{
         if(!touchName){
             setTouchName(true)
         }
+        const listName=document.querySelector('.listProduct');
+        listName.style.display="none";
     }
     const onChangeMaterial=(e)=>{
         setMaterial_id(e.target.value)
@@ -276,7 +288,8 @@ const AddProduct=()=>{
     }
 
     const handleOpenUploadFile=(name)=>{
-        file.current.click()
+        const file=document.querySelector(".input_upload")
+        file.click();
         setWhatColorUpload(name)
     }
 
@@ -301,7 +314,9 @@ const AddProduct=()=>{
                     if(myarray.filter(item=>item.color===whatColorUpload).length<=6){
                         setListImageChoose(myarray);
                     }else{
-                        dispatch(toastMessage("Không được thêm quá 6 ảnh!"))
+                        const toastMsg={...toastWarning};
+                        toastMsg.message="Không được thêm quá 6 ảnh!";
+                        dispatch(toastMessage(toastMsg));
                     }
                 }
             }
@@ -371,11 +386,15 @@ const AddProduct=()=>{
         checkboxall.checked=false
         setCheckAll(false)
         setListProductToEdit([])
-        dispatch(toastMessage("Chỉnh Sửa Giá Và Số Lượng Thành Công!"));
+        const toastMsg={...toastSuccess};
+        toastMsg.message="Chỉnh Sửa Giá Và Số Lượng Thành Công!";
+        dispatch(toastMessage(toastMsg));
     }
     const handleOpenModalEdit=()=>{
         if(listProductToEdit.length===0){
-            dispatch(toastMessage("Bạn Chưa Chọn Sản Phẩm!"))
+            const toastMsg={...toastWarning};
+            toastMsg.message="Bạn Chưa Chọn Sản Phẩm!";
+            dispatch(toastMessage(toastMsg));
         }else{
             setOpenModalEdit(true)
         }
@@ -389,82 +408,128 @@ const AddProduct=()=>{
     const handleAddProduct= async ()=>{
         let error=0
         try {
-            if(listColorChoosed.length===0 && listSizeChoosed.length===0){
-                // Chưa Chọn Ảnh Thì Chắc Chắn là chưa chọn màu...
-                dispatch(toastMessage("Bạn Chưa Chọn Màu Sắc Và Kích Cỡ!"));
-            }else{
-                if(listColorChoosed.length===0 && listSizeChoosed.length!==0){
-                    dispatch(toastMessage("Bạn Chưa Chọn Màu Sắc!"));
-                }else if(listColorChoosed.length!==0 && listSizeChoosed.length===0){
-                    dispatch(toastMessage("Bạn Chưa Chọn Kích Cỡ!"));
+            const productRequest={
+                name:name,
+                description:description,
+                brand_id:brand_id,
+                material_id:material_id,
+                gender_id:gender_id,
+                status_id:status_id,
+                sole_id:sole_id,
+                category_id:category_id,
+            };
+            const productResponse =await productAPI.addProduct(productRequest);
+            if(productResponse.data==="add"){
+                if(listColorChoosed.length===0 && listSizeChoosed.length===0){
+                    // Chưa Chọn Ảnh Thì Chắc Chắn là chưa chọn màu...
+                    const toastMsg={...toastWarning};
+                    toastMsg.message="Bạn Chưa Chọn Màu Sắc Và Kích Cỡ!";
+                    dispatch(toastMessage(toastMsg));
                 }else{
-                    listColorChoosed.forEach(color=>{
-                        if(listImageChoose.filter(image=>image.color===color.name).length===0){
-                            error++;
-                        }
-                    })
-                    if(error>0){
-                        dispatch(toastMessage("Bạn Chưa Chọn Đủ Ảnh!"))
+                    if(listColorChoosed.length===0 && listSizeChoosed.length!==0){
+                        const toastMsg={...toastWarning};
+                        toastMsg.message="Bạn Chưa Chọn Màu Sắc!";
+                        dispatch(toastMessage(toastMsg));
+                    }else if(listColorChoosed.length!==0 && listSizeChoosed.length===0){
+                        const toastMsg={...toastWarning};
+                        toastMsg.message="Bạn Chưa Chọn Kích Cỡ!";
+                        dispatch(toastMessage(toastMsg));
                     }else{
-                        setLoading(true);
-                        const productRequest={
-                            name:name,
-                            description:description,
-                            brand_id:brand_id,
-                            material_id:material_id,
-                            gender_id:gender_id,
-                            status_id:status_id,
-                            sole_id:sole_id,
-                            category_id:category_id
-                        };
-                        const productResponse =await productAPI.addProduct(productRequest);
-                        await addProductDetail(productResponse.data);
+                        listColorChoosed.forEach(color=>{
+                            if(listImageChoose.filter(image=>image.color===color.name).length===0){
+                                error++;
+                            }
+                        })
+                        if(error>0){
+                            const toastMsg={...toastWarning};
+                            toastMsg.message="Bạn Chưa Chọn Đủ Ảnh!";
+                            dispatch(toastMessage(toastMsg));
+                        }else{
+                            //add Product
+                            await addProductDetail();
+                        }
                     }
                 }
             }
         }catch (e) {
             setLoading(false);
-            const dataError=e.response.data
-            const errorCopy={...errors}
-            errorCopy.name=dataError.name
-            errorCopy.description=dataError.description
-            errorCopy.brand_id=dataError.brand_id
-            errorCopy.material_id=dataError.material_id
-            errorCopy.sole_id=dataError.sole_id
-            errorCopy.category_id=dataError.category_id
-            errorCopy.gender_id=dataError.gender_id
-            errorCopy.status_id=dataError.status_id
-            dispatch(toastMessage("Bạn Chưa Điền Đủ Thông Tin!"));
+            const dataError=e.response.data;
+            const errorCopy={...errors};
+            errorCopy.name=dataError.name;
+            errorCopy.description=dataError.description;
+            errorCopy.brand_id=dataError.brand_id;
+            errorCopy.material_id=dataError.material_id;
+            errorCopy.sole_id=dataError.sole_id;
+            errorCopy.category_id=dataError.category_id;
+            errorCopy.gender_id=dataError.gender_id;
+            errorCopy.status_id=dataError.status_id;
+            const toastMsg={...toastError};
+            toastMsg.message="Bạn Chưa Điền Đủ Thông Tin!";
+            dispatch(toastMessage(toastMsg));
             setErrors(errorCopy);
         }
     }
 
-    const addProductDetail=(idProduct)=>{
-        listProduct.forEach(async (product)=>{
+    const addProductDetail= async ()=>{
+        setLoading(true);
+        for(let i=0;i<listProduct.length;i++){
             const productDetailRequest = {
-                product_id: idProduct,
-                size_name: product.size_name,
-                color_name: product.color_name,
-                quantity: product.quantity,
-                sell_price: product.sell_price,
+                name:name,
+                description:description,
+                brand_id:brand_id,
+                material_id:material_id,
+                gender_id:gender_id,
+                status_id:status_id,
+                sole_id:sole_id,
+                category_id:category_id,
+                size_name: listProduct[i].size_name,
+                color_name: listProduct[i].color_name,
+                quantity: listProduct[i].quantity,
+                sell_price: listProduct[i].sell_price,
                 status_product_detail_id: status_id
             };
             try {
-                const response=await  ProductDetailAPI.addProductDetail(productDetailRequest);
-                const listImageForColor = listImageChoose.filter(item => item.color === product.color_name);
-                listImageForColor.forEach(image=>{
-                    let imageProductRequest = new FormData();
-                    imageProductRequest.append("product_detail_id", response.data);
-                    imageProductRequest.append("image", image.file);
-                    addImageProduct(imageProductRequest);
-                })
-            } catch (error) {
-                addSuccess();
+                const response= await ProductDetailAPI.addProductDetail(productDetailRequest);
+                if(response && response.status===201){
+                    const listImageForColor = listImageChoose.filter(item => item.color === listProduct[i].color_name);
+                    //uploadimage to Cloudinary
+                    await uploadImageToCloudinary(listImageForColor, response.data);
+                    addSuccess();
+                }
+            } catch (e) {
+                setLoading(false);
+                const dataError=e.response.data
+                const toastMsg={...toastError};
+                toastMsg.message=dataError.toastMsg;
+                dispatch(toastMessage(toastMsg));
             }
+        }
+    }
+
+    const uploadImageToCloudinary=async(listImageForColor,data)=>{
+        const CLOUD_NAME="dbxajsljz";
+        const PRESET_NAME="nvmstore";
+        const FOLDER_NAME="nvmstoreimage";
+        const API=`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+        const formData=new FormData();
+        formData.append("upload_preset",PRESET_NAME);
+        formData.append("folder",FOLDER_NAME);
+        await listImageForColor.forEach(image=>{
+            formData.append("file",image.file);
+            axios.post(API,formData,{
+                headers:{
+                    "Content-Type":"multipart/form-data",
+                }
+            }).then(response=>{
+                let imageProductRequest={
+                    product_detail_id:data,
+                    image_id:response.data.public_id,
+                    image_url:response.data.url
+                }
+                //add Image Product
+                addImageProduct(imageProductRequest);
+            })
         })
-        setTimeout(()=>{
-            addSuccess();
-        },8000)
     }
 
     const addImageProduct=async (imageProductRequest)=>{
@@ -478,8 +543,10 @@ const AddProduct=()=>{
 
     const addSuccess=()=>{
         nav("/product-management")
-        dispatch(toastMessage("Tạo Sản Phẩm Thành Công!"))
-        setLoading(false)
+        const toastMsg={...toastSuccess};
+        toastMsg.message="Tạo Sản Phẩm Thành Công!";
+        dispatch(toastMessage(toastMsg));
+        setLoading(false);
     }
 
     const handleChooseAllProductToEdit=()=>{
@@ -506,14 +573,19 @@ const AddProduct=()=>{
 
     }
 
-
-    const test=()=>{
-        console.log(listProductToEdit)
+    const handleOpenListNameProduct=()=>{
+        const listName=document.querySelector('.listProduct');
+        listName.style.display="block";
     }
+    const handleChooseProductName=(e)=>{
+        const listName=document.querySelector('.listProduct');
+        setName(e.target.textContent);
+        listName.style.display="none";
+    }
+
     return(
         <>
             {loading && <Loading/>}
-            <Button onClick={test}>Test</Button>
             {openModalImageDetail && <ModalDetailImage imageDetail={imageDetail} setOpenModalImageDetail={setOpenModalImageDetail}/>}
             {openModalEdit && <ModalEditProduct handleEditProduct={handleEditProduct} setOpenModalEdit={setOpenModalEdit}/>}
             {openModalColor && <ModalColor setOpenModalColor={setOpenModalColor} handleSetListColor={handleSetListColor}/>}
@@ -529,18 +601,27 @@ const AddProduct=()=>{
                             </Col>
                             {/*Tên Sản Phẩm*/}
                             <Col lg={12}>
-                                <Form.Group >
+                                <Form.Group style={{position:"relative"}}>
                                     <div style={{ display: 'flex', alignItems: 'start' }}>
                                         <Form.Label style={{width:"140px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Tên sản phẩm:</Form.Label>
-                                        <Form.Control value={name} onChange={onChangeName} required type="text" placeholder="Nhập tên sản phẩm!"
+                                        <Form.Control onClick={handleOpenListNameProduct} value={name} onChange={onChangeName} required type="text" placeholder="Nhập tên sản phẩm!"
                                                       isValid={name.length>=5}
                                                       isInvalid={touchName && name==='' || errors.name!==undefined}/>
                                     </div>
                                     {touchName && name === '' ?
                                         <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>Bạn Chưa Điền Tên Sản Phẩm!</span> :
-                                            errors.name !== undefined ?
-                                                <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.name}</span>:''
+                                        errors.name !== undefined ?
+                                            <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.name}</span>:''
                                     }
+                                    <div className="listProduct">
+                                        <Row style={{marginRight:"0"}}>
+                                            {listNameProduct.map(item=>(
+                                                <Col sm={12} className="itemProduct">
+                                                    <span onClick={handleChooseProductName}>{item.name}</span>
+                                                </Col>
+                                            ))}
+                                        </Row>
+                                    </div>
                                 </Form.Group>
                             </Col>
                             {/*Mô Tả*/}
@@ -551,7 +632,7 @@ const AddProduct=()=>{
                                         <textarea onChange={onChangeDescription} style={{width:"100%",height:"200px",border:"1px solid #999",borderRadius:"5px",outline:"none",paddingLeft:"10px"}}></textarea>
                                     </div>
                                     {touchDescription && description === '' ?
-                                        <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>Bạn Chưa Chọn Thương Hiệu!</span> :
+                                        <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>Bạn Chưa Điền Mô Tả!</span> :
                                             errors.description !== undefined ?
                                                 <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.description}</span>:''
                                     }
@@ -829,7 +910,7 @@ const AddProduct=()=>{
                                                                 </td>
                                                                 {index===0 &&
                                                                     <td rowSpan={productForColor.length}>
-                                                                        <input onChange={(e) => {handleChooseFile(e)}} ref={file} type="file" multiple style={{display: "none"}}/>
+                                                                        <input className="input_upload" onChange={(e) => {handleChooseFile(e)}} type="file" multiple style={{display: "none"}}/>
                                                                         <div className="grid-container">
                                                                             {listImageChoose.map((item, index) => {
                                                                                 if (item.color === color.name) {

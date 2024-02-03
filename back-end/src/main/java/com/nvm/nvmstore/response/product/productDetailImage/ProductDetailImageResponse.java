@@ -19,21 +19,21 @@ public interface ProductDetailImageResponse {
 
     Integer getProduct_detail_quantity();
 
-    String getProduct_detail_brand_name();
+    Long getProduct_detail_brand_id();
 
-    String getProduct_detail_material_name();
+    Long getProduct_detail_material_id();
 
-    String getProduct_detail_gender_name();
+    Long getProduct_detail_gender_id();
 
-    String getProduct_detail_sole_name();
+    Long getProduct_detail_sole_id();
 
-    String getProduct_detail_category_name();
+    Long getProduct_detail_category_id();
 
     BigDecimal getProduct_detail_sell_price();
 
-    String getProduct_detail_size_name();
+    Long getProduct_detail_size_id();
 
-    String getProduct_detail_color_code();
+    Long getProduct_detail_color_id();
 
-    String getProduct_detail_status();
+    Long getProduct_detail_status_id();
 }

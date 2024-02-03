@@ -5,11 +5,15 @@ import StaffAPI from "../../../../services/StaffAPI/StaffAPI";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import Loading from "../../../loading/Loading";
-import {CallApiGeoGraph, CallApiVN} from "../../../../../redux/slices/APIVNSlice";
+import {CallApiGeoGraph} from "../../../../../redux/slices/APIVNSlice";
 import {toastMessage} from "../../../../../redux/slices/ToastMsgSlice";
 
 
 const AddStaff=()=>{
+    //toastmsg
+    const toastSuccess=useSelector(state => state.toastmsg.toastSuccess);
+    const toastWarning=useSelector(state => state.toastmsg.toastWarning);
+    //state
     const [name,setName]=useState('')
     const [cccd,setCCCD]=useState('')
     const [city,setCity]=useState('')
@@ -105,9 +109,11 @@ const AddStaff=()=>{
             setLoading(true)
             const response= await StaffAPI.createStaff(formData);
             if(response && response.status===201){
-                setLoading(false)
-                dispatch(toastMessage("Thêm Nhân Viên Mới Thành Công!"))
-                nav("/staff-management")
+                setLoading(false);
+                const toastMsg={...toastSuccess};
+                toastMsg.message="Thêm Nhân Viên Mới Thành Công!";
+                dispatch(toastMessage(toastMsg));
+                nav("/staff-management");
             }
         }catch (e){
             setLoading(false)
@@ -125,9 +131,11 @@ const AddStaff=()=>{
             errorCopy.status=e.response.data.status
             errorCopy.gender=e.response.data.gender
             if(e.response.data.image==='Bạn Chưa Chọn Ảnh!'){
-                dispatch(toastMessage(e.response.data.image))
+                const toastMsg={...toastWarning};
+                toastMsg.message=e.response.data.image;
+                dispatch(toastMessage(toastMsg));
             }
-            setErrors(errorCopy)
+            setErrors(errorCopy);
         }
     }
 

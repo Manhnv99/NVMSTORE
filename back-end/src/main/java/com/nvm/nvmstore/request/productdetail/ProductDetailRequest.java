@@ -13,7 +13,21 @@ import java.math.BigDecimal;
 @Getter
 public class ProductDetailRequest {
 
-    private Long product_id;
+    private String name;
+
+    private String description;
+
+    private Long brand_id;
+
+    private Long material_id;
+
+    private Long gender_id;
+
+    private Long sole_id;
+
+    private Long category_id;
+
+    private Long status_product_detail_id;
 
     private String size_name;
 
@@ -23,5 +37,4 @@ public class ProductDetailRequest {
 
     private BigDecimal sell_price;
 
-    private Long status_product_detail_id;
 }

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 
 @AllArgsConstructor
@@ -13,5 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 public class ImageProductRequest {
     private Long product_detail_id;
-    private MultipartFile image;
+    private String image_id;
+    private String image_url;
 }

@@ -1,42 +1,43 @@
 import "./style/SizeAndColor.css"
 import {Button, Col, Form, Modal, Row} from "react-bootstrap";
 import {memo, useEffect, useState} from "react";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Loading from "../../loading/Loading";
 import sizeAPI from "../../../services/SizeAPI/SizeAPI";
 import SizeAPI from "../../../services/SizeAPI/SizeAPI";
 import {toastMessage} from "../../../../redux/slices/ToastMsgSlice";
 import colorAPI from "../../../services/ColorAPI/ColorAPI";
 import ColorAPI from "../../../services/ColorAPI/ColorAPI";
+import {getAllColor} from "../../../../redux/slices/ColorSlice";
 
 
 const ModalColor=(props)=>{
     //state
-    const [code,setCode]=useState('')
-    const [name,setName]=useState('')
-    const [status,setStatus]=useState('')
-    const [listColor,setListColor]=useState([])
+    const [code,setCode]=useState('');
+    const [name,setName]=useState('');
+    const [status,setStatus]=useState('');
+    const listColor=useSelector(state => state.color.listColor);
     //
-    const [addOrChoose,setAddOrChoose]=useState(true)
+    const [addOrChoose,setAddOrChoose]=useState(true);
     // touch
-    const [touchName,setTouchName]=useState(false)
-    const [touchCode,setTouchCode]=useState(false)
+    const [touchName,setTouchName]=useState(false);
+    const [touchCode,setTouchCode]=useState(false);
     // dispatch
     const dispatch=useDispatch();
     // loading
-    const [loading,setLoading]=useState(false)
+    const [loading,setLoading]=useState(false);
     // settingModal
     const [show, setShow] = useState(true);
     // error
     const [error,setError]=useState({
         code:undefined,
         name:undefined
-    })
-    const [listColorChoosed,setListColorChoosed]=useState([])
+    });
+    const [listColorChoosed,setListColorChoosed]=useState([]);
 
 
     useEffect(() => {
-        getAllColor();
+        dispatch(getAllColor());
     }, []);
 
 
@@ -45,12 +46,6 @@ const ModalColor=(props)=>{
         setTimeout(()=>{
             props.setOpenModalColor(false);
         },200)
-    }
-
-
-    const getAllColor=async ()=> {
-        const res=await colorAPI.getAll();
-        setListColor(res.data)
     }
 
     //onChange
@@ -88,7 +83,7 @@ const ModalColor=(props)=>{
             try {
                 const response = await ColorAPI.addColor(colorRequest)
                 if(response && response.status===201){
-                    getAllColor();
+                    dispatch(getAllColor());
                     setLoading(false);
                     handleAddOrChoose();
                     dispatch(toastMessage("Thêm màu sắc thành công!"));

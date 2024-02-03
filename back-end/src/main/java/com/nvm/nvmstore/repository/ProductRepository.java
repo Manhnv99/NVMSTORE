@@ -5,6 +5,7 @@ import com.nvm.nvmstore.response.product.ProductResponse;
 import com.nvm.nvmstore.response.product.productDetail.ProductDetailResponse;
 import com.nvm.nvmstore.response.product.productDetailImage.ImageProductResponse;
 import com.nvm.nvmstore.response.product.productDetailImage.ProductDetailImageResponse;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -25,56 +26,190 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             """)
     Product getProductByName(String name);
 
-    @Query(value = """
-            select p.id as product_id,p.code as product_code,p.name as product_name,sum(quantity) as sum_quantity from product p join product_detail pd on p.id=pd.product_id group by p.code,p.name,p.id
-            """,nativeQuery = true)
-    List<ProductResponse> getProductResponse();
-
-
-    @Query(value = """
-            select pd.id as product_detail_id,
-            p.name as product_name,
-            pd.quantity as product_detail_quantity,
-            pd.sell_price as product_detail_sell_price,
-            s.name as product_detail_size_name,
-            c.code as product_detail_color_code,
-            spd.name as product_detail_status
-            from product p
-            join product_detail pd on p.id=pd.product_id
-            join color c on pd.color_id=c.id
-            join size s on pd.size_id=s.id
-            join status_product_detail spd on spd.id=pd.status_product_detail
-            where p.id=:product_id
-            """,nativeQuery = true)
-    List<ProductDetailResponse> getProductDetailResponse(Long product_id);
-
-
+    //Product
     @Query(value = """
             select p.id as product_id,
-            pd.id as product_detail_id,
+            p.code as product_code,
             p.name as product_name,
-            p.description as product_description,
-            pd.quantity as product_detail_quantity,
-            b.name as product_detail_brand_name,
-            mate.name as product_detail_material_name,
-            gen.name as product_detail_gender_name,
-            sole.name as product_detail_sole_name,
-            cate.name as product_detail_category_name,
-            pd.sell_price as product_detail_sell_price,
-            s.name as product_detail_size_name,
-            c.code as product_detail_color_code,
-            spd.name as product_detail_status
-            from product p
-            join product_detail pd on p.id=pd.product_id
-            join color c on pd.color_id=c.id
-            join size s on pd.size_id=s.id
-            join brand b on b.id=p.brand_id
-            join category cate on cate.id=p.category_id
-            join gender gen on gen.id=p.gender_id
-            join material mate on mate.id=p.material_id
-            join sole on sole.id=p.sole_id
-            join status_product_detail spd on spd.id=pd.status_product_detail
-            where pd.id=:product_detail_id
+            p.status as product_status,
+            sum(quantity) as sum_quantity
+            from product p join product_detail pd on p.id=pd.product_id group by p.code,p.name,p.id
+            """,nativeQuery = true)
+    List<ProductResponse> getProductResponse(Pageable pageable);
+
+
+    @Query(value = """
+            SELECT COUNT(*) AS total_count
+            FROM (
+                SELECT p.id AS product_id,
+                        p.code AS product_code,
+                        p.name AS product_name,
+                        SUM(quantity) AS sum_quantity
+                FROM product p
+                JOIN product_detail pd ON p.id = pd.product_id
+                GROUP BY p.code, p.name, p.id
+            ) AS subquery;
+            """,nativeQuery = true)
+    Integer getTotalPageProductResponse();
+
+    @Query(value = """
+            SELECT p.id AS product_id,
+                       p.code AS product_code,
+                       p.name AS product_name,
+                       SUM(quantity) AS sum_quantity
+                FROM product p
+                JOIN product_detail pd ON p.id = pd.product_id
+                WHERE p.code LIKE CONCAT('%', :input, '%')
+                    OR p.name LIKE CONCAT('%', :input, '%')
+                GROUP BY p.code, p.name, p.id;
+            """,nativeQuery = true)
+    List<ProductResponse> searchProductResponse(String input,Pageable pageable);
+
+
+    @Query(value = """
+            select count(*) as 'result' from (
+                SELECT p.id AS product_id,
+                       p.code AS product_code,
+                       p.name AS product_name,
+                       SUM(quantity) AS sum_quantity
+                FROM product p
+                JOIN product_detail pd ON p.id = pd.product_id
+                WHERE p.code LIKE CONCAT('%', :input, '%')
+                    OR p.name LIKE CONCAT('%', :input, '%')
+                GROUP BY p.code, p.name, p.id) as subquery ;
+            """,nativeQuery = true)
+    Integer getTotalPageSearchProductResponse(String input);
+
+
+    //Product Detail
+    @Query(value = """
+            SELECT pd.id AS product_detail_id,
+            p.name AS product_name,
+            pd.quantity AS product_detail_quantity,
+            pd.sell_price AS product_detail_sell_price,
+            s.name AS product_detail_size_name,
+            c.code AS product_detail_color_code,
+            spd.name AS product_detail_status
+            FROM product p
+            JOIN product_detail pd ON p.id=pd.product_id
+            JOIN color c ON pd.color_id=c.id
+            JOIN size s ON pd.size_id=s.id
+            JOIN status_product_detail spd ON spd.id=pd.status_product_detail
+            WHERE p.id=:product_id
+            """,nativeQuery = true)
+    List<ProductDetailResponse> getProductDetailResponse(Long product_id,Pageable pageable);
+
+
+    @Query(value = """
+            SELECT count(*) FROM ( SELECT pd.id AS product_detail_id,
+                        p.name AS product_name,
+                        pd.quantity AS product_detail_quantity,
+                        pd.sell_price AS product_detail_sell_price,
+                        s.name AS product_detail_size_name,
+                        c.code AS product_detail_color_code,
+                        spd.name AS product_detail_status
+                        FROM product p
+                        JOIN product_detail pd ON p.id=pd.product_id
+                        JOIN color c ON pd.color_id=c.id
+                        JOIN size s ON pd.size_id=s.id
+                        JOIN status_product_detail spd ON spd.id=pd.status_product_detail
+                        where p.id=:product_id) AS subquery;
+            """,nativeQuery = true)
+    Integer getTotalPageProductDetailResponse(Long product_id);
+
+
+    @Query(value = """
+            SELECT pd.id AS product_detail_id,
+                   p.name AS product_name,
+                   pd.quantity AS product_detail_quantity,
+                   pd.sell_price AS product_detail_sell_price,
+                   s.name AS product_detail_size_name,
+                   c.code AS product_detail_color_code,
+                   spd.name AS product_detail_status
+            FROM product p
+            JOIN product_detail pd ON p.id = pd.product_id
+            JOIN material ON material.id = pd.material_id
+            JOIN brand ON brand.id = pd.brand_id
+            JOIN sole ON sole.id = pd.sole_id
+            JOIN category ON category.id = pd.category_id
+            JOIN gender ON gender.id = pd.gender_id
+            JOIN color c ON c.id = pd.color_id
+            JOIN size s ON s.id = pd.size_id
+            JOIN status_product_detail spd ON spd.id = pd.status_product_detail
+            WHERE p.id =:product_id
+            AND material.id = IFNULL(NULLIF(:materialId, ''), material.id)
+            AND brand.id = IFNULL(NULLIF(:brandId, ''), brand.id)
+            AND sole.id = IFNULL(NULLIF(:soleId, ''), sole.id)
+            AND s.id = IFNULL(NULLIF(:sizeId, ''), s.id)
+            AND c.id = IFNULL(NULLIF(:colorId, ''), c.id)
+            AND category.id = IFNULL(NULLIF(:categoryId, ''), category.id)
+            AND spd.id = IFNULL(NULLIF(:spdId, ''), spd.id)
+            AND gender.id = IFNULL(NULLIF(:genderId, ''), gender.id)
+            """,nativeQuery = true)
+    List<ProductDetailResponse> searchProductDetailResponse(Long product_id,Long materialId,Long brandId,Long soleId,Long sizeId,Long colorId,Long categoryId,
+                                                            Long spdId,Long genderId,Pageable pageable);
+
+
+
+    @Query(value = """
+            SELECT COUNT(*) FROM (SELECT pd.id AS product_detail_id,
+                   p.name AS product_name,
+                   pd.quantity AS product_detail_quantity,
+                   pd.sell_price AS product_detail_sell_price,
+                   s.name AS product_detail_size_name,
+                   c.code AS product_detail_color_code,
+                   spd.name AS product_detail_status
+            FROM product p
+            JOIN product_detail pd ON p.id = pd.product_id
+            JOIN material ON material.id = pd.material_id
+            JOIN brand ON brand.id = pd.brand_id
+            JOIN sole ON sole.id = pd.sole_id
+            JOIN category ON category.id = pd.category_id
+            JOIN gender ON gender.id = pd.gender_id
+            JOIN color c ON c.id = pd.color_id
+            JOIN size s ON s.id = pd.size_id
+            JOIN status_product_detail spd ON spd.id = pd.status_product_detail
+            WHERE p.id =:product_id
+            AND material.id = IFNULL(NULLIF(:materialId, ''), material.id)
+            AND brand.id = IFNULL(NULLIF(:brandId, ''), brand.id)
+            AND sole.id = IFNULL(NULLIF(:soleId, ''), sole.id)
+            AND s.id = IFNULL(NULLIF(:sizeId, ''), s.id)
+            AND c.id = IFNULL(NULLIF(:colorId, ''), c.id)
+            AND category.id = IFNULL(NULLIF(:categoryId, ''), category.id)
+            AND spd.id = IFNULL(NULLIF(:spdId, ''), spd.id)
+            AND gender.id = IFNULL(NULLIF(:genderId, ''), gender.id)) as subquery;
+            """,nativeQuery = true)
+    Integer getTotalPageSearchProductDetailResponse(Long product_id,Long materialId,Long brandId,Long soleId,Long sizeId,Long colorId,Long categoryId,
+                                                            Long spdId,Long genderId);
+
+
+
+    @Query(value = """
+            SELECT p.id AS product_id,
+            pd.id AS product_detail_id,
+            p.name AS product_name,
+            pd.description AS product_description,
+            pd.quantity AS product_detail_quantity,
+            b.id AS product_detail_brand_id,
+            mate.id AS product_detail_material_id,
+            gen.id AS product_detail_gender_id,
+            sole.id AS product_detail_sole_id,
+            cate.id AS product_detail_category_id,
+            pd.sell_price AS product_detail_sell_price,
+            s.id AS product_detail_size_id,
+            c.id AS product_detail_color_id,
+            spd.id AS product_detail_status_id
+            FROM product p
+            JOIN product_detail pd ON p.id=pd.product_id
+            JOIN color c ON pd.color_id=c.id
+            JOIN size s ON pd.size_id=s.id
+            JOIN brand b ON b.id=pd.brand_id
+            JOIN category cate ON cate.id=pd.category_id
+            JOIN gender gen ON gen.id=pd.gender_id
+            JOIN material mate ON mate.id=pd.material_id
+            JOIN sole ON sole.id=pd.sole_id
+            JOIN status_product_detail spd ON spd.id=pd.status_product_detail
+            WHERE pd.id=:product_detail_id
             """,nativeQuery = true)
     ProductDetailImageResponse getProductDetailImageResponse(Long product_detail_id);
 

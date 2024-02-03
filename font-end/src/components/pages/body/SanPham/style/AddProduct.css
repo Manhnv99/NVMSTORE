@@ -79,3 +79,30 @@
     color: var(--primary-white);
     cursor: pointer;
 }
+
+
+.listProduct{
+    z-index: 20;
+    position: absolute;
+    top: 38px;
+    right: 0;
+    left: 125px;
+    min-height: 200px;
+    overflow-y: scroll;
+    background-color: var(--primary-white);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    display: none;
+}
+.itemProduct{
+    border-radius: 5px;
+}
+.itemProduct span{
+    display: block;
+    cursor: pointer;
+    padding: 10px 25px 2px 10px !important;
+}
+.itemProduct:hover{
+    transition: 0.3s ease-in-out;
+    background-color: #e8e6e6;
+}

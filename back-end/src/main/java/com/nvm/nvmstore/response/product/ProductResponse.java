@@ -9,5 +9,7 @@ public interface ProductResponse {
 
     String getProduct_name();
 
+    Boolean getProduct_status();
+
     Integer getSum_quantity();
 }

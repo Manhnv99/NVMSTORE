@@ -1,24 +1,79 @@
 import "./style/Product.css"
-import {Button, Card, Col, Container, Form, Modal, Row, Table} from "react-bootstrap";
+import {Card, Col, Container, Form, Row, Table} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchProductResponse, setIdProduct} from "../../../../redux/slices/product/ProductSlice";
+import {fetchProductResponse, setListProduct} from "../../../../redux/slices/product/ProductSlice";
+import Loading from "../../loading/Loading";
+import Paging from "../../../utils/Paging";
+import productAPI from "../../../services/ProductAPI/ProductAPI";
 
 
 
 const Product=()=>{
+    //state
+    const [totalPage,setTotalPage]=useState(undefined);
+    const [input,setInput]=useState('');
+    //action
+    const [whatAction,setWhatAction]=useState("normal");
+    //nav
     const nav=useNavigate();
-    const dispatch=useDispatch()
-    const listProduct=useSelector(state => state.product.listProduct)
+    //dispatch
+    const dispatch=useDispatch();
+    //List
+    const listProduct=useSelector(state => state.product.listProduct);
+    //loading
+    const isLoading=useSelector(state => state.product.isLoading);
+    const [loading,setLoading]=useState(false);
 
 
     useEffect(() => {
-        dispatch(fetchProductResponse());
+        getTotalPage();
+        dispatch(fetchProductResponse(1));
     }, []);
+
+    const getTotalPage= async ()=>{
+        try {
+            const totalPage=await productAPI.getTotalPageProductResponse();
+            setTotalPage(totalPage.data);
+        }catch (e) {
+            console.log(e);
+        }
+    }
+
+    const handleSearch= async ()=>{
+        try {
+            const response= await productAPI.searchProductResponse(input,1);
+            dispatch(setListProduct(response.data));
+            const totalPage=await productAPI.getTotalPageSearchProductResponse(input);
+            setTotalPage(totalPage.data);
+            setWhatAction("search");
+        }catch (e) {
+            console.log(e)
+        }
+    }
+
+    const handleAPISearchPaging= async (page)=>{
+        setLoading(true);
+        try {
+            const response= await productAPI.searchProductResponse(input,page);
+            dispatch(setListProduct(response.data));
+            setLoading(false);
+        }catch (e) {
+            setLoading(false);
+            console.log(e)
+        }
+    }
+
+    const handleAPIPaging=(page)=>{
+        dispatch(fetchProductResponse(page));
+    }
+
+
 
     return(
         <>
+            {isLoading && <Loading/>}
             <Container>
                 <div className="base-header">
                     <i className="fa-solid fa-box-open"></i>
@@ -34,7 +89,7 @@ const Product=()=>{
                             <Col lg={6}>
                                 <Form.Group>
                                     <Form.Label>Tìm kiếm</Form.Label>
-                                    <Form.Control type="text"/>
+                                    <Form.Control value={input} onChange={(e)=>{setInput(e.target.value)}} required type="text"/>
                                 </Form.Group>
                             </Col>
                             <Col lg={6}>
@@ -50,8 +105,8 @@ const Product=()=>{
                         </Row>
                         <Row>
                             <Col lg={12} style={{textAlign:"center",marginTop:"50px"}}>
-                                <button className="handleFilter">Tìm kiếm</button>
-                                <button className="handleClear">Làm mới bộ lọc</button>
+                                <button onClick={handleSearch} className="handleFilter">Tìm kiếm</button>
+                                <button onClick={()=>{setInput('')}} className="handleClear">Làm mới bộ lọc</button>
                             </Col>
                         </Row>
                     </div>
@@ -103,12 +158,7 @@ const Product=()=>{
                             </Table>
                         </Card.Body>
                         <Card.Footer style={{backgroundColor: "#fff"}}>
-                            <div style={{display: "flex", justifyContent: "end", alignItems: "center"}}>
-                                <i style={{marginRight: "15px", cursor: "pointer", color: "#fa0307"}} className="fa-solid fa-angle-left"></i>
-                                <span className={"actionPage page"} style={{cursor: "pointer", padding: "3px 10px", borderRadius: "5px", textAlign: "center", margin: "3px", color: "#fa0307"}}>1</span>
-                                <i style={{marginLeft: "15px", cursor: "pointer", color: "#fa0307"}}
-                                   className="fa-solid fa-angle-right"></i>
-                            </div>
+                            <Paging TotalPage={totalPage} APIPaging={handleAPIPaging} APISearchPaging={handleAPISearchPaging} whatAction={whatAction}/>
                         </Card.Footer>
                     </Card>
                 </div>
