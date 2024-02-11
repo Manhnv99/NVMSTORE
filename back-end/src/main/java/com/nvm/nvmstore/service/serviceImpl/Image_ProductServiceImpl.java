@@ -5,10 +5,12 @@ import com.nvm.nvmstore.entity.Product_Detail;
 import com.nvm.nvmstore.repository.ImageProductRepository;
 import com.nvm.nvmstore.repository.Product_DetailRepository;
 import com.nvm.nvmstore.request.ImageProduct.ImageProductRequest;
+import com.nvm.nvmstore.service.CloudinaryService;
 import com.nvm.nvmstore.service.Image_ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 
@@ -21,6 +23,9 @@ public class Image_ProductServiceImpl implements Image_ProductService {
     @Autowired
     private Product_DetailRepository product_detailRepository;
 
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
     @Override
     public void addImageProduct(ImageProductRequest imageProductRequest) {
         Image_Product image_product_add=new Image_Product();
@@ -31,5 +36,11 @@ public class Image_ProductServiceImpl implements Image_ProductService {
         image_product_add.setCreated_at(new Date());
         image_product_add.setUpdated_at(new Date());
         imageProductRepository.save(image_product_add);
+    }
+
+    @Override
+    public void removeImageProduct(Long image_product_id,String image_id) throws IOException {
+        imageProductRepository.deleteById(image_product_id);
+        cloudinaryService.delete(image_id);
     }
 }

@@ -494,7 +494,6 @@ const AddProduct=()=>{
                     const listImageForColor = listImageChoose.filter(item => item.color === listProduct[i].color_name);
                     //uploadimage to Cloudinary
                     await uploadImageToCloudinary(listImageForColor, response.data);
-                    addSuccess();
                 }
             } catch (e) {
                 setLoading(false);
@@ -504,6 +503,7 @@ const AddProduct=()=>{
                 dispatch(toastMessage(toastMsg));
             }
         }
+        addSuccess();
     }
 
     const uploadImageToCloudinary=async(listImageForColor,data)=>{

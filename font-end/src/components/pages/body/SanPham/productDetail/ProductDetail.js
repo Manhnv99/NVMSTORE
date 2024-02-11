@@ -16,6 +16,7 @@ import ProductImageDetail from "../productImageDetail/ProductImageDetail";
 import Paging from "../../../../utils/Paging";
 import productDetailAPI from "../../../../services/ProductAPI/Product_Detail_API/ProductDetailAPI";
 import Loading from "../../../loading/Loading";
+import {NumericFormat} from "react-number-format";
 
 
 
@@ -25,14 +26,14 @@ const ProductDetail=()=>{
     //openModal
     const [openModalPID,setOpenModalPid]=useState(false);
     //state
-    const [material_id,setMaterial_Id]=useState('')
-    const [brand_id,setBrand_Id]=useState('')
-    const [sole_id,setSole_Id]=useState('')
-    const [size_id,setSize_Id]=useState('')
-    const [color_id,setColor_Id]=useState('')
-    const [category_id,setCategory_Id]=useState('')
-    const [status_id,setStatus_Id]=useState('')
-    const [gender_id,setGender_Id]=useState('')
+    const [brand_id,setBrand_Id]=useState('');
+    const [material_id,setMaterial_Id]=useState('');
+    const [gender_id,setGender_Id]=useState('');
+    const [color_id,setColor_Id]=useState('');
+    const [status_id,setStatus_Id]=useState('');
+    const [sole_id,setSole_Id]=useState('');
+    const [size_id,setSize_Id]=useState('');
+    const [category_id,setCategory_Id]=useState('');
     //list
     const [listMaterial,setListMaterial]=useState([]);
     const [listBrand,setListBrand]=useState([]);
@@ -162,7 +163,7 @@ const ProductDetail=()=>{
     return(
         <>
             {loading || isLoading && <Loading/>}
-            {openModalPID && <ProductImageDetail id_product_detail={id_product_detail} setOpenModalPid={setOpenModalPid}/>}
+            {openModalPID && <ProductImageDetail id_product_detail={id_product_detail} product_id={product_id} setOpenModalPid={setOpenModalPid}/>}
             <Container>
                 <div className="base-header">
                     <i className="fa-solid fa-box-open"></i>
@@ -335,10 +336,7 @@ const ProductDetail=()=>{
                             <Table style={{marginBottom: "0"}}>
                             <thead>
                             <tr style={{fontSize: "12px", fontWeight: "600"}}>
-                                <th style={{width: "5%", textAlign: "center"}}>
-                                    <input type="checkbox"/>
-                                    <span>STT</span>
-                                </th>
+                                <th style={{width: "5%", textAlign: "center"}}>STT</th>
                                 <th style={{width: "15%"}}>Ảnh</th>
                                 <th style={{width: "20%"}}>Tên Sản Phẩm</th>
                                 <th style={{width: "10%", textAlign: "center"}}>Số Lượng</th>
@@ -352,14 +350,15 @@ const ProductDetail=()=>{
                                 <tbody>
                                     {listProductDetail.map((item,index)=>(
                                         <tr style={{fontSize: "12px"}}>
-                                            <td style={{textAlign: "center"}}>
-                                                <input type="checkbox"/>
-                                                {index+1}
-                                            </td>
+                                            <td style={{textAlign: "center"}}>{index+1}</td>
                                             <td>2</td>
                                             <td>{item.product_name}</td>
-                                            <td style={{textAlign: "center"}}>{item.product_detail_quantity}</td>
-                                            <td style={{textAlign: "center"}}>{item.product_detail_sell_price}</td>
+                                            <td style={{textAlign: "center"}}>
+                                                <Form.Control type="number" className="changeQuantityandPrice" value={item.product_detail_quantity}/>
+                                            </td>
+                                            <td style={{textAlign: "center"}}>
+                                                <NumericFormat style={{padding: "0.375rem 0.75rem",borderRadius:"5px",border:"1px solid #dee2e6",outline:"none"}} thousandSeparator suffix="VNĐ" value={item.product_detail_sell_price}/>
+                                            </td>
                                             <td style={{textAlign: "center"}}>{item.product_detail_size_name}</td>
                                             <td style={{textAlign: "center"}}>
                                                 <span style={{backgroundColor:item.product_detail_color_code,display:"block",borderRadius:"10px", color:item.product_detail_color_code,border:"1px solid #444"}}>2</span>

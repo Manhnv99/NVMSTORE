@@ -7,6 +7,10 @@ class ProductDetailAPI{
         return axios.post(`http://localhost:8080/api/product_detail/add`,productDetailRequest);
     }
 
+    updateProductDetail=(updateProductDetailRequest)=>{
+        return axios.put(`http://localhost:8080/api/product_detail/update`,updateProductDetailRequest);
+    }
+
     //ProductDetail
     productDetailResponse=(product_id,page)=>{
         return axios.get(`http://localhost:8080/api/product/productDetailResponse/${product_id}`,{

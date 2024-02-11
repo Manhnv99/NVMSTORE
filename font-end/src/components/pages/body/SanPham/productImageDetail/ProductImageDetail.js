@@ -18,11 +18,21 @@ import {getAllSize} from "../../../../../redux/slices/SizeSlice";
 import {getAllColor} from "../../../../../redux/slices/ColorSlice";
 import ModalColor_PID from "./modal/ModalColor_PID";
 import ImageProductAPI from "../../../../services/ProductAPI/Image_Product_API/ImageProductAPI";
+import productDetailAPI from "../../../../services/ProductAPI/Product_Detail_API/ProductDetailAPI";
+import {getAllProductDetail} from "../../../../../redux/slices/product/ProductDetailSlice";
+import {toastMessage} from "../../../../../redux/slices/ToastMsgSlice";
+import Loading from "../../../loading/Loading";
+import Confirm from "../../../../utils/Confirm";
+import imageProductAPI from "../../../../services/ProductAPI/Image_Product_API/ImageProductAPI";
+import axios from "axios";
 
 
 const ProductImageDetail=(props)=>{
     // dispatch
     const dispatch=useDispatch();
+    //toastMSG
+    const toastError=useSelector(state => state.toastmsg.toastError);
+    const toastWarning=useSelector(state => state.toastmsg.toastWarning);
     //state entity
     const [whatEntity,setWhatEntity]=useState(undefined);
     const [openModalEntity,setOpenModalEntity]=useState(false);
@@ -41,7 +51,14 @@ const ProductImageDetail=(props)=>{
     const [size_id,setSize_id]=useState('');
     const [quantity,setQuantity]=useState('');
     const [sell_price,setSell_Price]=useState('');
-    const [imageUrl,setImageUrl]=useState(undefined);
+    const [imageUrl,setImageUrl]=useState([]);
+    const [loading,setLoading]=useState(false);
+    const [openConfirm,setOpenConfirm]=useState(false);
+    const [whatActionConfirm,setWhatActionConfirm]=useState(false);
+    const [message,setMessage]=useState("");
+    const [idImageProductDetail,setIdImageProductDetail]=useState(undefined);
+    const [image_id,setImage_Id]=useState(undefined);
+
     //list state to map
     const listBrand=useSelector(state => state.brand.listBrand);
     const listMaterial=useSelector(state => state.material.listMaterial);
@@ -53,7 +70,6 @@ const ProductImageDetail=(props)=>{
     const listSize=useSelector(state => state.size.listSize);
     const [listImage,setListImage]=useState([]);
     //touch
-    const [touchName,setTouchName]=useState(false);
     const [touchDescription,setTouchDescription]=useState(false);
     const [touchBrand_id,setTouchBrand_id]=useState(false);
     const [touchMaterial_id,setTouchMaterial_id]=useState(false);
@@ -67,7 +83,6 @@ const ProductImageDetail=(props)=>{
     const [touchSell_Price,setTouchSell_Price]=useState(false);
     //errors
     const [errors,setErrors]=useState({
-        name:undefined,
         description:undefined,
         brand_id:undefined,
         material_id:undefined,
@@ -102,7 +117,6 @@ const ProductImageDetail=(props)=>{
     const getQRCodeImage= async ()=>{
         const response= await ImageProductAPI.getQRCodeImage(props.id_product_detail);
         setImageUrl(response.data);
-        console.log(response.data)
     }
 
     const getAllImage= async ()=>{
@@ -130,15 +144,6 @@ const ProductImageDetail=(props)=>{
 
 
     //onChange
-    const onChangeName=(e)=>{
-        setName(e.target.value);
-        const errorCopy={...errors};
-        errorCopy.name=undefined;
-        setErrors(errorCopy);
-        if(!touchName){
-            setTouchName(true);
-        }
-    }
 
     const onChangeDescription=(e)=>{
         setDescription(e.target.value);
@@ -289,11 +294,6 @@ const ProductImageDetail=(props)=>{
         },280)
     }
 
-    const test=()=>{
-        const brand_DOC=document.querySelector('.brand_DOC');
-        console.log(brand_DOC.value);
-    }
-
     const fillInput= async ()=>{
         //start DOC
         const brand_DOC=document.querySelectorAll('.brand_DOC');
@@ -338,8 +338,157 @@ const ProductImageDetail=(props)=>{
         })
     }
 
+    const handleUpdateProductDetail= async ()=>{
+        const updateProductDetailRequest={
+            product_detail_id:props.id_product_detail,
+            description:description,
+            quantity:quantity,
+            sell_price:sell_price,
+            brand_id:brand_id,
+            material_id:material_id,
+            gender_id:gender_id,
+            color_id:color_id,
+            status_id:status_id,
+            sole_id:sole_id,
+            category_id:category_id,
+            size_id:size_id
+        };
+        try {
+            setLoading(true)
+            const response= await productDetailAPI.updateProductDetail(updateProductDetailRequest);
+            if(response && response.status===200){
+                const param={
+                    product_id:props.product_id,
+                    page:1
+                }
+                dispatch(getAllProductDetail(param));
+                setLoading(false);
+                handleClose();
+            }
+        }catch (e) {
+            setLoading(false)
+            const errorResponse=e.response.data;
+            const errorCopy={...errors}
+            errorCopy.description=errorResponse.description;
+            errorCopy.brand_id=errorResponse.brand_id;
+            errorCopy.category_id=errorResponse.category_id;
+            errorCopy.color_id=errorResponse.color_id;
+            errorCopy.gender_id=errorResponse.gender_id;
+            errorCopy.material_id=errorResponse.material_id;
+            errorCopy.quantity=errorResponse.quantity;
+            errorCopy.sell_price=errorResponse.sell_price;
+            errorCopy.size_id=errorResponse.size_id;
+            errorCopy.sole_id=errorResponse.sole_id;
+            errorCopy.status_id=errorResponse.status_id;
+            setErrors(errorCopy);
+            if(errorResponse.toastMsg!==undefined){
+                const toastMsg={...toastError}
+                toastMsg.message=errorResponse.toastMsg
+                dispatch(toastMessage(toastMsg));
+            }
+        }
+    }
+
+    const handleOpenConfirmUpdateProductDetail=()=>{
+        setOpenConfirm(true);
+        setWhatActionConfirm("updateProductDetail");
+        setMessage("Bạn có chắc muốn sửa sản phẩm này!");
+    }
+
+    const handleOpenConfirmDeleteImageProductDetail=(image_product_id,image_id)=>{
+        setIdImageProductDetail(image_product_id);
+        setImage_Id(image_id);
+        setOpenConfirm(true);
+        setWhatActionConfirm("deleteImageProductDetail");
+        setMessage("Bạn có chắc muốn xóa ảnh này!");
+    }
+    const handleRemoveImageProductDetail= async ()=>{
+        setLoading(true);
+        try {
+            const response = await imageProductAPI.removeImageProduct(idImageProductDetail,image_id);
+            if(response && response.status===200){
+                setLoading(false);
+                await getAllImage();
+            }
+        }catch (e) {
+            setLoading(false);
+            console.log(e);
+        }
+    }
+
+    const handleAddImageProductDetail= async (e)=>{
+        const files=e.target.files;
+        if(listImage.length+files.length>12){
+            const toastMsg={...toastWarning}
+            toastMsg.message="Không Thể Thêm Quá 12 Ảnh!";
+            dispatch(toastMessage(toastMsg));
+        }else{
+            if(files.length>0){
+                setLoading(true);
+                const CLOUD_NAME="dbxajsljz";
+                const PRESET_NAME="nvmstore";
+                const FOLDER_NAME="nvmstoreimage";
+                const API=`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+                const formData=new FormData();
+                formData.append("upload_preset",PRESET_NAME);
+                formData.append("folder",FOLDER_NAME);
+                for(const file of files){
+                    formData.append("file",file);
+                    axios.post(API,formData,{
+                        headers:{
+                            "Content-Type":"multipart/form-data",
+                        }
+                    }).then(response=>{
+                        let imageProductRequest={
+                            product_detail_id:props.id_product_detail,
+                            image_id:response.data.public_id,
+                            image_url:response.data.url
+                        }
+                        //add Image Product
+                        addImageProduct(imageProductRequest);
+                    }).catch(e=>{
+                        setLoading(false);
+                        console.log(e);
+                    })
+                }
+                if(files.length<=3){
+                    setTimeout(async ()=>{
+                        await getAllImage();
+                        setLoading(false);
+                    },2000)
+                }else if(files.length>3 && files.length <7){
+                    setTimeout(async ()=>{
+                        await getAllImage();
+                        setLoading(false);
+                    },4000)
+                }else if(files.length>7){
+                    setTimeout(async ()=>{
+                        await getAllImage();
+                        setLoading(false);
+                    },6000)
+                }
+            }
+        }
+    }
+
+    const addImageProduct=async (imageProductRequest)=>{
+        try{
+            await ImageProductAPI.addImageProduct(imageProductRequest)
+        }catch (e) {
+            setLoading(false)
+            console.log(e)
+        }
+    }
+
+
     return(
         <>
+            {openConfirm && <Confirm whatActionConfirm={whatActionConfirm}
+                                     setOpenConfirm={setOpenConfirm}
+                                     handleRemoveImageProductDetail={handleRemoveImageProductDetail}
+                                     handleUpdateProductDetail={handleUpdateProductDetail}
+                                     message={message}/>}
+            {loading && <Loading/>}
             {openModalColor && <ModalColor_PID setOpenModalColor={setOpenModalColor}/>}
             {openModalSize && <ModalSize_PID setOpenModalSize={setOpenModalSize}/>}
             {openModalEntity && <ModalEntity setOpenModalEntity={setOpenModalEntity} whatEntity={whatEntity}/>}
@@ -360,15 +509,8 @@ const ProductImageDetail=(props)=>{
                                     <Form.Group >
                                         <div style={{ display: 'flex', alignItems: 'start' }}>
                                             <Form.Label style={{width:"140px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Tên sản phẩm:</Form.Label>
-                                            <Form.Control value={name} onChange={onChangeName} required type="text" placeholder="Nhập tên sản phẩm!"
-                                                          isValid={name.length>=5}
-                                                          isInvalid={touchName && name==='' || errors.name!==undefined}/>
+                                            <Form.Control value={name} type="text" placeholder="Nhập tên sản phẩm!" disabled/>
                                         </div>
-                                        {touchName && name === '' ?
-                                            <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>Bạn Chưa Điền Tên Sản Phẩm!</span> :
-                                            errors.name !== undefined ?
-                                                <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.name}</span>:''
-                                        }
                                     </Form.Group>
                                 </Col>
                                 {/*Mô Tả*/}
@@ -497,7 +639,7 @@ const ProductImageDetail=(props)=>{
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Số Lượng:</Form.Label>
                                             <Form.Control value={quantity} onChange={onChangeQuantity} style={{width:"50%"}} required type="number" placeholder="Nhập số lượng đang bán!"
-                                                          isValid={quantity!==""}
+                                                          isValid={quantity!=="" && quantity>0 && quantity<=10000000}
                                                           isInvalid={touchQuantity && quantity==='' || errors.quantity!==undefined}/>
                                         </div>
                                         {touchQuantity && quantity==='' ?
@@ -617,7 +759,7 @@ const ProductImageDetail=(props)=>{
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Giá Bán:</Form.Label>
                                             <Form.Control value={sell_price} onChange={onChangeSell_Price} style={{width:"50%"}} required type="number" placeholder="Nhập giá bán!"
-                                                          isValid={sell_price!==""}
+                                                          isValid={sell_price!=="" && sell_price>0 && sell_price<=1000000000}
                                                           isInvalid={touchSell_Price && sell_price==='' || errors.sell_price!==undefined}/>
                                         </div>
                                         {touchSell_Price && sell_price==='' ?
@@ -635,28 +777,37 @@ const ProductImageDetail=(props)=>{
                                 </Col>
                             </Row>
                             <Row style={{margin:"40px 0 20px 0"}}>
-                                <input className="input_upload" type="file" multiple style={{display:"none"}}/>
+                                <input onChange={handleAddImageProductDetail} className="input_upload" type="file" multiple style={{display:"none"}}/>
                                 <div className="pid-list_image">
                                     <h1>Ảnh Sản Phẩm</h1>
                                 </div>
                                 {listImage.map(image=>(
                                     <Col sm={1}>
-                                        <img style={{width:"100%",height:"100px",objectFit:"contain",border:"1px solid #999",borderRadius:"5px"}} src={image.imageURL} alt=""/>
+                                        <div className="pid_image_container">
+                                            <img className="pid_list_image" src={image.imageURL} alt=""/>
+                                            <div className="pid_coating">
+                                                <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "100%"}}>
+                                                    <i onClick={()=>{handleOpenConfirmDeleteImageProductDetail(image.image_Product_id,image.image_id)}} style={{cursor:"pointer"}} className="fa-solid fa-trash"></i>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </Col>
                                 ))}
                                 <Col sm={1}>
-                                    <div onClick={handleOpenFileUpLoad} className="pid_upload">
-                                        <div style={{textAlign: "center"}}>
-                                            <i className="fa-solid fa-plus"></i>
-                                            <p>Upload</p>
-                                        </div>
-                                    </div>
+                                    {listImage.length<12 ?
+                                        <div onClick={handleOpenFileUpLoad} className="pid_upload">
+                                            <div style={{textAlign: "center"}}>
+                                                <i className="fa-solid fa-plus"></i>
+                                                <p>Upload</p>
+                                            </div>
+                                        </div> : <></>
+                                    }
                                 </Col>
                             </Row>
                         </div>
                         <div className="pid_footer">
                             <button onClick={handleClose} className="pid_cancel">Hủy</button>
-                            <button onClick={test} className="pid_edit">Chỉnh Sửa</button>
+                            <button onClick={handleOpenConfirmUpdateProductDetail} className="pid_edit">Chỉnh Sửa</button>
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,51 @@
+.conf_header i{
+    padding: 5px 12px;
+    border-radius: 50%;
+    color: #fff;
+    margin-right: 10px;
+    background-color: #f3ac18;
+}
+.conf_header span{
+    font-weight: 600;
+    font-size: 17px;
+}
+
+.conf_message span{
+    display: block;
+    font-weight: 500;
+    font-size: 18px;
+    margin: 10px 0 10px 0;
+
+}
+
+.conf_function{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.conf-close{
+    padding: 5px 20px;
+    border: 1px solid #444;
+    background-color: #ffffff;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.conf-agree{
+    padding: 5px 20px;
+    border: 1px solid var(--primary-blue);
+    background-color: var(--primary-blue);
+    border-radius: 5px;
+    color: #fff;
+    font-size: 14px;
+}
+.conf-agree:hover{
+    transition: 0.3s ease-in-out;
+    opacity: 0.8;
+}
+.conf-close:hover{
+    transition: 0.3s ease-in-out;
+    background-color: #f4f0f0;
+}

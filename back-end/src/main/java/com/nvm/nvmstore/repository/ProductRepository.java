@@ -215,7 +215,12 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
 
 
     @Query(value = """
-            select image_url as imageURL from product_detail pd join image_product ip on pd.id=ip.product_detail_id where pd.id=:product_detail_id
+            SELECT ip.id AS image_product_id,
+            ip.product_detail_id AS product_detail_id,
+            ip.image_id AS image_id,
+            image_url AS imageURL
+            FROM product_detail pd JOIN image_product ip ON pd.id=ip.product_detail_id
+            WHERE pd.id=:product_detail_id
             """,nativeQuery = true)
     List<ImageProductResponse> getImageProductResponse(Long product_detail_id);
 }

@@ -27,6 +27,12 @@ public class Image_Product_Controller {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @DeleteMapping("/remove")
+    public ResponseEntity<?> removeImageProduct(@RequestParam(value = "image_product_id") Long image_product_id, @RequestParam(value = "image_id") String image_id) throws IOException {
+        image_productService.removeImageProduct(image_product_id,image_id);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
     @GetMapping("/qrcodeimage")
     public ResponseEntity<?> ReadQRCodeToBase64(@RequestParam("qrcode") String data) throws IOException {
         return ResponseEntity.status(HttpStatus.OK).body(qrCodeService.ReadQRCodeToBase64(data));
