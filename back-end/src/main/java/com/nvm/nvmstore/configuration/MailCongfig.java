@@ -14,14 +14,13 @@ public class MailCongfig {
     public JavaMailSender javaMailSender(){
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587); // Điều chỉnh cổng theo cấu hình của bạn
+        mailSender.setPort(587);
         mailSender.setUsername("nguyenvimanhnqt@gmail.com");
         mailSender.setPassword("mwvy dmpm pppo kskc");
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", true);
         properties.put("mail.smtp.starttls.enable", true);
         mailSender.setJavaMailProperties(properties);
-        // Cấu hình các thuộc tính khác (nếu cần)
         return mailSender;
     }
 }

@@ -1,6 +1,6 @@
 import "./style/AddProduct.css"
-import {Button, Card, Col, Container, Form, Row, Table} from "react-bootstrap";
-import {useEffect, useState} from "react";
+import {Button, Card, Col, Container, Form, Modal, Row, Table} from "react-bootstrap";
+import {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import { setListBrand} from "../../../../redux/slices/BrandSlice";
 import brandAPI from "../../../services/BrandAPI/BrandAPI";
@@ -52,6 +52,7 @@ const AddProduct=()=>{
     const [status_id,setStatus_id]=useState('')
     const [imageDetail,setImageDetail]=useState(undefined)
     const [checkAll,setCheckAll]=useState(false)
+    const [show,setShow]=useState(false);
     // touch
     const [touchName,setTouchName]=useState(false)
     const [touchBrand_id,setTouchBrand_id]=useState(false)
@@ -132,6 +133,14 @@ const AddProduct=()=>{
         dispatch(getAllGender())
         dispatch(getAllStatusProductDetail())
     },[])
+
+    const handleClose=useCallback(()=>{
+        setShow(false);
+    },[]);
+
+    const handleConfirm=useCallback(()=>{
+       setShow(true);
+    },[]);
 
     const getAllProduct= async ()=>{
         const res= await productAPI.getAllProduct();
@@ -406,6 +415,7 @@ const AddProduct=()=>{
     }
 
     const handleAddProduct= async ()=>{
+        handleClose();
         let error=0
         try {
             const productRequest={
@@ -867,7 +877,7 @@ const AddProduct=()=>{
                             <Col sm={12}>
                                 <div style={{display:"flex",justifyContent:"end"}}>
                                     <Button onClick={handleOpenModalEdit}>Chỉnh số lượng và giá chung</Button>
-                                    <Button onClick={handleAddProduct} style={{marginLeft:"10px"}}>Hoàn Tất</Button>
+                                    <Button onClick={handleConfirm} style={{marginLeft:"10px"}}>Hoàn Tất</Button>
                                 </div>
                             </Col>
                             {/*Table*/}
@@ -953,6 +963,24 @@ const AddProduct=()=>{
                     </div>
                 </div>
             </Container>
+            {/*Confirm*/}
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Body>
+                    <Col sm={12}>
+                        <div className="conf_header">
+                            <i className="fa-solid fa-exclamation"></i>
+                            <span>Xác nhận</span>
+                        </div>
+                        <div className="conf_message">
+                            <span>Bạn có muốn thêm sản phẩm này không!</span>
+                        </div>
+                        <div className="conf_function">
+                            <button onClick={handleClose} className="conf-close">Hủy</button>
+                            <button onClick={handleAddProduct} className="conf-agree">Xác Nhận</button>
+                        </div>
+                    </Col>
+                </Modal.Body>
+            </Modal>
         </>
     )
 }
