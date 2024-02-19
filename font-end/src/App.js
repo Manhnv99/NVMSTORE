@@ -16,9 +16,14 @@ import Material from "./components/pages/body/SanPhamEntity/Material";
 import Product from "./components/pages/body/SanPham/Product";
 import AddProduct from "./components/pages/body/SanPham/AddProduct";
 import ProductDetail from "./components/pages/body/SanPham/productDetail/ProductDetail";
+import AddDiscount from "./components/pages/body/KhuyenMai/DotGiamGia/AddDiscount";
+import AddVoucher from "./components/pages/body/KhuyenMai/PhieuGiamGia/AddVoucher";
+import Discount from "./components/pages/body/KhuyenMai/DotGiamGia/Discount";
+import Voucher from "./components/pages/body/KhuyenMai/PhieuGiamGia/Voucher";
 
 
 function App() {
+
   return (
       <Router>
           <div id="menu">
@@ -43,9 +48,14 @@ function App() {
                 <Route path="/add-staff-management" element={<AddStaff/>}/>
                 <Route path="/update-staff-management/:id" element={<UpdateStaff/>}/>
                 <Route path="/detail-staff-management/:id" element={<DetailStaff/>}/>
+                <Route path="/discount-management" element={<Discount/>}/>
+                <Route path="/create-discount-management" element={<AddDiscount/>}/>
+                <Route path="/voucher-management" element={<Voucher/>}/>
+                <Route path="/create-voucher-management" element={<AddVoucher/>}/>
             </Routes>
           </div>
       </Router>
-  )}
+  )
+}
 
 export default App;

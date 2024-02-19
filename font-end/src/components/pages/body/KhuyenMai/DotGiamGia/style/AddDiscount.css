@@ -1,0 +1,32 @@
+
+.create-discount-container{
+    min-height: 85vh;
+}
+/*left*/
+.create-discount-leftside{
+    background-color: var(--primary-white);
+    height: 100%;
+    padding: 50px 25px 0 25px;
+}
+.create-discount-leftside-title{
+    font-size: 25px;
+    font-weight: 700;
+}
+.create-discount-form{
+    margin-top: 40px;
+}
+.create-discount-add{
+    text-align: center;
+    margin-top: 30px;
+}
+/*right*/
+.create-discount-rightside{
+    background-color: var(--primary-white);
+    height: 100%;
+    padding: 50px 25px 0 25px;
+}
+.create-discount-rightside-title{
+    display: block;
+    font-size: 23px;
+    font-weight: 700;
+}

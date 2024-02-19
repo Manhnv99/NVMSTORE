@@ -165,12 +165,12 @@ const Menu=()=>{
                             <Collapse in={openQLGG}>
                                 <ul>
                                     <li>
-                                        <Link style={{marginLeft: "21px"}}>
+                                        <Link to={"/discount-management"} style={{marginLeft: "21px"}}>
                                             <span>Đợt Giảm Giá</span>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link style={{marginLeft: "21px"}}>
+                                        <Link to={"/voucher-management"} style={{marginLeft: "21px"}}>
                                             <span>Phiếu Giảm Giá</span>
                                         </Link>
                                     </li>

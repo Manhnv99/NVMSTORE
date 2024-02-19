@@ -27,9 +27,7 @@ public class Discount {
 
     private String name;
 
-    private BigDecimal amount;
-
-    private BigDecimal percentage;
+    private BigDecimal value;
 
     private Boolean status;
 

@@ -23,9 +23,7 @@ public class Voucher {
 
     private String name;
 
-    private BigDecimal amount;
-
-    private BigDecimal percentage;
+    private BigDecimal value;
 
     private BigDecimal minimum_order;
 
