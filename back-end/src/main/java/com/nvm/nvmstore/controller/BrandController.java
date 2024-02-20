@@ -1,6 +1,5 @@
 package com.nvm.nvmstore.controller;
 
-
 import com.nvm.nvmstore.request.brand.BrandRequest;
 import com.nvm.nvmstore.service.BrandService;
 import jakarta.validation.Valid;
@@ -29,7 +28,6 @@ public class BrandController {
         return ResponseEntity.status(HttpStatus.OK).body(brandService.getAllPaging(pageRequest));
     }
 
-
     @GetMapping("/getAllTotalPage")
     public ResponseEntity<?> getAllTotalPage(){
         return ResponseEntity.status(HttpStatus.OK).body(brandService.getAllTotalPage());
@@ -45,7 +43,6 @@ public class BrandController {
     public ResponseEntity<?> getTotalPageSearch(@RequestParam(name = "input",required = false) String input,@RequestParam(name = "status",required = false) Boolean status){
         return ResponseEntity.status(HttpStatus.OK).body(brandService.getTotalPageSearch(input,status));
     }
-
 
     @PostMapping("/add")
     public ResponseEntity<?> addBrand(@RequestBody @Valid BrandRequest brandRequest){

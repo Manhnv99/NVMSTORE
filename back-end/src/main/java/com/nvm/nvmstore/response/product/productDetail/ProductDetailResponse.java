@@ -10,6 +10,8 @@ public interface ProductDetailResponse {
 
     String getProduct_name();
 
+    String getProduct_detail_gender();
+
     Integer getProduct_detail_quantity();
 
     BigDecimal getProduct_detail_sell_price();

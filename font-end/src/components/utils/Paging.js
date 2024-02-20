@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 
 
 
-const Paging=({TotalPage=5,APIPaging=function (){},APISearchPaging=function (){},whatAction="normal"})=>{
+const Paging=({TotalPage=1,APIPaging=function (){},APISearchPaging=function (){},whatAction="normal"})=>{
 
     const [totalPage,setTotalPage]=useState([]);
     const [currentPage,setCurrentPage]=useState(1);

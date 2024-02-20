@@ -34,8 +34,8 @@ const Product=()=>{
 
     const getTotalPage= async ()=>{
         try {
-            const totalPage=await productAPI.getTotalPageProductResponse();
-            setTotalPage(totalPage.data);
+            const response=await productAPI.getTotalPageProductResponse();
+            setTotalPage(response.data);
         }catch (e) {
             console.log(e);
         }

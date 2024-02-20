@@ -84,25 +84,8 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     //Product Detail
     @Query(value = """
             SELECT pd.id AS product_detail_id,
-            p.name AS product_name,
-            pd.quantity AS product_detail_quantity,
-            pd.sell_price AS product_detail_sell_price,
-            s.name AS product_detail_size_name,
-            c.code AS product_detail_color_code,
-            spd.name AS product_detail_status
-            FROM product p
-            JOIN product_detail pd ON p.id=pd.product_id
-            JOIN color c ON pd.color_id=c.id
-            JOIN size s ON pd.size_id=s.id
-            JOIN status_product_detail spd ON spd.id=pd.status_product_detail
-            WHERE p.id=:product_id
-            """,nativeQuery = true)
-    List<ProductDetailResponse> getProductDetailResponse(Long product_id,Pageable pageable);
-
-
-    @Query(value = """
-            SELECT count(*) FROM ( SELECT pd.id AS product_detail_id,
                         p.name AS product_name,
+                        g.name AS product_detail_gender,
                         pd.quantity AS product_detail_quantity,
                         pd.sell_price AS product_detail_sell_price,
                         s.name AS product_detail_size_name,
@@ -112,6 +95,27 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                         JOIN product_detail pd ON p.id=pd.product_id
                         JOIN color c ON pd.color_id=c.id
                         JOIN size s ON pd.size_id=s.id
+                        JOIN gender g ON pd.gender_id
+                        JOIN status_product_detail spd ON spd.id=pd.status_product_detail
+                        WHERE p.id=:product_id
+            """,nativeQuery = true)
+    List<ProductDetailResponse> getProductDetailResponse(Long product_id,Pageable pageable);
+
+
+    @Query(value = """
+            SELECT count(*) FROM ( SELECT pd.id AS product_detail_id,
+                        p.name AS product_name,
+                        g.name AS gender_name,
+                        pd.quantity AS product_detail_quantity,
+                        pd.sell_price AS product_detail_sell_price,
+                        s.name AS product_detail_size_name,
+                        c.code AS product_detail_color_code,
+                        spd.name AS product_detail_status
+                        FROM product p
+                        JOIN product_detail pd ON p.id=pd.product_id
+                        JOIN color c ON pd.color_id=c.id
+                        JOIN size s ON pd.size_id=s.id
+                        JOIN gender g ON pd.gender_id
                         JOIN status_product_detail spd ON spd.id=pd.status_product_detail
                         where p.id=:product_id) AS subquery;
             """,nativeQuery = true)
@@ -121,6 +125,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     @Query(value = """
             SELECT pd.id AS product_detail_id,
                    p.name AS product_name,
+                   g.name AS gender_name,
                    pd.quantity AS product_detail_quantity,
                    pd.sell_price AS product_detail_sell_price,
                    s.name AS product_detail_size_name,
@@ -135,6 +140,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             JOIN gender ON gender.id = pd.gender_id
             JOIN color c ON c.id = pd.color_id
             JOIN size s ON s.id = pd.size_id
+            JOIN gender g ON pd.gender_id
             JOIN status_product_detail spd ON spd.id = pd.status_product_detail
             WHERE p.id =:product_id
             AND material.id = IFNULL(NULLIF(:materialId, ''), material.id)
