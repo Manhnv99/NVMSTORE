@@ -19,7 +19,7 @@ import {getAllColor} from "../../../../../redux/slices/ColorSlice";
 import ModalColor_PID from "./modal/ModalColor_PID";
 import ImageProductAPI from "../../../../services/ProductAPI/Image_Product_API/ImageProductAPI";
 import productDetailAPI from "../../../../services/ProductAPI/Product_Detail_API/ProductDetailAPI";
-import {getAllProductDetail} from "../../../../../redux/slices/product/ProductDetailSlice";
+import {getAllProductDetailByProduct_id} from "../../../../../redux/slices/product/ProductDetailSlice";
 import {toastMessage} from "../../../../../redux/slices/ToastMsgSlice";
 import Loading from "../../../loading/Loading";
 import Confirm from "../../../../utils/Confirm";
@@ -41,21 +41,24 @@ const ProductImageDetail=(props)=>{
     //state
     const [name,setName]=useState('');
     const [description,setDescription]=useState('');
-    const [brand_id,setBrand_id]=useState('');
-    const [material_id,setMaterial_id]=useState('');
-    const [gender_id,setGender_id]=useState('');
-    const [color_id,setColor_id]=useState('');
-    const [status_id,setStatus_id]=useState('');
-    const [sole_id,setSole_id]=useState('');
-    const [category_id,setCategory_id]=useState('');
-    const [size_id,setSize_id]=useState('');
+    const [brand_name,setBrand_name]=useState('');
+    const [material_name,setMaterial_name]=useState('');
+    const [gender_name,setGender_name]=useState('');
+    const [color_name,setColor_name]=useState('');
+    const [status_name,setStatus_name]=useState('');
+    const [sole_name,setSole_name]=useState('');
+    const [category_name,setCategory_name]=useState('');
+    const [size_name,setSize_name]=useState('');
     const [quantity,setQuantity]=useState('');
     const [sell_price,setSell_Price]=useState('');
     const [imageUrl,setImageUrl]=useState([]);
+    //loading
     const [loading,setLoading]=useState(false);
+    //openConfirm
     const [openConfirm,setOpenConfirm]=useState(false);
     const [whatActionConfirm,setWhatActionConfirm]=useState(false);
     const [message,setMessage]=useState("");
+
     const [idImageProductDetail,setIdImageProductDetail]=useState(undefined);
     const [image_id,setImage_Id]=useState(undefined);
 
@@ -71,28 +74,28 @@ const ProductImageDetail=(props)=>{
     const [listImage,setListImage]=useState([]);
     //touch
     const [touchDescription,setTouchDescription]=useState(false);
-    const [touchBrand_id,setTouchBrand_id]=useState(false);
-    const [touchMaterial_id,setTouchMaterial_id]=useState(false);
-    const [touchGender_id,setTouchGender_id]=useState(false);
-    const [touchColor_id,setTouchColor_id]=useState(false);
+    const [touchBrand_name,setTouchBrand_name]=useState(false);
+    const [touchMaterial_name,setTouchMaterial_name]=useState(false);
+    const [touchGender_name,setTouchGender_name]=useState(false);
+    const [touchColor_name,setTouchColor_name]=useState(false);
     const [touchQuantity,setTouchQuantity]=useState(false);
-    const [touchStatus_id,setTouchStatus_id]=useState(false);
-    const [touchSole_id,setTouchSole_id]=useState(false);
-    const [touchCategory_id,setTouchCategory_id]=useState(false);
-    const [touchSize_id,setTouchSize_id]=useState(false);
+    const [touchStatus_name,setTouchStatus_name]=useState(false);
+    const [touchSole_name,setTouchSole_name]=useState(false);
+    const [touchCategory_name,setTouchCategory_name]=useState(false);
+    const [touchSize_name,setTouchSize_name]=useState(false);
     const [touchSell_Price,setTouchSell_Price]=useState(false);
     //errors
     const [errors,setErrors]=useState({
         description:undefined,
-        brand_id:undefined,
-        material_id:undefined,
-        gender_id:undefined,
-        color_id:undefined,
+        brand_name:undefined,
+        material_name:undefined,
+        gender_name:undefined,
+        color_name:undefined,
         quantity:undefined,
-        status_id:undefined,
-        sole_id:undefined,
-        category_id:undefined,
-        size_id:undefined,
+        status_name:undefined,
+        sole_name:undefined,
+        category_name:undefined,
+        size_name:undefined,
         sell_price:undefined,
     });
 
@@ -120,7 +123,7 @@ const ProductImageDetail=(props)=>{
     }
 
     const getAllImage= async ()=>{
-        const response= await ImageProductAPI.getAllImage(props.id_product_detail);
+        const response= await ImageProductAPI.getAllImageById(props.id_product_detail);
         setListImage(response.data)
     }
 
@@ -156,41 +159,41 @@ const ProductImageDetail=(props)=>{
     }
 
     const onChangeBrand=(e)=>{
-        setBrand_id(e.target.value);
+        setBrand_name(e.target.value);
         const errorCopy={...errors};
         errorCopy.brand_id=undefined;
         setErrors(errorCopy);
-        if(!touchBrand_id){
-            setTouchBrand_id(true);
+        if(!touchBrand_name){
+            setTouchBrand_name(true);
         }
     }
 
     const onChangeMaterial=(e)=>{
-        setMaterial_id(e.target.value);
+        setMaterial_name(e.target.value);
         const errorCopy={...errors};
         errorCopy.material_id=undefined;
         setErrors(errorCopy);
-        if(!touchMaterial_id){
-            setTouchMaterial_id(true);
+        if(!touchMaterial_name){
+            setTouchMaterial_name(true);
         }
     }
     const onChangeGender=(e)=>{
-        setGender_id(e.target.value);
+        setGender_name(e.target.value);
         const errorCopy={...errors};
         errorCopy.gender_id=undefined;
         setErrors(errorCopy);
-        if(!touchGender_id){
-            setTouchGender_id(true);
+        if(!touchGender_name){
+            setTouchGender_name(true);
         }
     }
 
     const onChangeColor=(e)=>{
-        setColor_id(e.target.value);
+        setColor_name(e.target.value);
         const errorCopy={...errors};
         errorCopy.color_id=undefined;
         setErrors(errorCopy);
-        if(!touchColor_id){
-            setTouchColor_id(true);
+        if(!touchColor_name){
+            setTouchColor_name(true);
         }
     }
 
@@ -205,41 +208,41 @@ const ProductImageDetail=(props)=>{
     }
 
     const onChangeStatus=(e)=>{
-        setStatus_id(e.target.value);
+        setStatus_name(e.target.value);
         const errorCopy={...errors};
         errorCopy.status_id=undefined;
         setErrors(errorCopy);
-        if(!touchStatus_id){
-            setTouchStatus_id(true);
+        if(!touchStatus_name){
+            setTouchStatus_name(true);
         }
     }
 
     const onChangeSole=(e)=>{
-        setSole_id(e.target.value);
+        setSole_name(e.target.value);
         const errorCopy={...errors};
         errorCopy.sole_id=undefined;
         setErrors(errorCopy);
-        if(!touchSole_id){
-            setTouchSole_id(true);
+        if(!touchSole_name){
+            setTouchSole_name(true);
         }
     }
     const onChangeCategory=(e)=>{
-        setCategory_id(e.target.value);
+        setCategory_name(e.target.value);
         const errorCopy={...errors};
         errorCopy.category_id=undefined;
         setErrors(errorCopy);
-        if(!touchCategory_id){
-            setTouchCategory_id(true);
+        if(!touchCategory_name){
+            setTouchCategory_name(true);
         }
     }
 
     const onChangeSize=(e)=>{
-        setSize_id(e.target.value);
+        setSize_name(e.target.value);
         const errorCopy={...errors};
         errorCopy.size_id=undefined;
         setErrors(errorCopy);
-        if(!touchSize_id){
-            setTouchSize_id(true);
+        if(!touchSize_name){
+            setTouchSize_name(true);
         }
     }
 
@@ -295,47 +298,22 @@ const ProductImageDetail=(props)=>{
     }
 
     const fillInput= async ()=>{
-        //start DOC
-        const brand_DOC=document.querySelectorAll('.brand_DOC');
-        const material_DOC=document.querySelectorAll('.material_DOC');
-        const gender_DOC=document.querySelectorAll('.gender_DOC');
-        const color_DOC=document.querySelectorAll('.color_DOC');
-        const status_DOC=document.querySelectorAll('.status_DOC');
-        const sole_DOC=document.querySelectorAll('.sole_DOC');
-        const category_DOC=document.querySelectorAll('.category_DOC');
-        const size_DOC=document.querySelectorAll('.size_DOC');
-        //end DOC
         const response = await ImageProductAPI.getProductDetailImage(props.id_product_detail);
         const data=response.data;
+        console.log(data);
         //setValue
         setName(data.product_name);
         setDescription(data.product_description);
-        setBrand_id(data.product_detail_brand_id);
-        setMaterial_id(data.product_detail_material_id);
-        setGender_id(data.product_detail_gender_id);
-        setColor_id(data.product_detail_color_id);
-        setStatus_id(data.product_detail_status_id);
-        setSole_id(data.product_detail_sole_id);
-        setCategory_id(data.product_detail_category_id);
-        setSize_id(data.product_detail_size_id);
+        setBrand_name(data.product_detail_brand_name);
+        setMaterial_name(data.product_detail_material_name);
+        setGender_name(data.product_detail_gender_name);
+        setColor_name(data.product_detail_color_name);
+        setStatus_name(data.product_detail_status_name);
+        setSole_name(data.product_detail_sole_name);
+        setCategory_name(data.product_detail_category_name);
+        setSize_name(data.product_detail_size_name);
         setSell_Price(data.product_detail_sell_price);
         setQuantity(data.product_detail_quantity);
-        //setValueSelect
-        setValueInput(brand_DOC,data.product_detail_brand_id);
-        setValueInput(material_DOC,data.product_detail_material_id);
-        setValueInput(gender_DOC,data.product_detail_gender_id);
-        setValueInput(color_DOC,data.product_detail_color_id);
-        setValueInput(status_DOC,data.product_detail_status_id);
-        setValueInput(sole_DOC,data.product_detail_sole_id);
-        setValueInput(category_DOC,data.product_detail_category_id);
-        setValueInput(size_DOC,data.product_detail_size_id);
-    }
-    const setValueInput=(arr,id)=>{
-        arr.forEach(item=>{
-            if(id===Number(item.value)){
-                item.selected=true
-            }
-        })
     }
 
     const handleUpdateProductDetail= async ()=>{
@@ -344,14 +322,14 @@ const ProductImageDetail=(props)=>{
             description:description,
             quantity:quantity,
             sell_price:sell_price,
-            brand_id:brand_id,
-            material_id:material_id,
-            gender_id:gender_id,
-            color_id:color_id,
-            status_id:status_id,
-            sole_id:sole_id,
-            category_id:category_id,
-            size_id:size_id
+            brand_name:brand_name,
+            material_name:material_name,
+            gender_name:gender_name,
+            color_name:color_name,
+            status_name:status_name,
+            sole_name:sole_name,
+            category_name:category_name,
+            size_name:size_name
         };
         try {
             setLoading(true)
@@ -361,7 +339,7 @@ const ProductImageDetail=(props)=>{
                     product_id:props.product_id,
                     page:1
                 }
-                dispatch(getAllProductDetail(param));
+                dispatch(getAllProductDetailByProduct_id(param));
                 setLoading(false);
                 handleClose();
             }
@@ -534,14 +512,14 @@ const ProductImageDetail=(props)=>{
                                     <Form.Group>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Thương hiệu:</Form.Label>
-                                            <Form.Select onChange={onChangeBrand} style={{width:"50%"}} required
-                                                         isValid={brand_id!==''}
-                                                         isInvalid={touchBrand_id && brand_id==='' || errors.brand_id!==undefined}>
+                                            <Form.Select value={brand_name} onChange={onChangeBrand} style={{width:"50%"}} required
+                                                         isValid={brand_name!==''}
+                                                         isInvalid={touchBrand_name && brand_name==='' || errors.brand_name!==undefined}>
                                                 <option value="">--Chọn thương hiệu--</option>
                                                 {listBrand.map((item,index)=>{
                                                     if(item.status===true){
                                                         return(
-                                                            <option className="brand_DOC" key={index} value={item.id}>{item.name}</option>
+                                                            <option key={index} value={item.name}>{item.name}</option>
                                                         )
                                                     }
                                                 })}
@@ -550,24 +528,24 @@ const ProductImageDetail=(props)=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        {touchBrand_id && brand_id === '' ?
+                                        {touchBrand_name && brand_name === '' ?
                                             <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>Bạn Chưa Chọn Thương Hiệu!</span> :
-                                            errors.brand_id !== undefined ?
-                                                <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.brand_id}</span>:''
+                                            errors.brand_name !== undefined ?
+                                                <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.brand_name}</span>:''
                                         }
                                     </Form.Group>
                                     {/**/}
                                     <Form.Group style={{marginTop:"20px"}}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Chất liệu:</Form.Label>
-                                            <Form.Select onChange={onChangeMaterial} style={{width:"50%"}} required
-                                                         isValid={material_id!==''}
-                                                         isInvalid={touchMaterial_id && material_id==='' || errors.material_id!==undefined}>
+                                            <Form.Select value={material_name} onChange={onChangeMaterial} style={{width:"50%"}} required
+                                                         isValid={material_name!==''}
+                                                         isInvalid={touchMaterial_name && material_name==='' || errors.material_name!==undefined}>
                                                 <option value="">--Chọn chất liệu--</option>
                                                 {listMaterial.map((item,index)=>{
                                                     if(item.status===true){
                                                         return(
-                                                            <option className="material_DOC" key={index} value={item.id}>{item.name}</option>
+                                                            <option key={index} value={item.name}>{item.name}</option>
                                                         )
                                                     }
                                                 })}
@@ -576,24 +554,24 @@ const ProductImageDetail=(props)=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        {touchMaterial_id && material_id === '' ?
+                                        {touchMaterial_name && material_name === '' ?
                                             <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>Bạn Chưa Chọn Chất Liệu!</span> :
-                                            errors.material_id !== undefined ?
-                                                <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.material_id}</span>:''
+                                            errors.material_name !== undefined ?
+                                                <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.material_name}</span>:''
                                         }
                                     </Form.Group>
                                     {/**/}
                                     <Form.Group style={{marginTop:"20px"}}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Giới tính:</Form.Label>
-                                            <Form.Select onChange={onChangeGender} style={{width:"50%"}} required
-                                                         isValid={gender_id!==''}
-                                                         isInvalid={touchGender_id && gender_id==='' || errors.gender_id!==undefined}>
+                                            <Form.Select value={gender_name} onChange={onChangeGender} style={{width:"50%"}} required
+                                                         isValid={gender_name!==''}
+                                                         isInvalid={touchGender_name && gender_name==='' || errors.gender_name!==undefined}>
                                                 <option value="">--Chọn giới tính--</option>
                                                 {listGender.map((item,index)=>{
                                                     if(item.status===true){
                                                         return(
-                                                            <option className="gender_DOC" key={index} value={item.id}>{item.name}</option>
+                                                            <option key={index} value={item.name}>{item.name}</option>
                                                         )
                                                     }
                                                 })}
@@ -602,24 +580,24 @@ const ProductImageDetail=(props)=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        {touchGender_id && gender_id==='' ?
+                                        {touchGender_name && gender_name==='' ?
                                             <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Giới Tính!</span>:
-                                            errors.gender_id!==undefined ?
-                                                <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>{errors.gender_id}</span>:''
+                                            errors.gender_name!==undefined ?
+                                                <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>{errors.gender_name}</span>:''
                                         }
                                     </Form.Group>
                                     {/**/}
                                     <Form.Group style={{marginTop:"20px"}}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Màu Sắc:</Form.Label>
-                                            <Form.Select onChange={onChangeColor} style={{width:"50%"}} required
-                                                         isValid={color_id!==''}
-                                                         isInvalid={touchColor_id && color_id==='' || errors.color_id!==undefined}>
+                                            <Form.Select value={color_name} onChange={onChangeColor} style={{width:"50%"}} required
+                                                         isValid={color_name!==''}
+                                                         isInvalid={touchColor_name && color_name==='' || errors.color_name!==undefined}>
                                                 <option value="">--Chọn màu sắc--</option>
                                                 {listColor.map((item,index)=>{
                                                     if(item.status===true){
                                                         return(
-                                                            <option className="color_DOC" key={index} value={item.id}>{item.name}</option>
+                                                            <option key={index} value={item.name}>{item.name}</option>
                                                         )
                                                     }
                                                 })}
@@ -628,10 +606,10 @@ const ProductImageDetail=(props)=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        {touchColor_id && color_id==='' ?
+                                        {touchColor_name && color_name==='' ?
                                             <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Màu Sắc!</span>:
-                                            errors.color_id!==undefined ?
-                                                <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>{errors.color_id}</span>:''
+                                            errors.color_name!==undefined ?
+                                                <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>{errors.color_name}</span>:''
                                         }
                                     </Form.Group>
                                     {/**/}
@@ -654,14 +632,14 @@ const ProductImageDetail=(props)=>{
                                     <Form.Group>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Trạng thái:</Form.Label>
-                                            <Form.Select onChange={onChangeStatus} style={{width:"50%"}} required
-                                                         isValid={status_id!==''}
-                                                         isInvalid={touchStatus_id && status_id==='' || errors.status_id!==undefined}>
+                                            <Form.Select value={status_name} onChange={onChangeStatus} style={{width:"50%"}} required
+                                                         isValid={status_name!==''}
+                                                         isInvalid={touchStatus_name && status_name==='' || errors.status_name!==undefined}>
                                                 <option value="">--Chọn trạng thái--</option>
                                                 {listStatusProductDetail.map((item,index)=>{
                                                     if(item.status===true){
                                                         return(
-                                                            <option className="status_DOC" key={index} value={item.id}>{item.name}</option>
+                                                            <option key={index} value={item.name}>{item.name}</option>
                                                         )
                                                     }
                                                 })}
@@ -670,24 +648,24 @@ const ProductImageDetail=(props)=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        {touchStatus_id && status_id===''?
+                                        {touchStatus_name && status_name===''?
                                             <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Trạng Thái!</span>:
-                                            errors.status_id!==undefined ?
-                                                <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>{errors.status_id}</span>:''
+                                            errors.status_name!==undefined ?
+                                                <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>{errors.status_name}</span>:''
                                         }
                                     </Form.Group>
                                     {/**/}
                                     <Form.Group style={{marginTop:"20px"}}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Đế giày:</Form.Label>
-                                            <Form.Select onChange={onChangeSole} style={{width:"50%"}} required
-                                                         isValid={sole_id!==''}
-                                                         isInvalid={touchSole_id && sole_id==='' || errors.sole_id!==undefined}>
+                                            <Form.Select value={sole_name} onChange={onChangeSole} style={{width:"50%"}} required
+                                                         isValid={sole_name!==''}
+                                                         isInvalid={touchSole_name && sole_name==='' || errors.sole_name!==undefined}>
                                                 <option value="">--Chọn đế giày--</option>
                                                 {listSole.map((item,index)=>{
                                                     if(item.status===true){
                                                         return(
-                                                            <option className="sole_DOC" key={index} value={item.id}>{item.name}</option>
+                                                            <option className="sole_DOC" key={index} value={item.name}>{item.name}</option>
                                                         )
                                                     }
                                                 })}
@@ -696,24 +674,24 @@ const ProductImageDetail=(props)=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        {touchSole_id && sole_id===''?
+                                        {touchSole_name && sole_name===''?
                                             <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Đế Giày!</span>:
-                                            errors.sole_id!==undefined ?
-                                                <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>{errors.sole_id}</span>:''
+                                            errors.sole_name!==undefined ?
+                                                <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>{errors.sole_name}</span>:''
                                         }
                                     </Form.Group>
                                     {/**/}
                                     <Form.Group style={{marginTop:"20px"}}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Thể loại:</Form.Label>
-                                            <Form.Select onChange={onChangeCategory} style={{width:"50%"}} required
-                                                         isValid={category_id!==''}
-                                                         isInvalid={touchCategory_id && category_id==='' || errors.category_id!==undefined}>
+                                            <Form.Select value={category_name} onChange={onChangeCategory} style={{width:"50%"}} required
+                                                         isValid={category_name!==''}
+                                                         isInvalid={touchCategory_name && category_name==='' || errors.category_name!==undefined}>
                                                 <option value="">--Chọn thể loại--</option>
                                                 {listCategory.map((item,index)=>{
                                                     if(item.status===true){
                                                         return(
-                                                            <option className="category_DOC" key={index} value={item.id}>{item.name}</option>
+                                                            <option className="category_DOC" key={index} value={item.name}>{item.name}</option>
                                                         )
                                                     }
                                                 })}
@@ -722,24 +700,24 @@ const ProductImageDetail=(props)=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        {touchCategory_id && category_id === '' ?
+                                        {touchCategory_name && category_name === '' ?
                                             <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>Bạn Chưa Chọn Thể Loại!</span> :
-                                            errors.category_id !== undefined ?
-                                                <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.category_id}</span>:''
+                                            errors.category_name !== undefined ?
+                                                <span style={{marginLeft: "120px", color: "#dc3545", fontSize: "14px"}}>{errors.category_name}</span>:''
                                         }
                                     </Form.Group>
                                     {/**/}
                                     <Form.Group style={{marginTop:"20px"}}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Form.Label style={{width:"120px",fontWeight:"600"}}><span style={{color: "red"}}>*</span> Kích Cỡ:</Form.Label>
-                                            <Form.Select onChange={onChangeSize} style={{width:"50%"}} required
-                                                         isValid={size_id!==''}
-                                                         isInvalid={touchSize_id && size_id==='' || errors.size_id!==undefined}>
+                                            <Form.Select value={size_name} onChange={onChangeSize} style={{width:"50%"}} required
+                                                         isValid={size_name!==''}
+                                                         isInvalid={touchSize_name && size_name==='' || errors.size_name!==undefined}>
                                                 <option value="">--Chọn kích cỡ--</option>
                                                 {listSize.map((item,index)=>{
                                                     if(item.status===true){
                                                         return(
-                                                            <option className="size_DOC" key={index} value={item.id}>{item.name}</option>
+                                                            <option key={index} value={item.name}>{item.name}</option>
                                                         )
                                                     }
                                                 })}
@@ -748,10 +726,10 @@ const ProductImageDetail=(props)=>{
                                                 <i className="fa-solid fa-plus"></i>
                                             </Button>
                                         </div>
-                                        {touchSize_id && size_id==='' ?
+                                        {touchSize_name && size_name==='' ?
                                             <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>Bạn Chưa Chọn Kích Cỡ!</span>:
-                                            errors.size_id!==undefined ?
-                                                <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>{errors.size_id}</span>:''
+                                            errors.size_name!==undefined ?
+                                                <span style={{marginLeft:"120px",color:"#dc3545",fontSize:"14px"}}>{errors.size_name}</span>:''
                                         }
                                     </Form.Group>
                                     {/**/}

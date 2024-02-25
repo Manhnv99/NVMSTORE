@@ -3,19 +3,19 @@ import axios from "axios";
 
 class CategoryAPI{
     getAllPaging=(page)=>{
-        return axios.get(`http://localhost:8080/api/category/getAll/${page}`)
+        return axios.get(`http://localhost:8080/api/category/get-all/${page}`)
     }
 
     getAll=()=>{
-        return axios.get(`http://localhost:8080/api/category/getAll`)
+        return axios.get(`http://localhost:8080/api/category/get-all`)
     }
 
     getAllTotalPage=()=>{
-        return axios.get(`http://localhost:8080/api/category/getAllTotalPage`)
+        return axios.get(`http://localhost:8080/api/category/get-all-totalPage`)
     }
 
     addCategory=(categoryRequest)=>{
-        return axios.post(`http://localhost:8080/api/category/add`,categoryRequest);
+        return axios.post(`http://localhost:8080/api/category/post-category`,categoryRequest);
     }
 
     searchCategory=(input,status,page)=>{
@@ -28,7 +28,7 @@ class CategoryAPI{
     }
 
     getTotalPageSearch=(input,status)=>{
-        return axios.get(`http://localhost:8080/api/category/search/getTotalPage`,{
+        return axios.get(`http://localhost:8080/api/category/search/get-totalPage`,{
             params:{
                 input:input,
                 status:status
@@ -41,7 +41,7 @@ class CategoryAPI{
     }
 
     updateCategory=(id,categoryRequest)=>{
-        return axios.put(`http://localhost:8080/api/category/update/${id}`,categoryRequest);
+        return axios.put(`http://localhost:8080/api/category/put-category/${id}`,categoryRequest);
     }
 }
 

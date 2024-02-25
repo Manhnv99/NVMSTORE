@@ -1,0 +1,9 @@
+
+.handleClearFilter{
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid var(--primary-red);
+    background-color: var(--primary-red);
+    color: #fff;
+    margin-left: 5px;
+}

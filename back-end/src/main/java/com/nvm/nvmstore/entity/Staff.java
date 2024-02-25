@@ -49,9 +49,9 @@ public class Staff {
     @Column(length = 2000)
     private String image_url;
 
-    private String address_city;
-
     private String address_province;
+
+    private String address_district;
 
     private String address_ward;
 

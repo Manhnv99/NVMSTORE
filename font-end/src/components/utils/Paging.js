@@ -1,5 +1,5 @@
 import "./style/Paging.css"
-import {useEffect, useState} from "react";
+import {memo, useEffect, useState} from "react";
 
 
 
@@ -117,11 +117,11 @@ const Paging=({TotalPage=1,APIPaging=function (){},APISearchPaging=function (){}
                 {totalPage.map((page,index)=>{
                     if(index===0) {
                         return(
-                            <span onClick={handleMovePage} className="active-paging paging-page">{page+1}</span>
+                            <span key={index} onClick={handleMovePage} className="active-paging paging-page">{page+1}</span>
                         )
                     }else{
                         return (
-                            <span onClick={handleMovePage} className="paging-page">{page+1}</span>
+                            <span key={index} onClick={handleMovePage} className="paging-page">{page+1}</span>
                         )
                     }
                 })}
@@ -132,4 +132,4 @@ const Paging=({TotalPage=1,APIPaging=function (){},APISearchPaging=function (){}
 
 }
 
-export default Paging
+export default memo(Paging)

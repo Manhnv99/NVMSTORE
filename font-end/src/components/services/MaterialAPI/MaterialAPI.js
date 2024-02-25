@@ -4,19 +4,19 @@ import axios from "axios";
 class MaterialAPI{
 
     getAllPaging=(page)=>{
-        return axios.get(`http://localhost:8080/api/material/getAll/${page}`)
+        return axios.get(`http://localhost:8080/api/material/get-all/${page}`)
     }
 
     getAll=()=>{
-        return axios.get(`http://localhost:8080/api/material/getAll`)
+        return axios.get(`http://localhost:8080/api/material/get-all`)
     }
 
     getAllTotalPage=()=>{
-        return axios.get(`http://localhost:8080/api/material/getAllTotalPage`)
+        return axios.get(`http://localhost:8080/api/material/get-all-totalPage`)
     }
 
     addMaterial=(categoryRequest)=>{
-        return axios.post(`http://localhost:8080/api/material/add`,categoryRequest);
+        return axios.post(`http://localhost:8080/api/material/post-material`,categoryRequest);
     }
 
     searchMaterial=(input,status,page)=>{
@@ -29,7 +29,7 @@ class MaterialAPI{
     }
 
     getTotalPageSearch=(input,status)=>{
-        return axios.get(`http://localhost:8080/api/material/search/getTotalPage`,{
+        return axios.get(`http://localhost:8080/api/material/search/get-totalPage`,{
             params:{
                 input:input,
                 status:status
@@ -42,7 +42,7 @@ class MaterialAPI{
     }
 
     updateMaterial=(id,categoryRequest)=>{
-        return axios.put(`http://localhost:8080/api/material/update/${id}`,categoryRequest);
+        return axios.put(`http://localhost:8080/api/material/put-material/${id}`,categoryRequest);
     }
 }
 export default new MaterialAPI()

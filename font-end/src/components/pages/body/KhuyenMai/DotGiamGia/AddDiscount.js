@@ -3,7 +3,7 @@ import {Button, Card, Col, Container, Form, Row, Table} from "react-bootstrap";
 import Paging from "../../../../utils/Paging";
 import {useDispatch, useSelector} from "react-redux";
 import {useCallback, useEffect, useState} from "react";
-import {getAllProductDetail} from "../../../../../redux/slices/product/ProductDetailSlice";
+import {getAllProductDetailByProduct_id, setListProductDetail} from "../../../../../redux/slices/product/ProductDetailSlice";
 import {fetchProductResponse} from "../../../../../redux/slices/product/ProductSlice";
 import productDetailAPI from "../../../../services/ProductAPI/Product_Detail_API/ProductDetailAPI";
 import productAPI from "../../../../services/ProductAPI/ProductAPI";
@@ -27,7 +27,14 @@ const AddDiscount=()=>{
     useEffect(() => {
         getListProduct(1);
         getTotalPageProduct();
+        refreshListProductDetail();
+        console.log(listProduct);
     }, []);
+
+    // Refresh List Product Detail at store
+    const refreshListProductDetail=useCallback(()=>{
+        dispatch(setListProductDetail([]));
+    },[])
 
     //get List Product
     const getListProduct=(page)=>{
@@ -36,7 +43,11 @@ const AddDiscount=()=>{
 
     // get List ProductDetail
     const getListProductDetail=(page)=>{
-        dispatch(getAllProductDetail({
+        // const checkBoxProductDetail=document.querySelectorAll(".checkBoxProductDetail");
+        // checkBoxProductDetail.forEach(item=>{
+        //     item.checked=false;
+        // })
+        dispatch(getAllProductDetailByProduct_id({
             product_id:product_id,
             page:page
         }));
@@ -46,7 +57,7 @@ const AddDiscount=()=>{
 
     const getTotalPageProduct=useCallback(async ()=>{
         try {
-            const response=await productAPI.getTotalPageProductResponse();
+            const response=await productAPI.getTotalPageProduct();
             setTotalPageProduct(response.data);
         }catch (e) {
             console.log(e);
@@ -55,14 +66,14 @@ const AddDiscount=()=>{
 
     const getTotalPageProductDetail=useCallback(async (product_id)=>{
         try {
-            const response = await productDetailAPI.getTotalPageProductDetailResponse(product_id);
+            const response = await productDetailAPI.getTotalPageProductDetailByProduct_id(product_id);
             setTotalPageProductDetail(response.data);
         }catch (e) {
             console.log(e)
         }
     })
 
-    //handle
+    //handle logic
 
     const handleShowProductDetail=(product_id,index)=>{
         const checkBoxProduct=document.querySelectorAll(".checkBoxProduct");
@@ -71,7 +82,7 @@ const AddDiscount=()=>{
         })
         checkBoxProduct[index].checked=true;
         setProduct_id(product_id);
-        dispatch(getAllProductDetail({
+        dispatch(getAllProductDetailByProduct_id({
             product_id:product_id,
             page:1
         }));
@@ -79,8 +90,18 @@ const AddDiscount=()=>{
     }
 
     const handleChooseProductDetail=(product_detail_id)=>{
-        const checkBoxProductDetail=document.querySelectorAll(".checkBoxProductDetail");
-        
+        if(listChooseProductDetail.includes(product_detail_id)){
+            //remove
+            setListChooseProductDetail(listChooseProductDetail.filter(item=>item!==product_detail_id));
+        }else{
+            //push
+            listChooseProductDetail.push(product_detail_id);
+            setListChooseProductDetail(listChooseProductDetail);
+        }
+    }
+
+    const handleAddDiscount=()=>{
+        console.log(listChooseProductDetail);
     }
 
     return(
@@ -120,7 +141,7 @@ const AddDiscount=()=>{
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <div className="create-discount-add">
-                                    <Button>Thêm</Button>
+                                    <Button onClick={handleAddDiscount} type="button">Thêm</Button>
                                 </div>
                             </div>
                         </div>
@@ -157,7 +178,7 @@ const AddDiscount=()=>{
                                                                     backgroundColor: "#68ae6b",
                                                                     padding: "7px 20px",
                                                                     borderRadius: "5px"
-                                                                }}>{item.status ? "Đang sử dụng" : "Ngưng sử dụng"}</span>
+                                                                }}>{item.product_status ? "Đang kinh doanh" : "Ngưng kinh doanh"}</span>
                                                             </td>
                                                         </tr>
                                                     )
@@ -193,8 +214,8 @@ const AddDiscount=()=>{
                                                 return(
                                                     <tr style={{fontSize: "15px"}}>
                                                         <td style={{textAlign: "center"}}>
-                                                            <input onClick={()=>{handleChooseProductDetail(item.product_detail_id)}} className="checkBoxProductDetail" type="checkbox"/>
-                                                            <span style={{marginLeft: "10px"}}>{index+1}</span>
+                                                            <input onClick={() => {handleChooseProductDetail(item.product_detail_id)}} className="checkBoxProductDetail" type="checkbox"/>
+                                                            <span style={{marginLeft: "10px"}}>{index + 1}</span>
                                                         </td>
                                                         <td style={{textAlign: "center"}}>{item.product_name}</td>
                                                         <td style={{textAlign: "center"}}>{item.product_detail_gender}</td>

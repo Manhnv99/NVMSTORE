@@ -1,13 +1,12 @@
 package com.nvm.nvmstore.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 public class Customer_Address {
 
@@ -19,11 +18,13 @@ public class Customer_Address {
     @JoinColumn(name = "customer_id",referencedColumnName = "id")
     private Customer customer_id;
 
-    private String address_city;
+    private String address_provinces;
 
-    private String address_province;
+    private String address_districts;
 
-    private String address_ward;
+    private String address_wards;
 
     private String address_detail;
+
+    private Boolean address_default;
 }

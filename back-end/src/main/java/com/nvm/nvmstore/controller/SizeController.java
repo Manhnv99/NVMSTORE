@@ -1,9 +1,7 @@
 package com.nvm.nvmstore.controller;
 
-import com.nvm.nvmstore.request.color.ColorRequest;
 import com.nvm.nvmstore.request.size.SizeRequest;
-import com.nvm.nvmstore.service.ColorService;
-import com.nvm.nvmstore.service.SizeService;
+import com.nvm.nvmstore.service.size.SizeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

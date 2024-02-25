@@ -1,8 +1,9 @@
 package com.nvm.nvmstore.controller;
 
 
-import com.nvm.nvmstore.request.staff.StaffRequest;
-import com.nvm.nvmstore.service.StaffService;
+import com.nvm.nvmstore.request.staff.PostStaffRequest;
+import com.nvm.nvmstore.request.staff.PutStaffRequest;
+import com.nvm.nvmstore.service.staff.StaffService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -20,30 +21,31 @@ public class StaffController {
     @Autowired
     private StaffService staffService;
 
-    @GetMapping("/getAll/{page}")
+    @GetMapping("/get-all/{page}")
     public ResponseEntity<?> getAll(@PathVariable Integer page){
         PageRequest pageRequest=PageRequest.of(page-1,3);
         return ResponseEntity.status(HttpStatus.OK).body(staffService.getAll(pageRequest));
     }
 
-    @GetMapping("/getStaffById/{id}")
+    @GetMapping("/get-byId/{id}")
     public ResponseEntity<?> getStaffById(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK).body(staffService.getStaffById(id));
     }
 
-    @GetMapping("/getTotalPage")
+    @GetMapping("/get-totalPage")
     public ResponseEntity<?> getTotalStaff(){
         return ResponseEntity.status(HttpStatus.OK).body(staffService.getTotalPageStaff());
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createStaff(@ModelAttribute @Valid StaffRequest staffRequest) throws IOException {
-        return staffService.addStaff(staffRequest);
+    @PostMapping("/post-staff")
+    public ResponseEntity<?> postStaff(@ModelAttribute @Valid PostStaffRequest postStaffRequest) throws IOException {
+        return staffService.postStaff(postStaffRequest);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateStaff(@PathVariable Long id,@ModelAttribute @Valid StaffRequest staffRequest) throws IOException{
-        return staffService.updateStaff(id,staffRequest);
+    @PutMapping("/put-staff/{id}")
+    public ResponseEntity<?> putStaff(@PathVariable Long id,@ModelAttribute @Valid PutStaffRequest putStaffRequest) throws IOException{
+
+        return staffService.putStaff(id, putStaffRequest);
     }
 
     @GetMapping("/search/{page}")
@@ -52,7 +54,7 @@ public class StaffController {
         return ResponseEntity.status(HttpStatus.OK).body(staffService.searchStaff(input,status,pageRequest));
     }
 
-    @GetMapping("/search/getTotalPage")
+    @GetMapping("/search/get-totalPage")
     public ResponseEntity<?> getTotalPageSearch(@RequestParam(name = "input",required = false) String input,@RequestParam(name = "status",required = false) Boolean status){
         return ResponseEntity.status(HttpStatus.OK).body(staffService.getTotalPageSearch(input,status));
     }

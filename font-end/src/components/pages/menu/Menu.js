@@ -67,7 +67,7 @@ const Menu=()=>{
                             </Link>
                         </li>
                         <li>
-                            <Link>
+                            <Link to="/sale-counter">
                                 <i className="fa-solid fa-shop"></i>
                                 <span>Bán Hàng Tại Quầy</span>
                             </Link>

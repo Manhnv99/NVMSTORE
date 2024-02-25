@@ -143,7 +143,7 @@ const AddProduct=()=>{
     },[]);
 
     const getAllProduct= async ()=>{
-        const res= await productAPI.getAllProduct();
+        const res= await productAPI.getAllName_Product();
         setListNameProduct(res.data);
     }
 
@@ -414,7 +414,7 @@ const AddProduct=()=>{
         setImageDetail(url)
     }
 
-    const handleAddProduct= async ()=>{
+    const handlePostProduct= async ()=>{
         handleClose();
         let error=0
         try {
@@ -428,7 +428,7 @@ const AddProduct=()=>{
                 sole_id:sole_id,
                 category_id:category_id,
             };
-            const productResponse =await productAPI.addProduct(productRequest);
+            const productResponse =await productAPI.postProduct(productRequest);
             if(productResponse.data==="add"){
                 if(listColorChoosed.length===0 && listSizeChoosed.length===0){
                     // Chưa Chọn Ảnh Thì Chắc Chắn là chưa chọn màu...
@@ -499,7 +499,7 @@ const AddProduct=()=>{
                 status_product_detail_id: status_id
             };
             try {
-                const response= await ProductDetailAPI.addProductDetail(productDetailRequest);
+                const response= await ProductDetailAPI.postProductDetail(productDetailRequest);
                 if(response && response.status===201){
                     const listImageForColor = listImageChoose.filter(item => item.color === listProduct[i].color_name);
                     //uploadimage to Cloudinary
@@ -560,7 +560,6 @@ const AddProduct=()=>{
     }
 
     const handleChooseAllProductToEdit=()=>{
-        console.log(checkAll)
         const checkbox=document.querySelectorAll(".checkbox")
         if(checkAll===false){
             //check
@@ -976,7 +975,7 @@ const AddProduct=()=>{
                         </div>
                         <div className="conf_function">
                             <button onClick={handleClose} className="conf-close">Hủy</button>
-                            <button onClick={handleAddProduct} className="conf-agree">Xác Nhận</button>
+                            <button onClick={handlePostProduct} className="conf-agree">Xác Nhận</button>
                         </div>
                     </Col>
                 </Modal.Body>

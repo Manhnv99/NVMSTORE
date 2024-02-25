@@ -1,8 +1,7 @@
 package com.nvm.nvmstore.controller;
 
-import com.nvm.nvmstore.request.category.CategoryRequest;
 import com.nvm.nvmstore.request.material.MaterialRequest;
-import com.nvm.nvmstore.service.MaterialService;
+import com.nvm.nvmstore.service.material.MaterialService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -18,18 +17,18 @@ public class MaterialController {
     @Autowired
     private MaterialService materialService;
 
-    @GetMapping("/getAll")
+    @GetMapping("/get-all")
     public ResponseEntity<?> getAll(){
         return ResponseEntity.status(HttpStatus.OK).body(materialService.getAll());
     }
 
-    @GetMapping("/getAll/{page}")
+    @GetMapping("/get-all/{page}")
     public ResponseEntity<?> getAll(@PathVariable Integer page){
         PageRequest pageRequest=PageRequest.of(page-1,3);
         return ResponseEntity.status(HttpStatus.OK).body(materialService.getAllPaging(pageRequest));
     }
 
-    @GetMapping("/getAllTotalPage")
+    @GetMapping("/get-all-totalPage")
     public ResponseEntity<?> getAllTotalPage(){
         return ResponseEntity.status(HttpStatus.OK).body(materialService.getAllTotalPage());
     }
@@ -40,19 +39,19 @@ public class MaterialController {
         return ResponseEntity.status(HttpStatus.OK).body(materialService.searchMaterial(input,status,pageRequest));
     }
 
-    @GetMapping("/search/getTotalPage")
+    @GetMapping("/search/get-totalPage")
     public ResponseEntity<?> getTotalPageSearch(@RequestParam(name = "input",required = false) String input,@RequestParam(name = "status",required = false) Boolean status){
         return ResponseEntity.status(HttpStatus.OK).body(materialService.getTotalPageSearch(input,status));
     }
 
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addMaterial(@RequestBody @Valid MaterialRequest materialRequest){
+    @PostMapping("/post-material")
+    public ResponseEntity<?> postMaterial(@RequestBody @Valid MaterialRequest materialRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(materialService.addMaterial(materialRequest));
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateMaterial(@PathVariable Long id,@RequestBody MaterialRequest materialRequest){
+    @PutMapping("/put-material/{id}")
+    public ResponseEntity<?> putMaterial(@PathVariable Long id,@RequestBody MaterialRequest materialRequest){
         materialService.updateMaterial(id,materialRequest);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

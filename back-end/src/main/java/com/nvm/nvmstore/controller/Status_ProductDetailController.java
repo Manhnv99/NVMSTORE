@@ -1,9 +1,8 @@
 package com.nvm.nvmstore.controller;
 
 
-import com.nvm.nvmstore.request.gender.GenderRequest;
 import com.nvm.nvmstore.request.status_productdetail.Status_ProductDetailRequest;
-import com.nvm.nvmstore.service.Status_ProductDetailService;
+import com.nvm.nvmstore.service.statusproductdetail.Status_ProductDetailService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

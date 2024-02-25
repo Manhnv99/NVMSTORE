@@ -9,7 +9,7 @@ const initialState={
 
 export const fetchProductResponse=createAsyncThunk("fetchProductResponse", async(page)=>{
     try {
-        const response = await productAPI.productResponse(page);
+        const response = await productAPI.getAllProduct(page);
         return response.data;
     }catch (e) {
         console.log(e)

@@ -5,44 +5,53 @@ import StaffAPI from "../../../../services/StaffAPI/StaffAPI";
 import {useNavigate, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import Loading from "../../../loading/Loading";
-import {CallApiGeoGraph, CallApiVN} from "../../../../../redux/slices/APIVNSlice";
 import {toastMessage} from "../../../../../redux/slices/ToastMsgSlice";
+import LocationAPI from "../../../../services/LocationAPI/LocationAPI";
 
 
 const UpdateStaff=()=>{
-    const [name,setName]=useState('')
-    const [cccd,setCCCD]=useState('')
-    const [city,setCity]=useState('')
-    const [province,setProvice]=useState('')
-    const [ward,setWard]=useState('')
-    const [address,setAddress]=useState('')
-    const [status,setStatus]=useState('')
-    const [phone,setPhone]=useState('')
-    const [email,setEmail]=useState('')
-    const [birth,setBirth]=useState('')
-    const [gender,setGender]=useState('')
-    const [image,setImage]=useState(new File([],'empty-file'))
+    //toastmsg
+    const toastSuccess=useSelector(state => state.toastmsg.toastSuccess);
+    const toastWarning=useSelector(state => state.toastmsg.toastWarning);
+    //state PutStaffRequest
+    const [putStaffRequest,setPutStaffRequest] = useState({
+        name : "",
+        gender : "",
+        birthday : "",
+        phone : "",
+        email : "",
+        cccd : "",
+        status : "",
+        address_province : "",
+        address_district : "",
+        address_ward : "",
+        address_detail : "",
+        image : new File([] , "empty-file")
+    })
+
     const [imageShow,setImageShow]=useState('')
     // Touch
-    const [touchName,setTouchName]=useState(false)
-    const [touchCCCD,setTouchCCCD]=useState(false)
-    const [touchCity,setTouchCity]=useState(false)
-    const [touchProvice,setTouchProvice]=useState(false)
-    const [touchWard,setTouchWard]=useState(false)
-    const [touchAddress,setTouchAddress]=useState(false)
-    const [touchStatus,setTouchStatus]=useState(false)
-    const [touchPhone,setTouchPhone]=useState(false)
-    const [touchEmail,setTouchEmail]=useState(false)
-    const [touchBirth,setTouchBirth]=useState(false)
-    const [touchGender,setTouchGender]=useState(false)
+    const [touch,setTouch] = useState({
+        name : false,
+        gender : false,
+        birthday : false,
+        phone : false,
+        email : false,
+        cccd : false,
+        status : false,
+        address_province : false,
+        address_district : false,
+        address_ward : false,
+        address_detail : false
+    })
     // useRef
     const openUpload=useRef();
     const [errors,setErrors]=useState({
         name:undefined,
         cccd:undefined,
         email:undefined,
-        address_city:undefined,
         address_province:undefined,
+        address_district:undefined,
         address_ward:undefined,
         address_detail:undefined,
         birthday:undefined,
@@ -51,62 +60,69 @@ const UpdateStaff=()=>{
         gender:undefined
     })
     // loading
+    const {id}=useParams();
     const nav=useNavigate();
+    //loading
     const [loading,setLoading]=useState(false)
-    const dispatch=useDispatch();
-    const listCity=useSelector((state)=>state.geograph.listGeograph)
+    //dispatch
+    const dispatch = useDispatch();
+    //List Locaiton
+    const [listProvince,setListProvince]=useState([]);
     const [listDistrict,setListDistrict]=useState([])
     const [listWard,setListWard]=useState([])
-    const {id}=useParams();
 
 
 
     useEffect(() => {
         getStaffById(id);
-        dispatch(CallApiGeoGraph())
+        getAllProvinces();
     }, []);
+
+    //start handle call Location
+    const getAllProvinces = async ()=>{
+        const response = await LocationAPI.getAllProvinces();
+        setListProvince(response.data);
+    }
+
+    const getAllDistrictsByProvince_code = async (province_code) =>{
+        const response = await LocationAPI.getAllDistrictsByCode(province_code);
+        setListDistrict(response.data);
+    }
+
+    const getAllWardsByDistrict_code = async (district_code) =>{
+        const response = await LocationAPI.getAllWardsByCode(district_code);
+        setListWard(response.data);
+    }
+    //end handle call Location
 
     const getStaffById=async (id)=>{
         try {
-            const res= await StaffAPI.getStaffById(id);
+            const res= await StaffAPI.getById(id);
             const data=res.data;
-            setName(data.name)
-            setCCCD(data.cccd)
-            setCity(data.address_city)
-            setProvice(data.address_province)
-            setWard(data.address_ward)
-            setAddress(data.address_detail)
-            setStatus(data.status+"")
-            setPhone(data.phone)
-            setEmail(data.email)
-            setBirth(data.birthday)
-            setGender(data.gender+"")
+            putStaffRequest.name = data.name;
+            putStaffRequest.gender = data.gender;
+            putStaffRequest.birthday = data.birthday;
+            putStaffRequest.phone = data.phone;
+            putStaffRequest.email = data.email;
+            putStaffRequest.cccd = data.cccd;
+            putStaffRequest.status = data.status;
+            putStaffRequest.address_province = data.address_province;
+            putStaffRequest.address_district = data.address_district;
+            putStaffRequest.address_ward = data.address_ward;
+            putStaffRequest.address_detail = data.address_detail;
+            getAllDistrictsByProvince_code(data.address_province);
+            getAllWardsByDistrict_code(data.address_district);
             setImageShow(data.image_url)
-            let nam=document.querySelector(`input[name="gender"][value="true"]`)
-            let nu=document.querySelector(`input[name="gender"][value="false"]`)
-            if(data.gender===true){
-                nam.checked=true;
-            }else{
-                nu.checked=true;
-            }
-            let statusDOC=document.querySelectorAll('.statusDOC option')
-            if (data.status===true){
-                // eslint-disable-next-line no-unused-expressions
-                statusDOC[1].selected=true
-            }else{
-                // eslint-disable-next-line no-unused-expressions
-                statusDOC[2].selected=true
-            }
         }catch (e) {
             console.log(e)
         }
     }
 
 
-    const handleUpdateStaff= async ()=>{
-        const formData=new FormData();
-        formData.append("name",name)
-        switch (gender){
+    const handlePutStaff= async ()=>{
+        const formData=new FormData()
+        formData.append("name",putStaffRequest.name)
+        switch (putStaffRequest.gender){
             case '':
                 formData.append("gender",'')
                 break
@@ -116,14 +132,20 @@ const UpdateStaff=()=>{
             case 'false':
                 formData.append("gender",false)
                 break
+            case true:
+                formData.append("gender",true)
+                break
+            case false:
+                formData.append("gender",false)
+                break
             default:
                 formData.append("gender",'')
         }
-        formData.append("birthday",birth)
-        formData.append("phone",phone)
-        formData.append("email",email)
-        formData.append("cccd",cccd)
-        switch (status){
+        formData.append("birthday",putStaffRequest.birthday)
+        formData.append("phone",putStaffRequest.phone)
+        formData.append("email",putStaffRequest.email)
+        formData.append("cccd",putStaffRequest.cccd)
+        switch (putStaffRequest.status){
             case '':
                 formData.append("status",'')
                 break
@@ -133,139 +155,288 @@ const UpdateStaff=()=>{
             case 'false':
                 formData.append("status",false)
                 break
+            case true:
+                formData.append("status",true)
+                break
+            case false:
+                formData.append("status",false)
+                break
             default:
                 formData.append("status",'')
         }
-        formData.append("address_city",city)
-        formData.append("address_province",province)
-        formData.append("address_ward",ward)
-        formData.append("address_detail",address)
-        formData.append("image",image)
+        formData.append("address_province",putStaffRequest.address_province)
+        formData.append("address_district",putStaffRequest.address_district)
+        formData.append("address_ward",putStaffRequest.address_ward)
+        formData.append("address_detail",putStaffRequest.address_detail)
+        formData.append("image",putStaffRequest.image)
         try {
             setLoading(true)
-            const response= await StaffAPI.updateStaff(id,formData);
+            const response= await StaffAPI.putStaff(id,formData);
             if(response && response.status===200){
-                setLoading(false)
-                dispatch(toastMessage("Cập nhật nhân viên thành công!"))
-                nav("/staff-management")
+                setLoading(false);
+                const toastMsg={...toastSuccess};
+                toastMsg.message="Cập Nhật Nhân Viên Thành Công!";
+                dispatch(toastMessage(toastMsg));
+                nav("/staff-management");
             }
         }catch (e){
             setLoading(false)
             const errorCopy={...errors}
-            errorCopy.name=e.response.data.name
-            errorCopy.cccd=e.response.data.cccd
-            errorCopy.email=e.response.data.email
-            errorCopy.address_city=e.response.data.address_city
-            errorCopy.address_province=e.response.data.address_province
-            errorCopy.address_ward=e.response.data.address_ward
-            errorCopy.address_detail=e.response.data.address_detail
-            errorCopy.phone=e.response.data.phone
-            errorCopy.birthday=e.response.data.birthday
-            errorCopy.status=e.response.data.status
-            errorCopy.gender=e.response.data.gender
-            setErrors(errorCopy)
+            errorCopy.name=e.response.data.name;
+            errorCopy.gender=e.response.data.gender;
+            errorCopy.birthday=e.response.data.birthday;
+            errorCopy.phone=e.response.data.phone;
+            errorCopy.email=e.response.data.email;
+            errorCopy.cccd=e.response.data.cccd;
+            errorCopy.status=e.response.data.status;
+            errorCopy.address_province=e.response.data.address_province;
+            errorCopy.address_district=e.response.data.address_district;
+            errorCopy.address_ward=e.response.data.address_ward;
+            errorCopy.address_detail=e.response.data.address_detail;
+            if(e.response.data.image==='Bạn Chưa Chọn Ảnh!'){
+                const toastMsg={...toastWarning};
+                toastMsg.message=e.response.data.image;
+                dispatch(toastMessage(toastMsg));
+            }
+            setErrors(errorCopy);
         }
     }
     const handleScanQRCODE=()=>{
 
     }
 
-    const onChangeName=useCallback(e=>{
-        setName(e.target.value)
-        if(!touchName){
-            setTouchName(true)
-            setErrors({...errors})
+    //start OnChange
+    const onChangeName=(e)=>{
+        const newPostStaffRequest = {...putStaffRequest};
+        newPostStaffRequest.name = e.target.value;
+        setPutStaffRequest(newPostStaffRequest);
+
+        if(!touch.name){
+            const newTouch = {...touch};
+            newTouch.name = true;
+            setTouch(newTouch);
         }
-    },[])
-    const onChangeCCCD=useCallback(e=>{
-        setCCCD(e.target.value)
-        if(!touchCCCD){
-            setTouchCCCD(true)
-            setErrors({...errors})
-        }
-    },[])
-    const onChangeCity=(e)=>{
-        if(e.target.value===""){
-            setCity("")
-        }else{
-            let cityChoose=listCity[e.target.value] //get index
-            setCity(cityChoose.name)
-            setListDistrict(cityChoose.districts)
-            if(!touchCity){
-                setTouchCity(true)
-                setErrors({...errors})
-            }
+
+        if(errors.name !== undefined){
+            const newError={...errors};
+            newError.name = undefined;
+            setErrors(newError);
         }
     }
-    const onChangeProvice=(e)=>{
-        if(e.target.value===""){
-            setProvice("")
+
+    const onChangeGender=(e)=>{
+        console.log(e)
+        const newPostStaffRequest = {...putStaffRequest};
+        newPostStaffRequest.gender = e.target.value;
+        setPutStaffRequest(newPostStaffRequest);
+
+        if(!touch.gender){
+            const newTouch = {...touch};
+            newTouch.gender = true;
+            setTouch(newTouch);
+        }
+
+        if(errors.gender !== undefined){
+            const newError={...errors};
+            newError.gender = undefined;
+            setErrors(newError);
+        }
+    }
+
+    const onChangeBirthDay=(e)=>{
+        const newPostStaffRequest = {...putStaffRequest};
+        newPostStaffRequest.birthday = e.target.value;
+        setPutStaffRequest(newPostStaffRequest);
+
+        if(!touch.birthday){
+            const newTouch = {...touch};
+            newTouch.birthday = true;
+            setTouch(newTouch);
+        }
+
+        if(errors.birthday !== undefined){
+            const newError={...errors};
+            newError.birthday = undefined;
+            setErrors(newError);
+        }
+    }
+
+    const onChangePhone=(e)=>{
+        const newPostStaffRequest = {...putStaffRequest};
+        newPostStaffRequest.phone = e.target.value;
+        setPutStaffRequest(newPostStaffRequest);
+
+        if(!touch.phone){
+            const newTouch = {...touch};
+            newTouch.phone = true;
+            setTouch(newTouch);
+        }
+
+        if(errors.phone !== undefined){
+            const newError={...errors};
+            newError.phone = undefined;
+            setErrors(newError);
+        }
+    }
+
+    const onChangeEmail=(e)=>{
+        const newPostStaffRequest = {...putStaffRequest};
+        newPostStaffRequest.email = e.target.value;
+        setPutStaffRequest(newPostStaffRequest);
+
+        if(!touch.email){
+            const newTouch = {...touch};
+            newTouch.email = true;
+            setTouch(newTouch);
+        }
+
+        if(errors.email !== undefined){
+            const newError={...errors};
+            newError.email = undefined;
+            setErrors(newError);
+        }
+    }
+
+    const onChangeCCCD=(e)=>{
+        const newPostStaffRequest = {...putStaffRequest};
+        newPostStaffRequest.cccd = e.target.value;
+        setPutStaffRequest(newPostStaffRequest);
+
+        if(!touch.cccd){
+            const newTouch = {...touch};
+            newTouch.cccd = true;
+            setTouch(newTouch);
+        }
+
+        if(errors.cccd !== undefined){
+            const newError={...errors};
+            newError.cccd = undefined;
+            setErrors(newError);
+        }
+    }
+
+    const onChangeStatus=(e)=>{
+        const newPostStaffRequest = {...putStaffRequest};
+        newPostStaffRequest.status = e.target.value;
+        setPutStaffRequest(newPostStaffRequest);
+
+        if(!touch.status){
+            const newTouch = {...touch};
+            newTouch.status = true;
+            setTouch(newTouch);
+        }
+
+        if(errors.status !== undefined){
+            const newError={...errors};
+            newError.status = undefined;
+            setErrors(newError);
+        }
+    }
+
+    const onChangeProvince=(e)=>{
+        //set List Districts and Wards
+        if(e.target.value.length === 0){
+            const newPostStaffRequest = {...putStaffRequest};
+            newPostStaffRequest.address_province = e.target.value;
+            newPostStaffRequest.address_district="";
+            newPostStaffRequest.address_ward="";
+
+            setPutStaffRequest(newPostStaffRequest);
+            setListDistrict([]);
+            setListWard([]);
         }else{
-            let districtChoose=listDistrict[e.target.value]
-            setProvice(districtChoose.name)
-            setListWard(districtChoose.wards)
-            if(!touchProvice){
-                setTouchProvice(true)
-                setErrors({...errors})
-            }
+            const newPostStaffRequest = {...putStaffRequest};
+            newPostStaffRequest.address_province = e.target.value;
+            setPutStaffRequest(newPostStaffRequest);
+            getAllDistrictsByProvince_code(e.target.value);
+        }
+
+        if(!touch.address_province){
+            const newTouch = {...touch};
+            newTouch.address_province = true;
+            setTouch(newTouch);
+        }
+
+        if(errors.address_province !== undefined){
+            const newError={...errors};
+            newError.address_province = undefined;
+            setErrors(newError);
+        }
+    }
+    const onChangeDistrict=(e)=>{
+
+        if(e.target.value.length === 0){
+            const newPostStaffRequest = {...putStaffRequest};
+            newPostStaffRequest.address_district = e.target.value;
+            newPostStaffRequest.address_ward="";
+
+            setPutStaffRequest(newPostStaffRequest);
+            setListWard([]);
+        }else{
+            const newPostStaffRequest = {...putStaffRequest};
+            newPostStaffRequest.address_district = e.target.value;
+            setPutStaffRequest(newPostStaffRequest);
+            getAllWardsByDistrict_code(e.target.value);
+        }
+
+        if(!touch.address_district){
+            const newTouch = {...touch};
+            newTouch.address_district = true;
+            setTouch(newTouch);
+        }
+
+        if(errors.address_district !== undefined){
+            const newError={...errors};
+            newError.address_district = undefined;
+            setErrors(newError);
         }
     }
     const onChangeWard=(e)=>{
-        setWard(e.target[Number(e.target.value)+1].innerText)
-        if(!touchWard){
-            setTouchWard(true)
-            setErrors({...errors})
+        const newPostStaffRequest = {...putStaffRequest};
+        newPostStaffRequest.address_ward = e.target.value;
+        setPutStaffRequest(newPostStaffRequest);
+
+        if(!touch.address_ward){
+            const newTouch = {...touch};
+            newTouch.address_ward = true;
+            setTouch(newTouch);
+        }
+
+        if(errors.address_ward !== undefined){
+            const newError={...errors};
+            newError.address_ward = undefined;
+            setErrors(newError);
         }
     }
-    const onChangeAddress=useCallback(e=>{
-        setAddress(e.target.value)
-        if(!touchAddress){
-            setTouchAddress(true)
-            setErrors({...errors})
+
+    const onChangeAddressDetail=(e)=>{
+        const newPostStaffRequest = {...putStaffRequest};
+        newPostStaffRequest.address_detail = e.target.value;
+        setPutStaffRequest(newPostStaffRequest);
+
+        if(!touch.address_detail){
+            const newTouch = {...touch};
+            newTouch.address_detail = true;
+            setTouch(newTouch);
         }
-    },[])
-    const onChangeStatus=useCallback(e=>{
-        setStatus(e.target.value)
-        if(!touchStatus){
-            setTouchStatus(true)
-            setErrors({...errors})
+
+        if(errors.address_detail !== undefined){
+            const newError={...errors};
+            newError.address_detail = undefined;
+            setErrors(newError);
         }
-    },[])
-    const onChangeGender=useCallback(e=>{
-        setGender(e.target.value)
-        if(!touchGender){
-            setTouchGender(true)
-            setErrors({...errors})
-        }
-    },[])
-    const onChangePhone=useCallback(e=>{
-        setPhone(e.target.value)
-        if(!touchPhone){
-            setTouchPhone(true)
-            setErrors({...errors})
-        }
-    },[])
-    const onChangeBirth=useCallback(e=>{
-        setBirth(e.target.value)
-        if(!touchBirth){
-            setTouchBirth(true)
-            setErrors({...errors})
-        }
-    },[])
-    const onChangeEmail=useCallback(e=>{
-        setEmail(e.target.value)
-        if(!touchEmail){
-            setTouchEmail(true)
-            setErrors({...errors})
-        }
-    },[])
+    }
+
+
     const isValidEmail=useCallback((email)=>{
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     },[])
 
     const handleChangeFile=(e)=>{
-        setImage(e.target.files[0])
+        const newPostStaffRequest = {...putStaffRequest};
+        newPostStaffRequest.image = e.target.files[0];
+        setPutStaffRequest(newPostStaffRequest);
         showImage(e.target.files[0])
     }
 
@@ -328,11 +499,11 @@ const UpdateStaff=()=>{
                                             <Form.Label><span style={{color: "red"}}>*</span> Tên nhân viên
                                             </Form.Label>
                                             <Form.Control required type="text" placeholder="Điền tên nhân viên!"
-                                                          value={name} onChange={(e) => {
+                                                          value={putStaffRequest.name} onChange={(e) => {
                                                 onChangeName(e)
                                             }}
-                                                          isInvalid={touchName && name.length === 0 || errors.name!==undefined}
-                                                          isValid={name.length > 5}/>
+                                                          isInvalid={touch.name && putStaffRequest.name.length === 0 || errors.name!==undefined}
+                                                          isValid={putStaffRequest.name.length > 5}/>
                                             <Form.Control.Feedback type={"invalid"}>
                                                 {errors.name!==undefined ? errors.name : 'Bạn Chưa Điền Tên Nhân Viên!'}
                                             </Form.Control.Feedback>
@@ -341,23 +512,23 @@ const UpdateStaff=()=>{
                                             <Form.Label><span style={{color: "red"}}>*</span> Căn cước công dân
                                             </Form.Label>
                                             <Form.Control required type="text" placeholder="Điền căn cước công dân!"
-                                                          value={cccd} onChange={(e) => {
+                                                          value={putStaffRequest.cccd} onChange={(e) => {
                                                 onChangeCCCD(e)
                                             }}
-                                                          isInvalid={touchCCCD && cccd.length === 0 || errors.cccd!==undefined}
-                                                          isValid={cccd.length === 12}/>
+                                                          isInvalid={touch.cccd && putStaffRequest.cccd.length === 0 || errors.cccd!==undefined}
+                                                          isValid={putStaffRequest.cccd.length === 12}/>
                                             <Form.Control.Feedback type={"invalid"}>
                                                 {errors.cccd!==undefined ? errors.cccd : 'Bạn Chưa Điền CCCD!'}
                                             </Form.Control.Feedback>
                                         </Form.Group>
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Email </Form.Label>
-                                            <Form.Control value={email} required type="email" placeholder="Điền email!"
+                                            <Form.Control value={putStaffRequest.email} required type="email" placeholder="Điền email!"
                                                           onChange={(e) => {
                                                               onChangeEmail(e)
                                                           }}
-                                                          isInvalid={touchEmail && email.length === 0 || errors.email!==undefined}
-                                                          isValid={isValidEmail(email)}/>
+                                                          isInvalid={touch.email && putStaffRequest.email.length === 0 || errors.email!==undefined}
+                                                          isValid={isValidEmail(putStaffRequest.email)}/>
                                             <Form.Control.Feedback type={"invalid"}>
                                                 {errors.email!==undefined ? errors.email : 'Bạn Chưa Điền Email!'}
                                             </Form.Control.Feedback>
@@ -365,28 +536,29 @@ const UpdateStaff=()=>{
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Tỉnh/Thành Phố
                                             </Form.Label>
-                                            <Form.Select required onChange={(e) => {onChangeCity(e)}}
-                                                         isInvalid={touchCity && city === '' || errors.address_city!==undefined} isValid={city !== ''}>
+                                            <Form.Select value={putStaffRequest.address_province} required onChange={onChangeProvince}
+                                                         isInvalid={touch.address_province && putStaffRequest.address_province === ''
+                                                             || errors.address_province!==undefined} isValid={putStaffRequest.address_province !== ''}>
                                                 <option value="">--Chọn Tỉnh/Thành Phố--</option>
-                                                {listCity.map((item,index)=>{
+                                                {listProvince.map((item,index)=>{
                                                     return(
-                                                        <option key={index} value={index}>{item.name}</option>
+                                                        <option key={index} value={item.code}>{item.full_Name}</option>
                                                     )
                                                 })}
                                             </Form.Select>
                                             <Form.Control.Feedback type={"invalid"}>
-                                                {errors.address_city!==undefined ? errors.address_city : 'Bạn Chưa Chọn Tỉnh Thành Phố!'}
+                                                {errors.address_province!==undefined ? errors.address_province : 'Bạn Chưa Chọn Tỉnh Thành Phố!'}
                                             </Form.Control.Feedback>
                                         </Form.Group>
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Xã/Phường </Form.Label>
-                                            <Form.Select required onChange={(e) => {onChangeWard(e)}}
-                                                         isInvalid={touchWard && ward === '' || errors.address_ward!==undefined}
-                                                         isValid={ward !== ''}>
+                                            <Form.Select value={putStaffRequest.address_ward} required onChange={onChangeWard}
+                                                         isInvalid={touch.address_ward && putStaffRequest.address_ward === '' || errors.address_ward!==undefined}
+                                                         isValid={putStaffRequest.address_ward !== ''}>
                                                 <option value="">--Chọn Xã/Phường--</option>
                                                 {listWard.map((item,index)=>{
                                                     return(
-                                                        <option key={index} value={index}>{item.name}</option>
+                                                        <option key={index} value={item.code}>{item.full_Name}</option>
                                                     )
                                                 })}
                                             </Form.Select>
@@ -396,9 +568,9 @@ const UpdateStaff=()=>{
                                         </Form.Group>
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Trạng Thái </Form.Label>
-                                            <Form.Select className={"statusDOC"} required onChange={onChangeStatus}
-                                                         isInvalid={touchStatus && status === '' || errors.status!==undefined }
-                                                         isValid={status !== ''}>
+                                            <Form.Select value={putStaffRequest.status} className={"statusDOC"} required onChange={onChangeStatus}
+                                                         isInvalid={touch.status && putStaffRequest.status === '' || errors.status!==undefined }
+                                                         isValid={putStaffRequest.status !== ''}>
                                                 <option value="">--Chọn Trạng Thái--</option>
                                                 <option value="true">Đi làm</option>
                                                 <option value="false">Tạm ngưng</option>
@@ -411,10 +583,10 @@ const UpdateStaff=()=>{
                                     <Col lg={6}>
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Ngày sinh </Form.Label>
-                                            <Form.Control value={birth} required type="date" placeholder="Last name"
-                                                          onChange={onChangeBirth}
-                                                          isInvalid={touchBirth && birth === '' || errors.birthday!==undefined}
-                                                          isValid={birth !== ''}/>
+                                            <Form.Control value={putStaffRequest.birthday} required type="date" placeholder="Last name"
+                                                          onChange={onChangeBirthDay}
+                                                          isInvalid={touch.birthday && putStaffRequest.birthday === '' || errors.birthday!==undefined}
+                                                          isValid={putStaffRequest.birthday !== ''}/>
                                             <Form.Control.Feedback type={"invalid"}>
                                                 {errors.birthday!==undefined ? errors.birthday : 'Bạn Chưa Chọn Ngày Sinh!'}
                                             </Form.Control.Feedback>
@@ -422,12 +594,12 @@ const UpdateStaff=()=>{
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Giới Tính </Form.Label>
                                             <br/>
-                                            <Form.Check onChange={onChangeGender} style={{marginLeft: "5px"}} inline label="Nam" type="radio" name="gender" value="true" required
-                                                        isInvalid={touchGender && gender==='' || errors.gender!==undefined }
-                                                        isValid={gender!==''}/>
-                                            <Form.Check onChange={onChangeGender} style={{marginLeft: "5px"}} inline label="Nữ" type="radio" name="gender" value="false" required
-                                                        isInvalid={touchGender && gender==='' || errors.gender!==undefined }
-                                                        isValid={gender!==''}/>
+                                            <Form.Check checked={putStaffRequest.gender === true || putStaffRequest.gender === "true" } onChange={onChangeGender} style={{marginLeft: "5px"}} inline label="Nam" type="radio" name="gender" value="true" required
+                                                        isInvalid={touch.gender && putStaffRequest.gender==='' || errors.gender!==undefined }
+                                                        isValid={putStaffRequest.gender!==''}/>
+                                            <Form.Check checked={putStaffRequest.gender === false || putStaffRequest.gender === "false"} onChange={onChangeGender} style={{marginLeft: "5px"}} inline label="Nữ" type="radio" name="gender" value="false" required
+                                                        isInvalid={touch.gender && putStaffRequest.gender==='' || errors.gender!==undefined }
+                                                        isValid={putStaffRequest.gender!==''}/>
                                             <Form.Control.Feedback type={"invalid"}>
                                                 {errors.gender!==undefined ? errors.gender : 'Bạn Chưa Chọn Giới Tính!'}
                                             </Form.Control.Feedback>
@@ -435,23 +607,23 @@ const UpdateStaff=()=>{
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Số điện thoại
                                             </Form.Label>
-                                            <Form.Control value={phone} required type="number" placeholder="Điền số điện thoại!"
+                                            <Form.Control value={putStaffRequest.phone} required type="number" placeholder="Điền số điện thoại!"
                                                           onChange={onChangePhone}
-                                                          isInvalid={touchPhone && phone === '' || errors.phone!==undefined}
-                                                          isValid={phone.length === 10}/>
+                                                          isInvalid={touch.phone && putStaffRequest.phone === '' || errors.phone!==undefined}
+                                                          isValid={putStaffRequest.phone.length === 10}/>
                                             <Form.Control.Feedback type={"invalid"}>
                                                 {errors.phone!==undefined ? errors.phone : 'Bạn Chưa Điền Số Điện Thoại!'}
                                             </Form.Control.Feedback>
                                         </Form.Group>
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Quận/Huyện </Form.Label>
-                                            <Form.Select required onChange={onChangeProvice}
-                                                         isInvalid={touchProvice && province === '' || errors.address_province!==undefined}
-                                                         isValid={province !== ''}>
+                                            <Form.Select value={putStaffRequest.address_district} required onChange={onChangeDistrict}
+                                                         isInvalid={touch.address_district && putStaffRequest.address_district === '' || errors.address_district!==undefined}
+                                                         isValid={putStaffRequest.address_district !== ''}>
                                                 <option value="">--Chọn Quận/Huyện--</option>
                                                 {listDistrict.map((item,index)=>{
                                                     return(
-                                                        <option key={index} value={index}>{item.name}</option>
+                                                        <option key={index} value={item.code}>{item.full_Name}</option>
                                                     )
                                                 })}
                                             </Form.Select>
@@ -462,10 +634,10 @@ const UpdateStaff=()=>{
                                         <Form.Group>
                                             <Form.Label><span style={{color: "red"}}>*</span> Số nhà/Ngõ/Đường
                                             </Form.Label>
-                                            <Form.Control value={address} required type="text" placeholder="Điền số nhà/ngõ/đường!"
-                                                          onChange={onChangeAddress}
-                                                          isInvalid={touchAddress && address === '' || errors.address_detail!==undefined}
-                                                          isValid={address.length > 0}/>
+                                            <Form.Control value={putStaffRequest.address_detail} required type="text" placeholder="Điền số nhà/ngõ/đường!"
+                                                          onChange={onChangeAddressDetail}
+                                                          isInvalid={touch.address_detail && putStaffRequest.address_detail === '' || errors.address_detail!==undefined}
+                                                          isValid={putStaffRequest.address_detail.length > 0}/>
                                             <Form.Control.Feedback type={"invalid"}>
                                                 {errors.address_detail!==undefined ? errors.address_detail : 'Bạn Chưa Điền Số nhà/Ngõ/Đường!'}
                                             </Form.Control.Feedback>
@@ -473,7 +645,7 @@ const UpdateStaff=()=>{
                                     </Col>
                                 </Row>
                                 <div style={{display: "flex", justifyContent: "end",padding:"0 0 20px 0"}}>
-                                    <Button style={{padding: "7px 30px"}} onClick={handleUpdateStaff}
+                                    <Button style={{padding: "7px 30px"}} onClick={handlePutStaff}
                                             type="submit">Cập Nhật</Button>
                                     <Button style={{
                                         backgroundColor: "#fff",

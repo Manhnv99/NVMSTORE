@@ -3,29 +3,30 @@ import axios from "axios";
 
 class ProductDetailAPI{
 
-    addProductDetail=(productDetailRequest)=>{
-        return axios.post(`http://localhost:8080/api/product_detail/add`,productDetailRequest);
+    postProductDetail=(productDetailRequest)=>{
+        return axios.post(`http://localhost:8080/api/product_detail/post-product_detail`,productDetailRequest);
     }
 
     updateProductDetail=(updateProductDetailRequest)=>{
-        return axios.put(`http://localhost:8080/api/product_detail/update`,updateProductDetailRequest);
+        return axios.put(`http://localhost:8080/api/product_detail/put-product_detail`,updateProductDetailRequest);
     }
 
     //ProductDetail
-    productDetailResponse=(product_id,page)=>{
-        return axios.get(`http://localhost:8080/api/product/productDetailResponse/${product_id}`,{
+
+    getAllProductDetail=(page)=>{
+        return axios.get(`http://localhost:8080/api/product_detail/get-all-product_detail`,{
             params:{
                 page:page
             }
         });
     }
 
-    getTotalPageProductDetailResponse=(product_id)=>{
-        return axios.get(`http://localhost:8080/api/product/getTotalPageProductDetailResponse/${product_id}`);
+    getTotalPageProductDetail=()=>{
+        return axios.get(`http://localhost:8080/api/product_detail/get-totalPage-product_detail`);
     }
 
-    searchProductDetailResponse=(product_id,materialId,brandId,soleId,sizeId,colorId,categoryId,spdId,genderId,page)=>{
-        return axios.get(`http://localhost:8080/api/product/searchProductDetailResponse/${product_id}`,{
+    searchProductDetail=(materialId,brandId,soleId,sizeId,colorId,categoryId,spdId,genderId,page)=>{
+        return axios.get(`http://localhost:8080/api/product_detail/search-product_detail`,{
             params:{
                 materialId:materialId,
                 brandId:brandId,
@@ -40,8 +41,53 @@ class ProductDetailAPI{
         });
     }
 
-    getTotalPageSearchProductDetailResponse=(product_id,materialId,brandId,soleId,sizeId,colorId,categoryId,spdId,genderId)=>{
-        return axios.get(`http://localhost:8080/api/product/getTotalPageSearchProductDetailResponse/${product_id}`,{
+    getTotalPageSearchProductDetail=(materialId,brandId,soleId,sizeId,colorId,categoryId,spdId,genderId)=>{
+        return axios.get(`http://localhost:8080/api/product_detail/search-totalPage-product_detail`,{
+            params:{
+                materialId:materialId,
+                brandId:brandId,
+                soleId:soleId,
+                sizeId:sizeId,
+                colorId:colorId,
+                categoryId:categoryId,
+                spdId:spdId,
+                genderId:genderId
+            }
+        });
+    }
+
+
+    //ProductDetail By Product_Id
+    getAllProductDetailByProduct_id=(product_id,page)=>{
+        return axios.get(`http://localhost:8080/api/product_detail/get-all-product_detail-byProductId/${product_id}`,{
+            params:{
+                page:page
+            }
+        });
+    }
+
+    getTotalPageProductDetailByProduct_id=(product_id)=>{
+        return axios.get(`http://localhost:8080/api/product_detail/get-totalPage-product_detail-byProductId/${product_id}`);
+    }
+
+    searchProductDetailByProduct_id=(product_id,materialId,brandId,soleId,sizeId,colorId,categoryId,spdId,genderId,page)=>{
+        return axios.get(`http://localhost:8080/api/product_detail/search-product_detail-byProductId/${product_id}`,{
+            params:{
+                materialId:materialId,
+                brandId:brandId,
+                soleId:soleId,
+                sizeId:sizeId,
+                colorId:colorId,
+                categoryId:categoryId,
+                spdId:spdId,
+                genderId:genderId,
+                page:page
+            }
+        });
+    }
+
+    getTotalPageSearchProductDetailByProductId=(product_id,materialId,brandId,soleId,sizeId,colorId,categoryId,spdId,genderId)=>{
+        return axios.get(`http://localhost:8080/api/product_detail/search-totalPage-product_detail-byProductId/${product_id}`,{
             params:{
                 materialId:materialId,
                 brandId:brandId,

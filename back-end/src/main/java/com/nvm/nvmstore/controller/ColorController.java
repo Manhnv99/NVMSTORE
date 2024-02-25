@@ -1,7 +1,7 @@
 package com.nvm.nvmstore.controller;
 
 import com.nvm.nvmstore.request.color.ColorRequest;
-import com.nvm.nvmstore.service.ColorService;
+import com.nvm.nvmstore.service.color.ColorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,13 +16,13 @@ public class ColorController {
     @Autowired
     private ColorService colorService;
 
-    @GetMapping("/getAll")
+    @GetMapping("/get-all")
     public ResponseEntity<?> getAll(){
         return ResponseEntity.status(HttpStatus.OK).body(colorService.getALl());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> add(@RequestBody @Valid ColorRequest colorRequest){
+    @PostMapping("/post-color")
+    public ResponseEntity<?> postColor(@RequestBody @Valid ColorRequest colorRequest){
         colorService.addColor(colorRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

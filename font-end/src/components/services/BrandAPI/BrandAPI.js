@@ -3,19 +3,19 @@ import axios from "axios";
 
 class BrandAPI{
     getAllPaging=(page)=>{
-        return axios.get(`http://localhost:8080/api/brand/getAll/${page}`)
+        return axios.get(`http://localhost:8080/api/brand/get-all/${page}`)
     }
 
     getAll=()=>{
-        return axios.get(`http://localhost:8080/api/brand/getAll`)
+        return axios.get(`http://localhost:8080/api/brand/get-all`)
     }
 
     getAllTotalPage=()=>{
-        return axios.get(`http://localhost:8080/api/brand/getAllTotalPage`)
+        return axios.get(`http://localhost:8080/api/brand/get-all-totalPage`)
     }
 
     addBrand=(categoryRequest)=>{
-        return axios.post(`http://localhost:8080/api/brand/add`,categoryRequest);
+        return axios.post(`http://localhost:8080/api/brand/post-brand`,categoryRequest);
     }
 
     searchBrand=(input,status,page)=>{
@@ -28,7 +28,7 @@ class BrandAPI{
     }
 
     getTotalPageSearch=(input,status)=>{
-        return axios.get(`http://localhost:8080/api/brand/search/getTotalPage`,{
+        return axios.get(`http://localhost:8080/api/brand/search/get-totalPage`,{
             params:{
                 input:input,
                 status:status
@@ -41,7 +41,7 @@ class BrandAPI{
     }
 
     updateBrand=(id,categoryRequest)=>{
-        return axios.put(`http://localhost:8080/api/brand/update/${id}`,categoryRequest);
+        return axios.put(`http://localhost:8080/api/brand/put-brand/${id}`,categoryRequest);
     }
 }
 

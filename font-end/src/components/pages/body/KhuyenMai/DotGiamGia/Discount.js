@@ -7,6 +7,7 @@ const Discount=()=>{
 
     const nav=useNavigate();
 
+
     return(
         <>
             {/*{(loading || isLoading) && <Loading/>}*/}

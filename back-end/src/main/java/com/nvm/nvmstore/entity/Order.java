@@ -27,25 +27,11 @@ public class Order {
 
     private BigDecimal ship_price;
 
-    private String address_city;
-
-    private String address_province;
-
-    private String address_ward;
-
-    private String address_detail;
-
     private String description;
-
-    private String transfer_code;
 
     @ManyToOne
     @JoinColumn(name = "status_order_id",referencedColumnName = "id")
     private Status_Order status_order_id;
-
-    @ManyToOne
-    @JoinColumn(name = "httt_id",referencedColumnName = "id")
-    private HTTT httt_id;
 
     @ManyToOne
     @JoinColumn(name = "type_order_id",referencedColumnName = "id")
@@ -56,8 +42,16 @@ public class Order {
     private Type_Payment type_payment_id;
 
     @ManyToOne
+    @JoinColumn(name = "payment_option_id",referencedColumnName = "id")
+    private PaymentOption payment_option_id;
+
+    @ManyToOne
     @JoinColumn(name = "customer_id",referencedColumnName = "id")
     private Customer customer_id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    private User user_id;
 
     @ManyToOne
     @JoinColumn(name = "staff_id",referencedColumnName = "id")
@@ -71,7 +65,4 @@ public class Order {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created_at;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updated_at;
 }

@@ -7,8 +7,8 @@ const initialState={
     isLoading:false
 }
 
-export const getAllProductDetail=createAsyncThunk("fetchProductDetail",async(param)=>{
-    const response=await productDetailAPI.productDetailResponse(param.product_id,param.page);
+export const getAllProductDetailByProduct_id=createAsyncThunk("fetchProductDetail",async(param)=>{
+    const response=await productDetailAPI.getAllProductDetailByProduct_id(param.product_id,param.page);
     return response.data
 })
 
@@ -22,14 +22,14 @@ const ProductDetailSlice=createSlice({
     },
     extraReducers:(builder)=>{
         builder
-            .addCase(getAllProductDetail.pending,(state,action)=>{
+            .addCase(getAllProductDetailByProduct_id.pending,(state,action)=>{
                 state.isLoading=true
             })
-            .addCase(getAllProductDetail.fulfilled,(state,action)=>{
+            .addCase(getAllProductDetailByProduct_id.fulfilled,(state,action)=>{
                 state.listProductDetail=action.payload
                 state.isLoading=false
             })
-            .addCase(getAllProductDetail.rejected,(state,action)=>{
+            .addCase(getAllProductDetailByProduct_id.rejected,(state,action)=>{
                 state.isLoading=false
             })
     }

@@ -17,9 +17,9 @@ import Product from "./components/pages/body/SanPham/Product";
 import AddProduct from "./components/pages/body/SanPham/AddProduct";
 import ProductDetail from "./components/pages/body/SanPham/productDetail/ProductDetail";
 import AddDiscount from "./components/pages/body/KhuyenMai/DotGiamGia/AddDiscount";
-import AddVoucher from "./components/pages/body/KhuyenMai/PhieuGiamGia/AddVoucher";
 import Discount from "./components/pages/body/KhuyenMai/DotGiamGia/Discount";
 import Voucher from "./components/pages/body/KhuyenMai/PhieuGiamGia/Voucher";
+import BanHang from "./components/pages/body/BanHangTaiQuay/BanHang";
 
 
 function App() {
@@ -51,7 +51,7 @@ function App() {
                 <Route path="/discount-management" element={<Discount/>}/>
                 <Route path="/create-discount-management" element={<AddDiscount/>}/>
                 <Route path="/voucher-management" element={<Voucher/>}/>
-                <Route path="/create-voucher-management" element={<AddVoucher/>}/>
+                <Route path="/sale-counter" element={<BanHang/>}/>
             </Routes>
           </div>
       </Router>

@@ -12,6 +12,7 @@ import ProductSlice from "./slices/product/ProductSlice";
 import ProductDetailSlice from "./slices/product/ProductDetailSlice";
 import ColorSlice from "./slices/ColorSlice";
 import SizeSlice from "./slices/SizeSlice";
+import VoucherSlice from "./slices/VoucherSlice";
 
 
 export const store=configureStore({
@@ -28,6 +29,7 @@ export const store=configureStore({
         geograph:APIVNSlice,
         toastmsg:ToastMsgSlice,
         product:ProductSlice,
-        productDetail:ProductDetailSlice
+        productDetail:ProductDetailSlice,
+        voucher:VoucherSlice
     }
 })

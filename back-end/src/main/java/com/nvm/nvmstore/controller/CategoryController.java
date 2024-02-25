@@ -2,7 +2,7 @@ package com.nvm.nvmstore.controller;
 
 
 import com.nvm.nvmstore.request.category.CategoryRequest;
-import com.nvm.nvmstore.service.CategoryService;
+import com.nvm.nvmstore.service.category.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -18,18 +18,18 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping("/getAll")
+    @GetMapping("/get-all")
     public ResponseEntity<?> getAll(){
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.getAll());
     }
 
-    @GetMapping("/getAll/{page}")
+    @GetMapping("/get-all/{page}")
     public ResponseEntity<?> getAll(@PathVariable Integer page){
         PageRequest pageRequest=PageRequest.of(page-1,3);
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.getAllPaging(pageRequest));
     }
 
-    @GetMapping("/getAllTotalPage")
+    @GetMapping("/get-all-totalPage")
     public ResponseEntity<?> getAllTotalPage(){
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.getAllTotalPage());
     }
@@ -40,18 +40,18 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.searchCategory(input,status,pageRequest));
     }
 
-    @GetMapping("/search/getTotalPage")
+    @GetMapping("/search/get-totalPage")
     public ResponseEntity<?> getTotalPageSearch(@RequestParam(name = "input",required = false) String input,@RequestParam(name = "status",required = false) Boolean status){
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.getTotalPageSearch(input,status));
     }
 
 
-    @PostMapping("/add")
+    @PostMapping("/post-category")
     public ResponseEntity<?> addCategory(@RequestBody @Valid CategoryRequest categoryRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.addCategory(categoryRequest));
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/put-category/{id}")
     public ResponseEntity<?> updateCategory(@PathVariable Long id,@RequestBody CategoryRequest categoryRequest){
         categoryService.updateCategory(id,categoryRequest);
         return ResponseEntity.status(HttpStatus.OK).build();

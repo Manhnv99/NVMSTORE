@@ -2,7 +2,7 @@ import {Button, Col, Form, Modal} from "react-bootstrap";
 import {memo, useState} from "react";
 import {useDispatch} from "react-redux";
 import BrandAPI from "../../../services/BrandAPI/BrandAPI";
-import {getAllBrand, setListBrand} from "../../../../redux/slices/BrandSlice";
+import {setListBrand} from "../../../../redux/slices/BrandSlice";
 import {toastMessage} from "../../../../redux/slices/ToastMsgSlice";
 import Loading from "../../loading/Loading";
 import brandAPI from "../../../services/BrandAPI/BrandAPI";

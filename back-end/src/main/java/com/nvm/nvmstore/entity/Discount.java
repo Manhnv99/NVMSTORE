@@ -26,9 +26,9 @@ public class Discount {
 
     private String name;
 
-    private BigDecimal value;
+    private Integer value;
 
-    private Boolean status;
+    private Integer status;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)

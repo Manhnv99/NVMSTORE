@@ -3,29 +3,29 @@ import axios from "axios";
 
 class ProductAPI{
 
-    getAllProduct=()=>{
-        return axios.get(`http://localhost:8080/api/product/getAll`);
+    getAllName_Product=()=>{
+        return axios.get(`http://localhost:8080/api/product/get-all`);
     }
 
-    addProduct=(productRequest)=>{
-        return axios.post(`http://localhost:8080/api/product/add`,productRequest);
+    postProduct=(productRequest)=>{
+        return axios.post(`http://localhost:8080/api/product/post-product`,productRequest);
     }
 
     //Product
-    productResponse=(page)=>{
-        return axios.get(`http://localhost:8080/api/product/productResponse`,{
+    getAllProduct=(page)=>{
+        return axios.get(`http://localhost:8080/api/product/get-all-product_paging`,{
             params:{
                 page:page
             }
         });
     }
 
-    getTotalPageProductResponse=()=>{
-        return axios.get(`http://localhost:8080/api/product/totalPageProductResponse`);
+    getTotalPageProduct=()=>{
+        return axios.get(`http://localhost:8080/api/product/get-totalPage`);
     }
 
-    searchProductResponse=(input,page)=>{
-        return axios.get(`http://localhost:8080/api/product/searchProductResponse`,{
+    searchProduct=(input,page)=>{
+        return axios.get(`http://localhost:8080/api/product/search-product_paging`,{
             params:{
                 input:input,
                 page:page
@@ -33,21 +33,12 @@ class ProductAPI{
         });
     }
 
-    getTotalPageSearchProductResponse=(input)=>{
-        return axios.get(`http://localhost:8080/api/product/totalPageSearchProductResponse`,{
+    getTotalPageSearchProduct=(input)=>{
+        return axios.get(`http://localhost:8080/api/product/search-totalPage`,{
             params:{
                 input:input
             }
         });
-    }
-
-    //Product Image Detail
-    productImageDetailResponse=(product_detail_id)=>{
-        return axios.get(`http://localhost:8080/api/product/productDetailImageResponse/${product_detail_id}}`);
-    }
-
-    imageProductResponse=(product_detail_id)=>{
-        return axios.get(`http://localhost:8080/api/product/imageProductResponse/${product_detail_id}`);
     }
 }
 

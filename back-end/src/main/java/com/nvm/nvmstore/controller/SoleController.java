@@ -2,7 +2,7 @@ package com.nvm.nvmstore.controller;
 
 
 import com.nvm.nvmstore.request.sole.SoleRequest;
-import com.nvm.nvmstore.service.SoleService;
+import com.nvm.nvmstore.service.sole.SoleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;

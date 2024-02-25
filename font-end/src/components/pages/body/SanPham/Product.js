@@ -34,7 +34,7 @@ const Product=()=>{
 
     const getTotalPage= async ()=>{
         try {
-            const response=await productAPI.getTotalPageProductResponse();
+            const response=await productAPI.getTotalPageProduct();
             setTotalPage(response.data);
         }catch (e) {
             console.log(e);
@@ -43,9 +43,9 @@ const Product=()=>{
 
     const handleSearch= async ()=>{
         try {
-            const response= await productAPI.searchProductResponse(input,1);
+            const response= await productAPI.searchProduct(input,1);
             dispatch(setListProduct(response.data));
-            const totalPage=await productAPI.getTotalPageSearchProductResponse(input);
+            const totalPage=await productAPI.getTotalPageSearchProduct(input);
             setTotalPage(totalPage.data);
             setWhatAction("search");
         }catch (e) {
@@ -56,7 +56,7 @@ const Product=()=>{
     const handleAPISearchPaging= async (page)=>{
         setLoading(true);
         try {
-            const response= await productAPI.searchProductResponse(input,page);
+            const response= await productAPI.searchProduct(input,page);
             dispatch(setListProduct(response.data));
             setLoading(false);
         }catch (e) {

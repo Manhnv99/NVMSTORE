@@ -3,10 +3,7 @@ import {Button, Col, Form, Modal, Row} from "react-bootstrap";
 import {memo, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import Loading from "../../loading/Loading";
-import sizeAPI from "../../../services/SizeAPI/SizeAPI";
-import SizeAPI from "../../../services/SizeAPI/SizeAPI";
 import {toastMessage} from "../../../../redux/slices/ToastMsgSlice";
-import colorAPI from "../../../services/ColorAPI/ColorAPI";
 import ColorAPI from "../../../services/ColorAPI/ColorAPI";
 import {getAllColor} from "../../../../redux/slices/ColorSlice";
 

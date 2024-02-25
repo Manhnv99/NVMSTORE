@@ -3,16 +3,16 @@ import axios from "axios";
 
 class StaffAPI{
 
-    createStaff=(formData)=>{
-        return axios.post("http://localhost:8080/api/staff/create",formData,{
+    postStaff=(formData)=>{
+        return axios.post("http://localhost:8080/api/staff/post-staff",formData,{
             headers:{
                 "Content-Type":"multipart/form-data"
             }
         })
     }
 
-    updateStaff=(id,formData)=>{
-        return axios.put(`http://localhost:8080/api/staff/update/${id}`,formData,{
+    putStaff=(id,formData)=>{
+        return axios.put(`http://localhost:8080/api/staff/put-staff/${id}`,formData,{
             headers:{
                 "Content-Type":"multipart/form-data"
             }
@@ -20,15 +20,15 @@ class StaffAPI{
     }
 
     getAll=(page)=>{
-        return axios.get(`http://localhost:8080/api/staff/getAll/${page}`)
+        return axios.get(`http://localhost:8080/api/staff/get-all/${page}`)
     }
 
     getTotalPage=()=>{
-        return axios.get(`http://localhost:8080/api/staff/getTotalPage`)
+        return axios.get(`http://localhost:8080/api/staff/get-totalPage`)
     }
 
-    getStaffById=(id)=>{
-        return axios.get(`http://localhost:8080/api/staff/getStaffById/${id}`)
+    getById=(id)=>{
+        return axios.get(`http://localhost:8080/api/staff/get-byId/${id}`)
     }
 
     searchStaff=(input,status,page)=>{
@@ -41,7 +41,7 @@ class StaffAPI{
     }
 
     getTotalPageSearch=(input,status)=>{
-        return axios.get(`http://localhost:8080/api/staff/search/getTotalPage`,{
+        return axios.get(`http://localhost:8080/api/staff/search/get-totalPage`,{
             params:{
                 input:input,
                 status:status

@@ -1,0 +1,14 @@
+*màn thêm giảm giá
+-vấn đề về input phân trang:
+  +)sẽ làm số STT tăng dần -> sẽ xử lý input check bằng cách khi bấm vào input đó sẽ thực hiện lưu số thứ tự tăng dần đó vào 1 mảng và set ở phần giao diện nếu trong mảng đó có phần từ của stt đó thì thực hiện check.
+  +) không dựa vào stt nữa mà dựa vào product_id.
+*màn sửa giám giá
+-vấn đề khi bấm vào chỉnh sửa đợt giảm giá -> sẽ trả ra list các product và productdetail đã được add vào giảm giá đó, những cái nào đc add thì tick.
+-vấn đề khi tick vào untick hoặc là tick -> chỉnh sửa giảm giá sản phẩm chi tiết:thực hiện gửi list
+
+*màn voucher
+-hết hạn 3
+-trong thời hạn 2
+-sắp đến 1
+
+*call listAllImage -> dùng filter lọc theo product_detail_id -> dùng slideImage để chuyển ảnhh

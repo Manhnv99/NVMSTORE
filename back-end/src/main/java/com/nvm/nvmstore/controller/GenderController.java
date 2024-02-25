@@ -1,10 +1,7 @@
 package com.nvm.nvmstore.controller;
 
-import com.nvm.nvmstore.repository.GenderRepository;
 import com.nvm.nvmstore.request.gender.GenderRequest;
-import com.nvm.nvmstore.request.status_productdetail.Status_ProductDetailRequest;
-import com.nvm.nvmstore.service.GenderService;
-import com.nvm.nvmstore.service.Status_ProductDetailService;
+import com.nvm.nvmstore.service.gender.GenderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,13 +17,13 @@ public class GenderController {
     @Autowired
     private GenderService genderService;
 
-    @GetMapping("/getAll")
+    @GetMapping("/get-all")
     public ResponseEntity<?> getAll(){
         return ResponseEntity.status(HttpStatus.OK).body(genderService.getALl());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> add(@RequestBody @Valid GenderRequest genderRequest){
+    @PostMapping("/post-gender")
+    public ResponseEntity<?> postGender(@RequestBody @Valid GenderRequest genderRequest){
         genderService.addGender(genderRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
