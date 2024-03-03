@@ -28,6 +28,8 @@ public class Customer {
 
     private Integer point;
 
+    private Boolean status;
+
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created_at;

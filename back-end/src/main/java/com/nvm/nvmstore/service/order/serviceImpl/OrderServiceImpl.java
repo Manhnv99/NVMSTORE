@@ -53,4 +53,9 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderPendingResponse> getListOrderPending() {
         return orderRepository.getListOrderPending();
     }
+
+    @Override
+    public void deleteListOrderPending() {
+        orderRepository.deleteListOrderPending();
+    }
 }

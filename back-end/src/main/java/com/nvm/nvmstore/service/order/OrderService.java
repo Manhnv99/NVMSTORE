@@ -9,4 +9,6 @@ public interface OrderService {
     String postDefaultOrder();
 
     List<OrderPendingResponse> getListOrderPending();
+
+    void deleteListOrderPending();
 }

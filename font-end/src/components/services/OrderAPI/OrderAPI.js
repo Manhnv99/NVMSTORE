@@ -9,6 +9,10 @@ class OrderAPI{
     list_Order_Pending=()=>{
         return axios.get(`http://localhost:8080/api/order/list-order_pending`)
     }
+
+    delete_list_Order_Pending=()=>{
+        return axios.delete(`http://localhost:8080/api/order/delete-list-order_pending`)
+    }
 }
 
 export default new OrderAPI()

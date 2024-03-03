@@ -63,7 +63,7 @@ const AddVoucher=(props)=>{
                 props.callAPIGetAllVoucherPaging();
                 props.callAPIGetToTalPage();
                 const toastMsg={...toastSuccess}
-                toastMsg.message="Cập Nhật Voucher Thành Công!"
+                toastMsg.message="Thêm Mới Voucher Thành Công!"
                 dispatch(toastMessage(toastMsg));
                 handleClose();
             }

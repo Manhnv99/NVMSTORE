@@ -1,5 +1,5 @@
 
-import "./AddStaff.css"
+import "./style/AddStaff.css"
 import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {useCallback, useEffect, useRef, useState} from "react";
 import StaffAPI from "../../../../services/StaffAPI/StaffAPI";

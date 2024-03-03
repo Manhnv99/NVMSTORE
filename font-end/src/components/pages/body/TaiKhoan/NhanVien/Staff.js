@@ -1,4 +1,4 @@
-import "./Staff.css"
+import "./style/Staff.css"
 import {Button, Card, Col, Container, Form, Row, Table} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";

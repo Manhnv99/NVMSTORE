@@ -23,4 +23,10 @@ public class OrderController {
     public ResponseEntity<?> getListOrderPending(){
         return ResponseEntity.status(HttpStatus.OK).body(orderService.getListOrderPending());
     }
+
+    @DeleteMapping("/delete-list-order_pending")
+    public ResponseEntity<?> clearListOrderPending(){
+        orderService.deleteListOrderPending();
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

@@ -8,6 +8,7 @@ import ImageProductAPI from "../../../services/ProductAPI/Image_Product_API/Imag
 import OrderAPI from "../../../services/OrderAPI/OrderAPI";
 import {useDispatch, useSelector} from "react-redux";
 import {toastMessage} from "../../../../redux/slices/ToastMsgSlice";
+import {setListOrderProductDetail} from "../../../../redux/slices/order/OrderSlice";
 
 const BanHang=()=>{
     //dispatch
@@ -16,7 +17,8 @@ const BanHang=()=>{
     const [slideImage,setSlideImage] = useState(0);
     const [currentOrder_Id,setCurrentOrder_Id] = useState(undefined);
     //state List
-    const [listProductDetail,setListProductDetail] = useState([]);
+    // const [listProductDetail,setListProductDetail] = useState([]);
+    const listProductDetail = useSelector(state => state.order.listOrderProductDetail);
     const [listImageProduct,setListImageProduct] = useState([]);
     const [listOrderPending,setListOrderPending] = useState([]);
     //message
@@ -32,10 +34,13 @@ const BanHang=()=>{
     useEffect(() => {
         getAllImageProduct();
         callListOrderPending();
+        // return (()=>{
+        //     OrderAPI.delete_list_Order_Pending();
+        // })
     }, []);
 
 
-    //set All ImageProduct
+    //using for set All ImageProduct
     useEffect(()=>{
         let count=0;
         let interval_id=undefined;
@@ -61,7 +66,7 @@ const BanHang=()=>{
                         item.style.animation="";
                     })
                 },[1000]);
-            },[5000]);
+            },[2000]);
         }
 
         return(()=>{
@@ -69,6 +74,7 @@ const BanHang=()=>{
         })
     },[listProductDetail])
 
+    //using for add order-default-active css
     useEffect(()=>{
         if(runInSecondRerender === 2){
             const order_active = document.querySelectorAll(".order-active");
@@ -88,7 +94,7 @@ const BanHang=()=>{
             const response = await OrderAPI.list_Order_Pending();
             if(response && response.status === 200){
                 if(response.data.length > 0){
-                    setCurrentOrder_Id(response.data[0]);
+                    setCurrentOrder_Id(response.data[0].order_id);
                 }
                 setListOrderPending(response.data);
             }
@@ -108,7 +114,7 @@ const BanHang=()=>{
             }
         })
         //set Current_Order
-        setCurrentOrder_Id(order_id);
+        setCurrentOrder_Id(order_id.order_id);
     }
 
 
@@ -145,8 +151,7 @@ const BanHang=()=>{
             const response = await OrderAPI.post_Default_Order();
             if(response && response.status === 201){
                 const res = await OrderAPI.list_Order_Pending();
-                setCurrentOrder_Id(res.data[res.data.length - 1]);
-                console.log(res.data)
+                setCurrentOrder_Id(res.data[res.data.length - 1].order_id);
                 setListOrderPending(res.data);
                 setRunInSecondRerender(2);
             }
@@ -158,28 +163,57 @@ const BanHang=()=>{
     }
 
     const handleChooseProductDetail=(product_detail)=>{
-        let isDuplicate = false;
-        let index_product_detail_duplicate = 0;
+        if(listOrderPending.length === 0){
+            const toastMsg = {...toastWarning}
+            toastMsg.message="Bạn Chưa Tạo Hóa Đơn";
+            dispatch(toastMessage(toastMsg));
+        }else{
+            if(listProductDetail.length > 0){
+                let isDuplicate = false;
+                let index_product_detail_duplicate = 0;
 
+                listProductDetail.forEach((item,index)=>{
+                    if(item.product_detail_id === product_detail.product_detail_id && item.order_id === currentOrder_Id){
+                        isDuplicate=true;
+                        index_product_detail_duplicate=index;
+                    }
+                })
+
+                if(isDuplicate){
+                    //duplicate === true => update quantity ++1
+                    const newListProductDetail = [...listProductDetail];
+                    newListProductDetail[index_product_detail_duplicate].quantity_pay++;
+                    dispatch(setListOrderProductDetail(newListProductDetail));
+                    // setListProductDetail(newListProductDetail);
+                }else{
+                    //duplicate === false => push
+                    const newProductDetail = {...product_detail};
+                    const newListProductDetail = [...listProductDetail];
+                    newProductDetail.order_id=currentOrder_Id;
+                    newListProductDetail.push(newProductDetail);
+                    dispatch(setListOrderProductDetail(newListProductDetail));
+                    // setListProductDetail(newListProductDetail);
+                }
+            }else{
+                //duplicate === false => push
+                const newProductDetail = {...product_detail};
+                const newListProductDetail = [...listProductDetail];
+                newProductDetail.order_id=currentOrder_Id;
+                newListProductDetail.push(newProductDetail);
+                dispatch(setListOrderProductDetail(newListProductDetail));
+                // setListProductDetail(newListProductDetail);
+            }
+        }
+    }
+
+    const handleDeleteProductDetail=(product_detail)=>{
         listProductDetail.forEach((item,index)=>{
             if(item.product_detail_id === product_detail.product_detail_id && item.order_id === currentOrder_Id){
-                isDuplicate=true;
-                index_product_detail_duplicate=index;
+                const newListProductDetail = [...listProductDetail];
+                newListProductDetail.splice(index,1);
+                dispatch(setListOrderProductDetail(newListProductDetail));
             }
         })
-
-        if(isDuplicate){
-            //duplicate === true => update quantity ++1
-            const newListProductDetail = [...listProductDetail];
-            newListProductDetail[index_product_detail_duplicate].quantity_pay++;
-            setListProductDetail(newListProductDetail);
-        }else{
-            //duplicate === false => push
-            const newListProductDetail = [...listProductDetail];
-            product_detail.order_id=currentOrder_Id;
-            newListProductDetail.push(product_detail);
-            setListProductDetail(newListProductDetail);
-        }
     }
 
     const handleMinusQuantityPay=(product_detail,index)=>{
@@ -191,7 +225,8 @@ const BanHang=()=>{
                 if(pd.product_detail_id === newProductDetail.product_detail_id && pd.order_id === currentOrder_Id){
                     newProductDetail.quantity_pay--;
                     newListProductDetail.splice(location,1,newProductDetail);
-                    setListProductDetail(newListProductDetail);
+                    dispatch(setListOrderProductDetail(newListProductDetail));
+                    // setListProductDetail(newListProductDetail);
                 }
             })
         }
@@ -204,7 +239,8 @@ const BanHang=()=>{
             if(pd.product_detail_id === newProductDetail.product_detail_id && pd.order_id === currentOrder_Id){
                 newProductDetail.quantity_pay++;
                 newListProductDetail.splice(location,1,newProductDetail);
-                setListProductDetail(newListProductDetail);
+                dispatch(setListOrderProductDetail(newListProductDetail));
+                // setListProductDetail(newListProductDetail);
             }
         })
     }
@@ -217,7 +253,8 @@ const BanHang=()=>{
             if(pd.product_detail_id === newProductDetail.product_detail_id && pd.order_id === currentOrder_Id){
                 newProductDetail.quantity_pay = Number(e.target.value);
                 newListProductDetail.splice(location,1,newProductDetail);
-                setListProductDetail(newListProductDetail);
+                dispatch(setListOrderProductDetail(newListProductDetail));
+                // setListProductDetail(newListProductDetail);
             }
         })
     }
@@ -268,7 +305,7 @@ const BanHang=()=>{
                             </div>
                             {/*Giỏ hàng*/}
                             <div className="order-list-product">
-                                {listProductDetail.length > 0 ?
+                                {listProductDetail.filter(pd=>pd.order_id === currentOrder_Id).length > 0 ?
                                     <Table style={{margin:"20px 0"}}>
                                         <thead>
                                         <tr style={{fontSize: "13px", fontWeight: "600"}}>
@@ -312,7 +349,7 @@ const BanHang=()=>{
                                                     </span>
                                                 </td>
                                                 <td style={{textAlign: "center"}}>
-                                                    <i className="pay-delete fa-solid fa-trash"></i>
+                                                    <i onClick={()=>{handleDeleteProductDetail(item)}} className="pay-delete fa-solid fa-trash"></i>
                                                 </td>
                                             </tr>
                                         ))}

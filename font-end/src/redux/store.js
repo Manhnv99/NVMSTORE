@@ -13,6 +13,8 @@ import ProductDetailSlice from "./slices/product/ProductDetailSlice";
 import ColorSlice from "./slices/ColorSlice";
 import SizeSlice from "./slices/SizeSlice";
 import VoucherSlice from "./slices/VoucherSlice";
+import OrderSlice from "./slices/order/OrderSlice";
+
 
 
 export const store=configureStore({
@@ -30,6 +32,7 @@ export const store=configureStore({
         toastmsg:ToastMsgSlice,
         product:ProductSlice,
         productDetail:ProductDetailSlice,
-        voucher:VoucherSlice
+        voucher:VoucherSlice,
+        order:OrderSlice
     }
 })

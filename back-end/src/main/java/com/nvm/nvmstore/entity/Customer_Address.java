@@ -1,8 +1,10 @@
 package com.nvm.nvmstore.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -18,11 +20,15 @@ public class Customer_Address {
     @JoinColumn(name = "customer_id",referencedColumnName = "id")
     private Customer customer_id;
 
-    private String address_provinces;
+    private String name;
 
-    private String address_districts;
+    private String phone;
 
-    private String address_wards;
+    private String address_province_code;
+
+    private String address_district_code;
+
+    private String address_ward_code;
 
     private String address_detail;
 

@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class UserAddress {
+public class User_Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +20,10 @@ public class UserAddress {
     @ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "id")
     private User user_id;
+
+    private String name;
+
+    private String phone;
 
     private String address_provinces;
 

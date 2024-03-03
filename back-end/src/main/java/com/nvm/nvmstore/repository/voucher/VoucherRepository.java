@@ -55,7 +55,7 @@ public interface VoucherRepository extends JpaRepository<Voucher,Long> {
                     v.updated_at AS updated_At,
                     v.status AS status
             FROM voucher v
-            Where
+            WHERE
             v.code LIKE CONCAT ("%", (IFNULL(NULLIF(:code,""),v.code)) ,"%") AND
             v.quantity = (IFNULL(NULLIF(:quantity,""),v.quantity)) AND
             v.value = (IFNULL(NULLIF(:value,""),v.value)) AND

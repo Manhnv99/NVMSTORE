@@ -1,0 +1,19 @@
+.customerAddress-btn{
+    background-color: var(--primary-white);
+    border: 1px solid #cccccc;
+    font-size: 13px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.customerAddress-btn i{
+    font-size: 13px;
+    margin-right: 3px;
+}
+.list_address-update-btn{
+    border: 1px solid var(--primary-orange);
+    background-color: var(--primary-white);
+    font-size: 13px;
+    padding: 5px 15px;
+    border-radius: 5px;
+}
