@@ -11,7 +11,7 @@ import {getAllSize} from "../../../../redux/slices/SizeSlice";
 const ModalSize=(props)=>{
     //state
     const [name,setName]=useState('')
-    const [status,setStatus]=useState('')
+    const [status,setStatus]=useState('DANG_SU_DUNG')
     const listSize=useSelector(state => state.size.listSize)
     //
     const [addOrChoose,setAddOrChoose]=useState(true)
@@ -86,7 +86,7 @@ const ModalSize=(props)=>{
             document.querySelector('.chooseSizeOrColor').style.display='none'
             document.querySelector('.addSizeOrColor').style.display='block'
             setName('')
-            setStatus("true")
+            setStatus("DANG_SU_DUNG")
             setTouchName(false)
             setError(undefined)
             document.querySelector('.modal-status')[0].selected=true
@@ -151,8 +151,8 @@ const ModalSize=(props)=>{
                         <Form.Group>
                             <Form.Label><span style={{color: "red"}}>*</span>Trạng thái</Form.Label>
                             <Form.Select className="modal-status" onChange={(e)=>{setStatus(e.target.value)}} required>
-                                <option value="true">Đang sử dụng</option>
-                                <option value="false">Không sử dụng</option>
+                                <option value="DANG_SU_DUNG">Đang sử dụng</option>
+                                <option value="NGUNG_SU_DUNG">Không sử dụng</option>
                             </Form.Select>
                         </Form.Group>
                     </Col>

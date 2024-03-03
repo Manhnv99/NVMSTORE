@@ -21,7 +21,7 @@ import {getAllStatusProductDetail} from "../../../../redux/slices/StatusProductD
 const ModalEntity=(props)=>{
     //state
     const [name,setName]=useState('')
-    const [status,setStatus]=useState('')
+    const [status,setStatus]=useState("DANG_SU_DUNG")
     // touch
     const [touchName,setTouchName]=useState(false)
     // dispatch
@@ -226,8 +226,8 @@ const ModalEntity=(props)=>{
                         <Form.Group>
                             <Form.Label><span style={{color: "red"}}>*</span>Trạng thái</Form.Label>
                             <Form.Select className="modal-status" onChange={(e)=>{setStatus(e.target.value)}} required>
-                                <option value="true">Đang sử dụng</option>
-                                <option value="false">Không sử dụng</option>
+                                <option value="DANG_SU_DUNG">Đang sử dụng</option>
+                                <option value="NGUNG_SU_DUNG">Không sử dụng</option>
                             </Form.Select>
                         </Form.Group>
                     </Col>

@@ -150,15 +150,17 @@ const BanHang=()=>{
         try {
             const response = await OrderAPI.post_Default_Order();
             if(response && response.status === 201){
+                console.log(response)
                 const res = await OrderAPI.list_Order_Pending();
                 setCurrentOrder_Id(res.data[res.data.length - 1].order_id);
                 setListOrderPending(res.data);
                 setRunInSecondRerender(2);
             }
         }catch (e) {
-            const toastMsg={...toastError}
-            toastMsg.message=e.response.data.overOrder_pending;
-            dispatch(toastMessage(toastMsg));
+            console.log(e);
+            // const toastMsg={...toastError}
+            // toastMsg.message=e.response.data.overOrder_pending;
+            // dispatch(toastMessage(toastMsg));
         }
     }
 

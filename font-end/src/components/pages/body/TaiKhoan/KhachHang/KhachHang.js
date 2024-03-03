@@ -196,7 +196,7 @@ const KhachHang=()=>{
                                             <td style={{textAlign: "center"}}>{item.point}</td>
                                             <td style={{textAlign: "center"}}>
                                                 <span style={{backgroundColor: "#68ae6b", display:"block",color:"white",padding:"6px 0", borderRadius: "5px"
-                                                }}>{item.status ? "Kích hoạt" : "Ngưng kích hoạt"}</span>
+                                                }}>{item.status === "KICH_HOAT" ? "Kích hoạt" : "Ngưng kích hoạt"}</span>
                                             </td>
                                             <td style={{textAlign: "center"}}>
                                                 <i onClick={() => {handleOpenDetailModal(item.id)}} className="fa-regular fa-eye actionDetail"></i>

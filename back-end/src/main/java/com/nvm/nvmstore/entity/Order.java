@@ -1,5 +1,9 @@
 package com.nvm.nvmstore.entity;
 
+import com.nvm.nvmstore.infrastructure.constant.Order_Payment_Option;
+import com.nvm.nvmstore.infrastructure.constant.Order_Payment_Type;
+import com.nvm.nvmstore.infrastructure.constant.Order_Status;
+import com.nvm.nvmstore.infrastructure.constant.Order_Type;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,21 +33,17 @@ public class Order {
 
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "status_order_id",referencedColumnName = "id")
-    private Status_Order status_order_id;
+    @Enumerated(EnumType.STRING)
+    private Order_Status order_status;
 
-    @ManyToOne
-    @JoinColumn(name = "type_order_id",referencedColumnName = "id")
-    private Type_Order type_order_id;
+    @Enumerated(EnumType.STRING)
+    private Order_Type order_type;
 
-    @ManyToOne
-    @JoinColumn(name = "type_payment_id",referencedColumnName = "id")
-    private Type_Payment type_payment_id;
+    @Enumerated(EnumType.STRING)
+    private Order_Payment_Type order_payment_type;
 
-    @ManyToOne
-    @JoinColumn(name = "payment_option_id",referencedColumnName = "id")
-    private PaymentOption payment_option_id;
+    @Enumerated(EnumType.STRING)
+    private Order_Payment_Option order_payment_option;
 
     @ManyToOne
     @JoinColumn(name = "customer_id",referencedColumnName = "id")

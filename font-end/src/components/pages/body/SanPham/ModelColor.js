@@ -12,7 +12,7 @@ const ModalColor=(props)=>{
     //state
     const [code,setCode]=useState('');
     const [name,setName]=useState('');
-    const [status,setStatus]=useState('');
+    const [status,setStatus]=useState('DANG_SU_DUNG');
     const listColor=useSelector(state => state.color.listColor);
     //
     const [addOrChoose,setAddOrChoose]=useState(true);
@@ -103,7 +103,7 @@ const ModalColor=(props)=>{
             document.querySelector('.addSizeOrColor').style.display='block'
             setCode('')
             setName('')
-            setStatus("true")
+            setStatus("DANG_SU_DUNG")
             setTouchName(false)
             setTouchCode(false)
             setError({
@@ -185,8 +185,8 @@ const ModalColor=(props)=>{
                         <Form.Group>
                             <Form.Label><span style={{color: "red"}}>*</span>Trạng thái</Form.Label>
                             <Form.Select className="modal-status" onChange={(e)=>{setStatus(e.target.value)}} required>
-                                <option value="true">Đang sử dụng</option>
-                                <option value="false">Không sử dụng</option>
+                                <option value="DANG_SU_DUNG">Đang sử dụng</option>
+                                <option value="NGUNG_SU_DUNG">Không sử dụng</option>
                             </Form.Select>
                         </Form.Group>
                     </Col>

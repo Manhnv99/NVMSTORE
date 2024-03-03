@@ -96,8 +96,8 @@ const Staff=()=>{
                                     <Form.Label>Trạng Thái</Form.Label>
                                     <Form.Select className={"statusDOC"} onChange={(e)=>{setStatus(e.target.value)}}>
                                         <option value="">Tất cả</option>
-                                        <option value="true">Đang làm</option>
-                                        <option value="false">Nghỉ làm</option>
+                                        <option value="DANG_LAM_VIEC">Đang làm</option>
+                                        <option value="NGHI_VIEC">Nghỉ làm</option>
                                     </Form.Select>
                                 </Form.Group>
                             </Col>
@@ -154,7 +154,7 @@ const Staff=()=>{
                                             <td style={{textAlign:"center"}}>{item.gender ? "Nam" : "Nữ"}</td>
                                             <td style={{textAlign:"center"}}>
                                                 <span style={{backgroundColor:"#68ae6b",height:"40px",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",borderRadius:"5px",cursor:"default"}}>
-                                                    {item.status ? "Đang Làm" : "Tạm Ngưng"}
+                                                    {item.status === "DANG_LAM_VIEC" ? "Đang Làm" : "Tạm Ngưng"}
                                                 </span>
                                             </td>
                                             <td style={{textAlign:"center"}}>

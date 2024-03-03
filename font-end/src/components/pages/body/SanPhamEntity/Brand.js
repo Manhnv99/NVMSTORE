@@ -14,7 +14,7 @@ import Paging from "../../../utils/Paging";
 const Brand=()=>{
     const dispatch=useDispatch();
     const [name,setName]=useState('');
-    const [status,setStatus]=useState('true');
+    const [status,setStatus]=useState('DANG_SU_DUNG');
     const [error,setError]=useState(undefined);
     const [totalPage,setTotalPage]=useState(undefined);
     const [touchName,setTouchName]=useState(false);
@@ -188,8 +188,8 @@ const Brand=()=>{
                                     <Form.Label>Trạng Thái</Form.Label>
                                     <Form.Select onChange={(e)=>{setStatus(e.target.value)}} className={"statusDOC"}>
                                         <option value="">Tất cả</option>
-                                        <option value="true">Đang sử dụng</option>
-                                        <option value="false">Ngưng sử dụng</option>
+                                        <option value="DANG_SU_DUNG">Đang sử dụng</option>
+                                        <option value="NGUNG_SU_DUNG">Ngưng sử dụng</option>
                                     </Form.Select>
                                 </Form.Group>
                             </Col>
@@ -238,7 +238,7 @@ const Brand=()=>{
                                                     {moment(item.updated_at).format("YYYY-MM-DD hh:mm:ss")}
                                                 </td>
                                                 <td style={{textAlign: "center", justifyContent: "center", color: "#fff", borderRadius: "5px"}}>
-                                                    <span style={{backgroundColor: "#68ae6b", padding: "7px 20px", borderRadius: "5px"}}>{item.status ? "Đang sử dụng" : "Ngưng sử dụng"}</span>
+                                                    <span style={{backgroundColor: "#68ae6b", padding: "7px 20px", borderRadius: "5px"}}>{item.status === "DANG_SU_DUNG" ? "Đang sử dụng" : "Ngưng sử dụng"}</span>
                                                 </td>
                                                 <td style={{textAlign: "center"}}>
                                                     <i className="fa-regular fa-eye actionDetail"></i>
@@ -276,8 +276,8 @@ const Brand=()=>{
                         <Form.Group>
                             <Form.Label><span style={{color: "red"}}>*</span>Trạng thái</Form.Label>
                             <Form.Select className="modal-status" onChange={(e)=>{setStatus(e.target.value)}} required>
-                                <option value="true">Đang sử dụng</option>
-                                <option value="false">Không sử dụng</option>
+                                <option value="DANG_SU_DUNG">Đang sử dụng</option>
+                                <option value="NGUNG_SU_DUNG">Không sử dụng</option>
                             </Form.Select>
                         </Form.Group>
                     </Col>

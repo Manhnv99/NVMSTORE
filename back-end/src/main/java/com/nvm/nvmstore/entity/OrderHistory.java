@@ -1,5 +1,6 @@
 package com.nvm.nvmstore.entity;
 
+import com.nvm.nvmstore.infrastructure.constant.Order_Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,9 +20,7 @@ public class OrderHistory {
     @JoinColumn(name = "order_id",referencedColumnName = "id")
     private Order order_id;
 
-    @ManyToOne
-    @JoinColumn(name = "status_order_id",referencedColumnName = "id")
-    private Status_Order status_order_id;
+    private Order_Status order_status;
 
     @ManyToOne
     @JoinColumn(name = "staff_id",referencedColumnName = "id")

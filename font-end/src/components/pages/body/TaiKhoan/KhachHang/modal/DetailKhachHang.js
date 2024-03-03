@@ -12,7 +12,7 @@ const DetailKhachHang =(props)=>{
         name:"",
         phone:"",
         email:"",
-        status:"true"
+        status:"KICH_HOAT"
     });
 
     //showModal
@@ -78,8 +78,8 @@ const DetailKhachHang =(props)=>{
                         <Form.Group className="mb-2">
                             <Form.Label><span style={{color: "red"}}>*</span> Trạng Thái</Form.Label>
                             <Form.Select value={putCustomerRequest.status} isValid={putCustomerRequest.status !== ""}>
-                                <option value="true">Kích hoạt</option>
-                                <option value="false">Ngưng kích hoạt</option>
+                                <option value="KICH_HOAT">Kích hoạt</option>
+                                <option value="NGUNG_KICH_HOAT">Ngưng kích hoạt</option>
                             </Form.Select>
                         </Form.Group>
                     </Col>

@@ -111,19 +111,7 @@ const AddStaff=()=>{
         formData.append("phone",postStaffRequest.phone)
         formData.append("email",postStaffRequest.email)
         formData.append("cccd",postStaffRequest.cccd)
-        switch (postStaffRequest.status){
-            case '':
-                formData.append("status",'')
-                break
-            case 'true':
-                formData.append("status",true)
-                break
-            case 'false':
-                formData.append("status",false)
-                break
-            default:
-                formData.append("status",'')
-        }
+        formData.append("status",postStaffRequest.status)
         formData.append("address_province",postStaffRequest.address_province)
         formData.append("address_district",postStaffRequest.address_district)
         formData.append("address_ward",postStaffRequest.address_ward)
@@ -536,8 +524,8 @@ const AddStaff=()=>{
                                                          isInvalid={touch.status && postStaffRequest.status === '' || errors.status!==undefined }
                                                          isValid={postStaffRequest.status !== ''}>
                                                 <option value="">--Chọn Trạng Thái--</option>
-                                                <option value="true">Đi làm</option>
-                                                <option value="false">Tạm ngưng</option>
+                                                <option value="DANG_LAM_VIEC">Đi làm</option>
+                                                <option value="NGHI_VIEC">Tạm ngưng</option>
                                             </Form.Select>
                                             <Form.Control.Feedback type={"invalid"}>
                                                 {errors.status!==undefined ? errors.status : 'Bạn Chưa Chọn Trạng Thái!'}

@@ -142,13 +142,14 @@ const AddProduct=()=>{
        setShow(true);
     },[]);
 
-    const getAllProduct= async ()=>{
+    const getAllProduct = async ()=>{
         const res= await productAPI.getAllName_Product();
         setListNameProduct(res.data);
     }
 
-    const getAllBrand= async ()=>{
+    const getAllBrand = async ()=>{
         const res=await brandAPI.getAll();
+        console.log(res.data)
         dispatch(setListBrand(res.data))
     }
     const getAllMaterial= async ()=>{
@@ -660,7 +661,7 @@ const AddProduct=()=>{
                                                          isInvalid={touchBrand_id && brand_id==='' || errors.brand_id!==undefined}>
                                                 <option value="">--Chọn thương hiệu--</option>
                                                 {listBrand.map((item,index)=>{
-                                                    if(item.status===true){
+                                                    if(item.status==="DANG_SU_DUNG"){
                                                         return(
                                                             <option key={index} value={item.id}>{item.name}</option>
                                                         )
@@ -686,7 +687,7 @@ const AddProduct=()=>{
                                                          isInvalid={touchMaterial_id && material_id==='' || errors.material_id!==undefined}>
                                                 <option value="">--Chọn chất liệu--</option>
                                                 {listMaterial.map((item,index)=>{
-                                                    if(item.status===true){
+                                                    if(item.status==="DANG_SU_DUNG"){
                                                         return(
                                                             <option key={index} value={item.id}>{item.name}</option>
                                                         )
@@ -712,7 +713,7 @@ const AddProduct=()=>{
                                                          isInvalid={touchGender_id && gender_id==='' || errors.gender_id!==undefined}>
                                                 <option value="">--Chọn giới tính--</option>
                                                 {listGender.map((item,index)=>{
-                                                    if(item.status===true){
+                                                    if(item.status==="DANG_SU_DUNG"){
                                                         return(
                                                             <option key={index} value={item.id}>{item.name}</option>
                                                         )
@@ -740,7 +741,7 @@ const AddProduct=()=>{
                                                          isInvalid={touchStatus_id && status_id==='' || errors.status_id!==undefined}>
                                                 <option value="">--Chọn trạng thái--</option>
                                                 {listStatusProductDetail.map((item,index)=>{
-                                                    if(item.status===true){
+                                                    if(item.status){
                                                         return(
                                                             <option key={index} value={item.id}>{item.name}</option>
                                                         )
@@ -766,7 +767,7 @@ const AddProduct=()=>{
                                                          isInvalid={touchSole_id && sole_id==='' || errors.sole_id!==undefined}>
                                                 <option value="">--Chọn đế giày--</option>
                                                 {listSole.map((item,index)=>{
-                                                    if(item.status===true){
+                                                    if(item.status==="DANG_SU_DUNG"){
                                                         return(
                                                             <option key={index} value={item.id}>{item.name}</option>
                                                         )
@@ -792,7 +793,7 @@ const AddProduct=()=>{
                                                          isInvalid={touchCategory_id && category_id==='' || errors.category_id!==undefined}>
                                                 <option value="">--Chọn thể loại--</option>
                                                 {listCategory.map((item,index)=>{
-                                                    if(item.status===true){
+                                                    if(item.status==="DANG_SU_DUNG"){
                                                         return(
                                                             <option key={index} value={item.id}>{item.name}</option>
                                                         )

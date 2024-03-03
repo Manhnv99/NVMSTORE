@@ -1,0 +1,8 @@
+package com.nvm.nvmstore.repository;
+
+import com.nvm.nvmstore.entity.Category;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CategoryRepository extends JpaRepository<Category,Long> {
+
+}

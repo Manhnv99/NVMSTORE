@@ -1,5 +1,6 @@
 package com.nvm.nvmstore.entity;
 
+import com.nvm.nvmstore.infrastructure.constant.Customer_Status;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,7 +29,8 @@ public class Customer {
 
     private Integer point;
 
-    private Boolean status;
+    @Enumerated(EnumType.STRING)
+    private Customer_Status status;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)

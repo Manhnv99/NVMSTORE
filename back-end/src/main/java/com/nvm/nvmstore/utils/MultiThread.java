@@ -1,7 +1,8 @@
 package com.nvm.nvmstore.utils;
 
 import com.nvm.nvmstore.entity.Voucher;
-import com.nvm.nvmstore.repository.voucher.VoucherRepository;
+import com.nvm.nvmstore.infrastructure.constant.Voucher_Status;
+import com.nvm.nvmstore.repository.VoucherRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,13 +32,13 @@ public class MultiThread  {
             @Override
             public void run() {
                 voucherRepository.findAll().forEach(voucher -> {
-                    Integer result = checkStatusVoucher.CheckStatus(voucher.getDate_start(),voucher.getDate_end());
-                    if(result==3){
+                    Voucher_Status result = checkStatusVoucher.CheckStatus(voucher.getDate_start(),voucher.getDate_end());
+                    if(result==Voucher_Status.NGUNG_AP_DUNG){
                         listVoucherExpires.add(voucher);
                     }
                 });
                 listVoucherExpires.forEach(voucherExpires -> {
-                    voucherExpires.setStatus(3);
+                    voucherExpires.setStatus(Voucher_Status.NGUNG_AP_DUNG);
                     voucherRepository.save(voucherExpires);
                 });
                 listVoucherExpires.clear();

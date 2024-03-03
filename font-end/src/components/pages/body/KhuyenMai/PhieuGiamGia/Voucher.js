@@ -261,9 +261,9 @@ const Voucher=()=>{
                                     <Form.Label>Trạng thái</Form.Label>
                                     <Form.Select value={voucherObjectSearchRequest.status} onChange={onChangeStatusSearch}>
                                         <option value="">Tất cả</option>
-                                        <option value="1">Sắp Áp Dung</option>
-                                        <option value="2">Đang Áp Dụng</option>
-                                        <option value="3">Quá Hạn</option>
+                                        <option value="SAP_AP_DUNG">Sắp Áp Dung</option>
+                                        <option value="DANG_AP_DUNG">Đang Áp Dụng</option>
+                                        <option value="NGUNG_AP_DUNG">Quá Hạn</option>
                                     </Form.Select>
                                 </Form.Group>
                             </Col>
@@ -328,7 +328,7 @@ const Voucher=()=>{
                                             <td style={{textAlign: "center"}}>{moment(item.updated_At).format("YYYY-MM-DD hh:mm:ss")}</td>
                                             <td style={{textAlign: "center", justifyContent: "center", color: "#fff", borderRadius: "5px"}}>
                                                 <span style={{backgroundColor: "#68ae6b", display:"block",padding:"6px 0", borderRadius: "5px"
-                                                }}>{item.status === 1 ? "Sắp Áp Dụng" : item.status === 2 ? "Đang Áp Dụng" : item.status === 3 ? "Quá Hạn" : ""}</span>
+                                                }}>{item.status === "SAP_AP_DUNG" ? "Sắp Áp Dụng" : item.status === "DANG_AP_DUNG" ? "Đang Áp Dụng" : item.status === "NGUNG_AP_DUNG" ? "Quá Hạn" : ""}</span>
                                             </td>
                                             <td style={{textAlign: "center"}}>
                                                 <i onClick={()=>{handleOpenDetailVoucher(item.id)}} className="fa-regular fa-eye actionDetail"></i>

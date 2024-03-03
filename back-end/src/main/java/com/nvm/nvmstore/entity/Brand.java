@@ -1,5 +1,6 @@
 package com.nvm.nvmstore.entity;
 
+import com.nvm.nvmstore.infrastructure.constant.Entity_Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +22,8 @@ public class Brand {
 
     private String name;
 
-    private Boolean Status;
+    @Enumerated(EnumType.STRING)
+    private Entity_Status status;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)

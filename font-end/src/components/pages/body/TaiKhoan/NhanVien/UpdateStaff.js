@@ -145,25 +145,7 @@ const UpdateStaff=()=>{
         formData.append("phone",putStaffRequest.phone)
         formData.append("email",putStaffRequest.email)
         formData.append("cccd",putStaffRequest.cccd)
-        switch (putStaffRequest.status){
-            case '':
-                formData.append("status",'')
-                break
-            case 'true':
-                formData.append("status",true)
-                break
-            case 'false':
-                formData.append("status",false)
-                break
-            case true:
-                formData.append("status",true)
-                break
-            case false:
-                formData.append("status",false)
-                break
-            default:
-                formData.append("status",'')
-        }
+        formData.append("status",putStaffRequest.status)
         formData.append("address_province",putStaffRequest.address_province)
         formData.append("address_district",putStaffRequest.address_district)
         formData.append("address_ward",putStaffRequest.address_ward)
@@ -572,8 +554,8 @@ const UpdateStaff=()=>{
                                                          isInvalid={touch.status && putStaffRequest.status === '' || errors.status!==undefined }
                                                          isValid={putStaffRequest.status !== ''}>
                                                 <option value="">--Chọn Trạng Thái--</option>
-                                                <option value="true">Đi làm</option>
-                                                <option value="false">Tạm ngưng</option>
+                                                <option value="DANG_LAM_VIEC">Đi làm</option>
+                                                <option value="NGHI_VIEC">Tạm ngưng</option>
                                             </Form.Select>
                                             <Form.Control.Feedback type={"invalid"}>
                                                 {errors.status!==undefined ? errors.status : 'Bạn Chưa Chọn Trạng Thái!'}

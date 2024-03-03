@@ -1,5 +1,6 @@
 package com.nvm.nvmstore.entity;
 
+import com.nvm.nvmstore.infrastructure.constant.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,8 +28,6 @@ public class User {
 
     private String password;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id",referencedColumnName = "id")
     private Role role;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

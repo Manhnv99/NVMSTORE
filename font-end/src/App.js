@@ -20,12 +20,14 @@ import AddDiscount from "./components/pages/body/KhuyenMai/DotGiamGia/AddDiscoun
 import Discount from "./components/pages/body/KhuyenMai/DotGiamGia/Discount";
 import Voucher from "./components/pages/body/KhuyenMai/PhieuGiamGia/Voucher";
 import BanHang from "./components/pages/body/BanHangTaiQuay/BanHang";
+import {ToastContainer} from "react-toastify";
 
 
 function App() {
 
   return (
       <Router>
+          <ToastContainer/>
           <div id="menu">
               <Menu/>
           </div>

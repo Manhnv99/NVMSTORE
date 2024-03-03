@@ -1,5 +1,7 @@
 package com.nvm.nvmstore.entity;
 
+import com.nvm.nvmstore.infrastructure.constant.Role;
+import com.nvm.nvmstore.infrastructure.constant.Staff_Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,11 +37,11 @@ public class Staff {
     @Column(length = 12)
     private String cccd;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id",referencedColumnName = "id")
-    private Role role_id;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    private Boolean status;
+    @Enumerated(EnumType.STRING)
+    private Staff_Status status;
 
     private String password;
 

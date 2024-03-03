@@ -17,7 +17,7 @@ const UpdateKhachHang =(props)=>{
         name:"",
         phone:"",
         email:"",
-        status:"true"
+        status:"KICH_HOAT"
     });
     const[loading,setLoading]=useState(false);
     //touch
@@ -71,11 +71,6 @@ const UpdateKhachHang =(props)=>{
         setLoading(true);
         try {
             const newPutCustomerRequest = {...putCustomerRequest};
-            if(newPutCustomerRequest.status === "true"){
-                newPutCustomerRequest.status = true;
-            }else{
-                newPutCustomerRequest.status = false;
-            }
             const response = await CustomerAPI.putCustomer(newPutCustomerRequest);
             if(response && response.status === 200){
                 setLoading(false);
@@ -213,8 +208,8 @@ const UpdateKhachHang =(props)=>{
                         <Form.Group className="mb-2">
                             <Form.Label><span style={{color: "red"}}>*</span> Trạng Thái</Form.Label>
                             <Form.Select value={putCustomerRequest.status} onChange={onChangeCustomerStatus} isValid={putCustomerRequest.status !== ""}>
-                                <option value="true">Kích hoạt</option>
-                                <option value="false">Ngưng kích hoạt</option>
+                                <option value="KICH_HOAT">Kích hoạt</option>
+                                <option value="NGUNG_KICH_HOAT">Ngưng kích hoạt</option>
                             </Form.Select>
                         </Form.Group>
                     </Col>

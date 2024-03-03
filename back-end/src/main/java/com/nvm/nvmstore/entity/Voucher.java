@@ -1,5 +1,6 @@
 package com.nvm.nvmstore.entity;
 
+import com.nvm.nvmstore.infrastructure.constant.Voucher_Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +31,8 @@ public class Voucher {
 
     private Integer quantity;
 
-    private Integer status;
+    @Enumerated(EnumType.STRING)
+    private Voucher_Status status;
 
     private LocalDate date_start;
 
